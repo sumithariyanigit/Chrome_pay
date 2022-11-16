@@ -3542,7 +3542,7 @@ const calculate_Amount = async (req, res) => {
 
 
         return res.status(200).send({
-            status: true, msg: "OTP Send sucessfully", obj, EMI: Num_Emi, Total_Amount: Finalamount, Duration_Month: Emi_Months, Duration_Year: year,
+            status: true, msg: "Loan apply successfully", obj, EMI: Num_Emi, Total_Amount: Finalamount, Duration_Month: Emi_Months, Duration_Year: year,
             Interest_percentege: Interest, Intrest_Amount_per_Year: Calculate, Total_Interest_Amount: totalAmount
         })
 
