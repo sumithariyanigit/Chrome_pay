@@ -31,8 +31,6 @@ var moment = require('moment');
 const cust_Bank = require("../models/customerBank")
 
 
-
-
 //-------------------------
 var FcaeModel = require("../models/CustFace")
 const faceapi = require("face-api.js");
@@ -3485,15 +3483,15 @@ const calculate_Amount = async (req, res) => {
             return res.status(200).send({ staus: false, msg: "Please enter Emi Loan_type" })
         }
 
-        if (!recidence) {
-            return res.status(200).send({ staus: false, msg: "Please enter Emi recidence " })
-        }
-        if (!LocalGov) {
-            return res.status(200).send({ staus: false, msg: "Please enter Emi Local Gov certificate " })
-        }
-        if (!LandRegistration) {
-            return res.status(200).send({ staus: false, msg: "Please enter Emi Land Registration " })
-        }
+        // if (!recidence) {
+        //     return res.status(200).send({ staus: false, msg: "Please enter Emi recidence " })
+        // }
+        // if (!LocalGov) {
+        //     return res.status(200).send({ staus: false, msg: "Please enter Emi Local Gov certificate " })
+        // }
+        // if (!LandRegistration) {
+        //     return res.status(200).send({ staus: false, msg: "Please enter Emi Land Registration " })
+        // }
 
 
 
@@ -3528,17 +3526,7 @@ const calculate_Amount = async (req, res) => {
         }
 
         console.log(obj)
-
-
-
-
-
-
         let create = await Loan_applay_customer.create(obj)
-
-
-
-
 
 
         return res.status(200).send({
@@ -3560,10 +3548,11 @@ const Cust_apply_Agent_Loans = async (req, res) => {
 
         const agentID = req.userId
 
+        console.log("my ip")
+
         if (!agentID) {
             return res.status(200).send({ status: false, msg: "Please enter custID" })
         }
-
 
         let pageNO = req.body.page;
         if (pageNO == 0) {
@@ -3581,7 +3570,10 @@ const Cust_apply_Agent_Loans = async (req, res) => {
         let totalRaow1 = find_Loans1.length
 
 
-        let find_Loans = await Loan_applay_customer.find({ agentID: agentID }).limit(limit * 1)
+        let find_Loans = await Loan_applay_customer.find({ agentID: agentID, Loan_status: "PENDING" })
+            .populate('CustomerID', { 'fullname': 1, 'IDphoto': 1, 'digitalID': 1, 'phone': 1 })
+            .populate('OrganisationID', { 'name': 1 })
+            .limit(limit * 1)
             .skip((page - 1) * limit)
             .exec();
 
@@ -3619,7 +3611,10 @@ const Cust_Loan_apply_agent = async (req, res) => {
 
         let totalRaow1 = find_Loans1.length
 
-        let find_Loans = await Loan_applay_customer.find({ CustomerID: custID }).limit(limit * 1)
+        let find_Loans = await Loan_applay_customer.find({ CustomerID: custID })
+            .populate('CustomerID', { 'fullname': 1, 'IDphoto': 1, 'digitalID': 1, 'phone': 1 })
+            .populate('OrganisationID', { 'name': 1 })
+            .limit(limit * 1)
             .skip((page - 1) * limit)
             .exec();
 
@@ -3643,7 +3638,7 @@ const get_Agent_pass_Loans = async (req, res) => {
         }
 
         let find = await Loan_applay_customer.find({ agentID: agentID, Loan_status: "PASS" })
-            .populate('CustomerID', { 'fullname': 1 })
+            .populate('CustomerID', { 'fullname': 1, 'IDphoto': 1, 'digitalID': 1, 'phone': 1 })
             .populate('OrganisationID', { 'name': 1 })
 
         return res.status(200).send({ status: true, find })
@@ -3948,14 +3943,18 @@ const Calculate_credit_Score = async (req, res) => {
         if (Loan_Pay_Score == "D") {
             Loan_Pay_Score_credit = 15
         }
+
         else if (Loan_Pay_Score == "C") {
             Loan_Pay_Score_credit = 35
         }
+
         else if (Loan_Pay_Score == "B") {
             Loan_Pay_Score_credit = 60;
-        } else if (Loan_Pay_Score == "A") {
+        }
+        else if (Loan_Pay_Score == "A") {
             Loan_Pay_Score_credit = 90;
-        } else if (Loan_Pay_Score == "A+") {
+        }
+        else if (Loan_Pay_Score == "A+") {
             Loan_Pay_Score_credit = 105;
         }
 
@@ -3967,16 +3966,24 @@ const Calculate_credit_Score = async (req, res) => {
 
         //----------------------------final_calculation-------------------------------------
 
-        let CREDIT_SCORE = creditScore + Account_Credit + credit_score + final_cal_owe + Payment_His
+        let CREDIT_SCORE = 300 + creditScore + Account_Credit + credit_score + final_cal_owe + Payment_His
 
-        console.log("creditScore", creditScore)
-        console.log("Account_Credit", Account_Credit)
-        console.log("credit_score", credit_score)
-        console.log("final_cal_owe", final_cal_owe)
-        console.log("Payment_His", Payment_His)
-        console.log("Final_Credit", CREDIT_SCORE)
+        let percentage = `0.${CREDIT_SCORE / 900 * 100}`
+        let per = Number(percentage)
 
-        return res.status(200).send({ status: true, CREDIT_SCORE })
+        console.log("PER", percentage)
+
+
+        console.log("PER", percentage)
+
+        // console.log("creditScore", creditScore)
+        // console.log("Account_Credit", Account_Credit)
+        // console.log("credit_score", credit_score)
+        // console.log("final_cal_owe", final_cal_owe)
+        // console.log("Payment_His", Payment_His)
+        // console.log("Final_Credit", CREDIT_SCORE)
+
+        return res.status(200).send({ status: true, CREDIT_SCORE, CREDIT_PERCENTEGE: per })
 
 
 
@@ -4013,6 +4020,7 @@ const get_Insatallment_Loans = async (req, res) => {
         return res.status(200).send({ statsu: false, msg: error.messege })
     }
 }
+
 
 
 

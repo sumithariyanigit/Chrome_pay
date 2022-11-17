@@ -2921,9 +2921,6 @@ const updateCommission = async (req, res) => {
 
         return res.status(200).send({ status: true, create })
 
-
-
-
     } catch (error) {
         console.log(error)
         return res.status(200).send({ status: false, msg: error.messege })
@@ -3247,7 +3244,7 @@ const org_loan_accept = async (req, res) => {
 
     } catch (error) {
         console.log(error)
-        return res.status(200).send({ status: false, msg: "" })
+        return res.status(200).send({ status: false, msg: " " })
     }
 }
 
@@ -3328,6 +3325,8 @@ const get_Loan_installment = async (req, res) => {
         return res.status(200).send({ status: false, msg: error.messege })
     }
 }
+
+
 
 
 
