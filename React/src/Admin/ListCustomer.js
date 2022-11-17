@@ -429,8 +429,17 @@ useEffect(() => {
                                                         
                                                         <td>{Moment(item.dateOfBirth).format("DD/MM//YYYY")}</td>
                                                         <td>{Moment(item.createdAt).format("DD/MM//YYYY")}</td>
-                                                        <td><span class="badge badge-light-info fs-5">{item.nationality}</span></td>
-                                                        <td>{item.status}</td>
+                                                        <td>{item.nationality}</td>
+                                                        <td>{item.status == "pending" ? <> 
+                                                            <span class="badge badge-light-info fs-5">{item.status}</span>
+                                                            </>:
+                                                            <>
+                                                             <span class="badge badge-light-pending fs-5">{item.status}</span>
+                                                            </>
+                                                           
+                                                        }
+                                                            </td>
+                                                        
                                                         <td>
                                                             <div className="d-flex justify-content-end flex-shrink-0">
                                                            {menu.approveDID == 1 ?<>

@@ -6,6 +6,8 @@ import { useParams }  from 'react-router-dom';
 import Moment from 'moment';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { Link } from "react-router-dom";
+
 var jwt = require("jsonwebtoken");
 
 function CustmerViewOrg() {
@@ -17,6 +19,7 @@ function CustmerViewOrg() {
   const [ data, setData]= useState([])
   const [ digitalrefID, setDigitalrefID]= useState([])
   const [gender,setGender]=useState()
+  const [account,setAccount]= useState([]);
   
   const { _id } = useParams('');
   // const currDate = new Date().toLocaleDateString();
@@ -38,8 +41,20 @@ function CustmerViewOrg() {
   }
  useEffect(() => {
    userlist();
+   accountlist();
   
  }, []);
+
+ const {custID} = { custID : _id }
+ const accountlist = async () =>{
+      
+    await axios.post(`/customer_bank/${custID}`)
+    .then(resp =>{
+        let data =resp.data.findCust
+        setAccount(data);
+        console.log('@pushpak@',data);
+    })
+}
  
  const handleVerfiy = (_id) => {
     console.log(_id);
@@ -436,19 +451,19 @@ function CustmerViewOrg() {
                                 <ul className="nav flex-wrap border-transparent fw-bold" role="tablist">
 
                                     <li className="nav-item my-1" role="presentation">
-                                        <a role="tab" aria-selected="true" data-bs-toggle="tab" href="#overview" className="btn btn-color-gray-600 btn-active-secondary  active btn-active-color-primary fw-bolder fs-8 fs-lg-base nav-link px-3 px-lg-8 mx-1 text-uppercase">Overview</a>
+                                        <a role="tab" aria-selected="true" data-bs-toggle="tab" href="#overview" className="btn btn-color-gray-600 btn-active-secondary  active btn-active-color-primary fw-bolder fs-8 fs-lg-base nav-link px-3 px-lg-7 mx-1 text-uppercase">Overview</a>
                                     </li>
 
 
                                     <li className="nav-item my-1" role="presentation">
-                                        <a role="tab" aria-selected="true" data-bs-toggle="tab" href="#documents" className="btn btn-color-gray-600 btn-active-secondary btn-active-color-primary fw-bolder fs-8 fs-lg-base nav-link px-3 px-lg-8 mx-1 text-uppercase">
+                                        <a role="tab" aria-selected="true" data-bs-toggle="tab" href="#documents" className="btn btn-color-gray-600 btn-active-secondary btn-active-color-primary fw-bolder fs-8 fs-lg-base nav-link px-3 px-lg-7  mx-1 text-uppercase">
                                             Documents</a>
                                     </li>
 
 
                                     <li className="nav-item my-1" role="presentation">
 
-                                        <a role="tab" aria-selected="true" data-bs-toggle="tab" href="#land" className="btn btn-color-gray-600 btn-active-secondary btn-active-color-primary fw-bolder fs-8 fs-lg-base nav-link px-3 px-lg-8 mx-1 text-uppercase">Land Registration</a>
+                                        <a role="tab" aria-selected="true" data-bs-toggle="tab" href="#land" className="btn btn-color-gray-600 btn-active-secondary btn-active-color-primary fw-bolder fs-8 fs-lg-base nav-link px-3 px-lg-7  mx-1 text-uppercase">Land Registration</a>
                                     </li>
 
 
@@ -457,8 +472,12 @@ function CustmerViewOrg() {
 
                                     <li className="nav-item my-1">
 
-                                        <a role="tab" aria-selected="true" data-bs-toggle="tab" href="#finance" className="btn btn-color-gray-600 btn-active-secondary btn-active-color-primary fw-bolder fs-8 fs-lg-base nav-link px-3 px-lg-8 mx-1 text-uppercase">
+                                        <a role="tab" aria-selected="true" data-bs-toggle="tab" href="#finance" className="btn btn-color-gray-600 btn-active-secondary btn-active-color-primary fw-bolder fs-8 fs-lg-base nav-link px-3 px-lg-7  mx-1 text-uppercase">
                                             Financial Activities</a>
+                                    </li>
+                                    <li className="nav-item my-1" role="presentation">
+                                        <a role="tab" aria-selected="true" data-bs-toggle="tab" href="#account" className="btn btn-color-gray-600 btn-active-secondary btn-active-color-primary fw-bolder fs-8 fs-lg-base nav-link px-3 px-lg-7 mx-1 text-uppercase">
+                                            Bank Account</a>
                                     </li>
 
 
@@ -1394,6 +1413,104 @@ function CustmerViewOrg() {
                             </div>
 
                         </div>
+                    </div>
+                    <div className="tab-pane fade" id="account" role="tabpanel">
+
+<div className="row">
+    <div className="col-lg-12 mb-4">
+        <h3 className="fw-bold my-2">User Bank Documents
+            <span className="fs-6 text-gray-400 fw-semibold ms-1"></span></h3>
+    </div>
+
+    <div className="row mt-4 text-hover-primary">
+
+
+{account.map((item)=>
+
+        <div className="col-lg-3 basicdetail">
+            <div className="carduser animestion-bank">
+                <div className="text-center">
+                    <Link to={`/custmer-bank-detail/${item._id}/${custID} `} className="img_div">
+                        {/* <img src={data.residance} /> */}
+                        <i class="fad fa-university fs-45"></i>
+                    </Link>
+                    <a href="../assets_new/images/largepreview.png" className="viewimg1">
+                        {/* <i className="fa fa-eye" data-toggle="lightbox" data-gallery="gallery" aria-hidden="true"></i> */}
+                        </a>
+                </div>
+                <div className="d-flex justify-content-between p-3">
+                    <h5>{item.Bankname}</h5>
+                    <div>
+
+                        <a href="#" className="ml-2"><i className="fad fa-university" aria-hidden="true"></i></a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        )}
+
+        {/* <div className="col-lg-3 basicdetail">
+            <div className="carduser">
+                <div className="text-center">
+                    <a className="img_div">
+                    <i class="fad fa-university"></i>
+                        
+                    </a>
+
+                    <a className="viewimg" href="../assets_new/images/largepreview.png" data-toggle="lightbox" data-gallery="gallery">
+                        <i className="fa fa-eye" aria-hidden="true" data-toggle="lightbox" data-gallery="gallery"></i></a>
+
+                </div>
+                <div className="d-flex justify-content-between p-3">
+                    <h5>Local Govt. Doc</h5>
+                    <div>
+                        <a href="#" className="ml-2"><i className="fa fa-download" aria-hidden="true"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div> */}
+
+        {/* <div className="col-lg-3 basicdetail">
+            <div className="carduser">
+                <div className="text-center">
+                    <a className="img_div" href="#">
+                       
+                        <i class="fad fa-university"></i>
+                    </a>
+                    <a className="viewimg" href="../assets_new/images/largepreview.png" data-toggle="lightbox" data-gallery="gallery"><i className="fa fa-eye" aria-hidden="true"></i></a>
+                </div>
+                <div className="d-flex justify-content-between p-3">
+                    <h5>Land Registration</h5>
+                    <div>
+
+                        <a href="#" className="ml-2"><i className="fa fa-download" aria-hidden="true"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div> */}
+
+        {/* <div className="col-lg-3 basicdetail">
+            <div className="carduser">
+                <div className="text-center">
+                    <a className="img_div" href="#">
+                        <img src="../assets_new/images/id.png" />
+                    </a><a className="viewimg" href="../assets_new/images/id.png" data-toggle="lightbox" data-gallery="gallery"><i className="fa fa-eye" aria-hidden="true"></i></a>
+
+                </div>
+                <div className="d-flex justify-content-between p-3">
+                    <h5>National ID</h5>
+                    <div>
+
+                        <a href="#" className="ml-2"><i className="fa fa-download" aria-hidden="true"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div> */}
+
+    </div>
+
+</div>
                     </div>
 
 

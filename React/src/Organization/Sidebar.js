@@ -5,9 +5,9 @@ import { Link } from "react-router-dom";
 export default function Sidebar() {
 
     const logout=()=>{
-        alert('okk')
+        // alert('okk')
         localStorage.clear();
-        window.location =`/login-agent`;
+        window.location =`/loginorg`;
 
     }
 
@@ -50,27 +50,27 @@ export default function Sidebar() {
                                     <div className="menu-item">
 
                                         <div className="menu-content">
-                                            <span className="menu-section fs-5 fw-bolder ps-1 py-1">Customer Management</span>
+                                            <span className="menu-section fs-5 fw-bolder ps-1 py-1">CRM</span>
                                         </div>
 
                                     </div>
 
                                     <div className="menu-item menu-accordion">
 
-
+                                    <a href="/customer-list" className="menu-link">
+                                            <span className="menu-bullet">
+                                                <span className="bullet bullet-dot"></span>
+                                            </span>
+                                            <span className="menu-title">All DIDs List</span>
+                                        </a>
                                         <a href="/addcustomer" className="menu-link">
                                             <span className="menu-bullet">
                                                 <span className="bullet bullet-dot"></span>
                                             </span>
-                                            <span className="menu-title">Add Customer</span>
+                                            <span className="menu-title">Create DIDs</span>
                                         </a>
 
-                                        <a href="/customer-list" className="menu-link">
-                                            <span className="menu-bullet">
-                                                <span className="bullet bullet-dot"></span>
-                                            </span>
-                                            <span className="menu-title">Customers List</span>
-                                        </a>
+                                       
                                         
                                         {/* <Link to="/transtion-list" className="menu-link">
                                             <span className="menu-bullet">
@@ -120,6 +120,40 @@ export default function Sidebar() {
                             </div>
                             <div data-kt-menu-trigger="{default: 'click', lg: 'hover'}" data-kt-menu-placement="right-start" className="menu-item py-2">
 
+<span className="menu-link menu-center">
+    <span className="menu-icon me-0">
+    <i class="fad fa-university fs-1"></i>
+    </span>
+</span>
+
+<div className="menu-sub menu-sub-dropdown menu-sub-indention px-2 py-4 w-200px w-lg-225px">
+
+    <div className="menu-item">
+
+        <div className="menu-content">
+            <span className="menu-section fs-5 fw-bolder ps-1 py-1">Bank Management</span>
+        </div>
+
+    </div>
+
+    <div className="menu-item menu-accordion">
+
+       <a href="/Add-Bank" className="menu-link">
+            <span className="menu-bullet">
+                <span className="bullet bullet-dot"></span>
+            </span>
+            <span className="menu-title">Add Bank</span>
+        </a>
+        
+
+    </div>
+
+
+</div>
+
+                            </div>
+                            <div data-kt-menu-trigger="{default: 'click', lg: 'hover'}" data-kt-menu-placement="right-start" className="menu-item py-2">
+
                                 <span className="menu-link menu-center">
                                     <span className="menu-icon me-0">
                                     <i class="fas fa-users-medical fs-1"></i>
@@ -158,40 +192,7 @@ export default function Sidebar() {
                                 </div>
 
                             </div>
-                            <div data-kt-menu-trigger="{default: 'click', lg: 'hover'}" data-kt-menu-placement="right-start" className="menu-item py-2">
-
-<span className="menu-link menu-center">
-    <span className="menu-icon me-0">
-    <i class="fad fa-university fs-1"></i>
-    </span>
-</span>
-
-<div className="menu-sub menu-sub-dropdown menu-sub-indention px-2 py-4 w-200px w-lg-225px">
-
-    <div className="menu-item">
-
-        <div className="menu-content">
-            <span className="menu-section fs-5 fw-bolder ps-1 py-1">Bank Management</span>
-        </div>
-
-    </div>
-
-    <div className="menu-item menu-accordion">
-
-       <a href="/Add-Bank" className="menu-link">
-            <span className="menu-bullet">
-                <span className="bullet bullet-dot"></span>
-            </span>
-            <span className="menu-title">Add Bank</span>
-        </a>
-        
-
-    </div>
-
-
-</div>
-
-                            </div>
+                            
                             <div data-kt-menu-trigger="{default: 'click', lg: 'hover'}" data-kt-menu-placement="right-start" className="menu-item py-2">
 
                             <span className="menu-link menu-center">
@@ -291,12 +292,12 @@ export default function Sidebar() {
                             </div>
 
                             </div>
-                            <div data-kt-menu-trigger="{default: 'click', lg: 'hover'}" data-kt-menu-placement="right-start" className="menu-item py-2">
+                            {/* <div data-kt-menu-trigger="{default: 'click', lg: 'hover'}" data-kt-menu-placement="right-start" className="menu-item py-2">
 
                             <span className="menu-link menu-center">
                                 <span className="menu-icon me-0">
                                 <i class="fad fa-credit-card fs-1"></i>  
-                                {/* <i class="fad fa-sack-dollar fs-1"></i> */}
+                               
                                 
                                 </span>
                             </span>
@@ -320,13 +321,7 @@ export default function Sidebar() {
                                         </span>
                                         <span className="menu-title">Credit</span>
                                     </a>
-                                    {/* <a href="/loan-pass" className="menu-link">
-
-                                        <span className="menu-bullet">
-                                            <span className="bullet bullet-dot"></span>
-                                        </span>
-                                        <span className="menu-title">Loan Pass List</span>
-                                    </a> */}
+                                   
                                     
 
                                 </div>
@@ -334,7 +329,7 @@ export default function Sidebar() {
 
                             </div>
 
-                            </div>
+                            </div> */}
 
 
                         </div>

@@ -159,6 +159,7 @@ import Customerloanlist from './Agent/loanlist/Customerloanlist';
 import Loanpasslist from './Agent/loanlist/Loanpasslist';
 import CardScore from './Organization/CreditScoreComponent/CardScore';
 import AgentLoanPassDashbord from './Agent/loanlist/AgentLoanPassDashbord';
+import AgentCustLink from './Agent/LinkComponent/AgentCustLink';
 
 
 
@@ -286,7 +287,8 @@ function App() {
  <Route exact path='/longApply/:_id' component={LongApply} />
  <Route exact path='/Customerloanlist' component={Customerloanlist} />
   <Route exact path='/Loanpasslist' component={Loanpasslist} />
-  <Route exact path='/loan-pass-dashbord/:_id' component={AgentLoanPassDashbord}/>
+  <Route exact path='/agent-loan-pass-dashbord/:_id' component={AgentLoanPassDashbord}/>
+  <Route exact path='/agent-customer-links' component={AgentCustLink}/>
 
   {/*--------------Export Agent---------------- */}
   <Route exact path='/agent-did-customer' component={ExportCustomerDIDs} />

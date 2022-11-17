@@ -30,7 +30,8 @@ customerloanlistapply();
     },[]);
 
     const handleView = (_id) =>{
-    window.location = `/loan-pass-dashbord/${_id}`;
+   window.location = `/agent-loan-pass-dashbord/${_id}`;
+   
         return false;  
     }
 

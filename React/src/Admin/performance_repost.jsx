@@ -259,7 +259,7 @@ console.log("jjjjjjjjjjjjjjjjjjjjjjjjjjj",useractivedatayear)
                                     <div className='card-body  pt-9 pb-0 '>
                                     <div className="row">
 
-<div className="col-4">
+<div className="col-md-4 mb-2">
 
     <div className="retative bg-gray-100 animestion-bank h-100 bg-opacity-70 rounded-2 px-6 py-5">
   
@@ -302,7 +302,7 @@ console.log("jjjjjjjjjjjjjjjjjjjjjjjjjjj",useractivedatayear)
 
 { Last_Month<=0?
 
-<div className="col-4">
+<div className="col-md-4 mb-2">
 <div className="retative bg-gray-100 animestion-bank h-100 bg-opacity-70 rounded-2 px-6 py-5">
 <span> TIME</span>
 
@@ -362,7 +362,7 @@ display: false,
 />
 </div>
 </div>
-:<div className="col-4">
+:<div className="col-md-4 mb-2">
 <div className="retative bg-gray-100 animestion-bank h-100 bg-opacity-70 rounded-2 px-6 py-5">
 
 
@@ -425,7 +425,7 @@ display: false,
 }
 
 
-<div className="col-4">
+<div className="col-md-4">
 
 <div className="retative bg-gray-100 animestion-bank h-100 bg-opacity-70 rounded-2 px-6 py-5">
 

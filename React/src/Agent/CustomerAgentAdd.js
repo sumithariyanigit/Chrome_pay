@@ -7,6 +7,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import  Jwt  from "jsonwebtoken";
 import AutoAddress from "../Mapcomponents/AutoAddress";
+import Swal from "sweetalert2";
 
 function CustomerAgentAdd() {
 
@@ -82,14 +83,36 @@ function CustomerAgentAdd() {
  
         axios.post(`/createCustomerByOrg1/${agentID}/${orgID}`,dataToSend2)
         .then(res =>{
-            if(res.status){
+            if(res.status || res.service){
             let data =res.data;
                 if(data.status){
                     toast.success(data.msg)
                      window.location ="/agent-customer-otp"
                     // e.target.reset();
+                } else if(data.service){
+                    // toast.error(data.msg);
+                    Swal.fire({
+                        title: 'This Customer Alredy Register You Want To Linked Service',
+                        imageUrl: '../assets_new/images/handshake.png',
+                        imageWidth: 100,
+                        imageHeight: 60,
+                        imageAlt: 'Custom image',
+                        showCancelButton: true,
+                        confirmButtonText: 'Save',
+                       
+                      }).then((result) => {
+                        
+                        if (result.isConfirmed) {
+                          Swal.fire('Saved!', '', 'success')
+                          window.location ="/agent-customer-links";
+                        } else if (result.isDenied) {
+                          Swal.fire('Changes are not saved', '', 'info')
+                        }
+                      })
+                    
                 }else{
                     toast.error(data.msg)
+                     
                 }
                  
                 }
@@ -241,7 +264,7 @@ function CustomerAgentAdd() {
                                                 {/* <i className="fas fa-exclamation-circle ms-1 fs-7" data-bs-toggle="tooltip" title="Phone number must be active"></i> */}
                                             </label>
                                             <div className="col-lg-8 fv-row">
-                                                <input type="tel" name="nextFOKniPhone"  className="form-control form-control-lg form-control-solid" placeholder="Next Of Kin number" />
+                                                <input type="number" name="nextFOKniPhone"  className="form-control form-control-lg form-control-solid" placeholder="Next Of Kin number" />
                                             </div>
                                         </div>
                                         <div className="row mb-6">

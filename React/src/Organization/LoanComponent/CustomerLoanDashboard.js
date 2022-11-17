@@ -648,13 +648,21 @@ function CustomerLoanDashboard() {
                                     <div className="col-lg-4 mt-5">
                                         <div className="text-center">
                                         <div className="row">
-                                        <h1 className="card-score">Your Credit Card Score </h1>
+                                        <div className="col-lg-12"><h1 className="card-score">Your Credit Card Score </h1></div>
+                                        <div className="row">
+                                        <div className="col-lg-12 row">
                                         <div className="col-lg-2 mt-5"><div className="box-poor"></div></div>
                                         <div className="col-lg-9 mt-5"><h1>Poor</h1></div>
+                                        </div>
+                                        <div className="col-lg-12 row">
                                         <div className="col-lg-2 mt-5"><div className="box-good"></div></div>
                                         <div className="col-lg-9 mt-5"><h1>Good</h1></div>
-                                        <div className="col-lg-2 mt-5"><div className="box-excellent"></div></div>
+                                        </div>
+                                       <div className="col-lg-12 row">
+                                       <div className="col-lg-2 mt-5"><div className="box-excellent"></div></div>
                                         <div className="col-lg-9 mt-5"><h1>Excellent</h1></div>
+                                       </div>
+                                        </div>
                                         
 
                                         </div>
