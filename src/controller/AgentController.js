@@ -2320,6 +2320,9 @@ const createCustomerByOrg1 = async (req, res, next) => {
         let ID = req.params.agentID;
         let orgID = req.params.orgID;
 
+
+
+
         console.log("=recidence==>", files.length - 1)
         let findsubAdminID = await subAdmin.findOne({ _id: ID })
 
@@ -2352,6 +2355,22 @@ const createCustomerByOrg1 = async (req, res, next) => {
 
 
 
+        //------------------------------------Manage-Linked-service----------------------------------------------------------------------
+
+        console.log("Phone", phone)
+        const cheack_cus = await cutomerModel.findOne({ phone: phone })
+        console.log("AGENT_JAMES", cheack_cus)
+
+        if (cheack_cus) {
+
+            return res.status(200).send({ status: false, service: "Linked", msg: "Customer already register, you want to linked service" })
+
+        }
+
+
+        //---------------------------------------------------------------------------------------------------------------------------------
+
+
         let findcust = await cutomerModel.find({ createdBY: orgID })
         let findOrg = await Organisation.findOne({ _id: orgID })
 
@@ -2361,8 +2380,6 @@ const createCustomerByOrg1 = async (req, res, next) => {
             return res.status(200).send({ status: false, msg: "You have not enough licenses to add DID, Please contact admin to update yout licenses" })
 
         }
-
-
 
         if (!data)
             return res.status(200).send({ status: false, msg: "please enter data" })
@@ -3415,7 +3432,7 @@ const send_Loan_Otp = async (req, res) => {
 
         send_mobile_otp();
 
-        let update_OTP = await cutomerModel.findOneAndUpdate({ _id: custID }, { Loan_OTP: OTP })
+        let update_OTP = await cutomerModel.findOneAndUpdate({ _id: custID }, { Loan_OTP: "123456" })
 
 
 
@@ -3792,6 +3809,7 @@ const Calculate_credit_Score = async (req, res) => {
 
 
         let find_Transections = await transectionModel.find({ senderID: custID })
+
         let current_Transection = find_Transections.pop()
         let very_first_transection = find_Transections[0]
 
@@ -3971,11 +3989,9 @@ const Calculate_credit_Score = async (req, res) => {
         let CREDIT_SCORE = 300 + creditScore + Account_Credit + credit_score + final_cal_owe + Payment_His
 
         let percentage = `0.${CREDIT_SCORE / 900 * 100}`
-        let per = Number(percentage)
-
-        console.log("PER", percentage)
-
-
+        let slice = percentage.slice(0, 4)
+        let per = Number(slice)
+        console.log("PER", slice)
         console.log("PER", percentage)
 
         // console.log("creditScore", creditScore)
@@ -4023,6 +4039,109 @@ const get_Insatallment_Loans = async (req, res) => {
     }
 }
 
+//---------------------------------------------Customer-Linked-service-Send-OTP----------------------------------------------------------------
+
+
+const Cust_Linked_Srevice_send_OTP = async (req, res) => {
+    try {
+
+        const cust_phone = req.body.Phone;
+
+        if (!cust_phone) {
+            return res.statsu(200).send({ statsu: false, msg: "Please enter user phone number" })
+        }
+
+        let check_cust = await cutomerModel.findOne({ phone: cust_phone })
+
+        if (!check_cust) {
+            return res.status(200).send({ statsu: false, msg: "customer not regiater please register first" })
+        }
+
+        let OTP = 100000 + Math.floor(Math.random() * 900000);
+
+        console.log("OTP", OTP)
+
+        const send_mobile_otp = async (req, res) => {
+
+            let mobile = cust_phone;
+            let otp = OTP;
+
+            let url = `http://sms.bulksmsind.in/v2/sendSMS?username=d49games&message=Dear+user+your+registration+OTP+for+D49+is+${otp}+GLDCRW&sendername=GLDCRW&smstype=TRANS&numbers=${mobile}&apikey=b1b6190c-c609-4add-b03d-ab3a22e9d635&peid=1701165034632151350&%20templateid=1707165155715063574`;
+
+            try {
+                return await axios.get(url).then(function (response) {
+                    //console.log(response);
+                    return response;
+                });
+            } catch (error) {
+                console.log(error);
+            }
+        }
+
+        send_mobile_otp();
+
+        let update_OTP = await cutomerModel.findOneAndUpdate({ phone: cust_phone }, { Linekd_Service_OTP: OTP })
+
+        return res.status(200).send({ status: true, msg: "OTP send succesfully" })
+
+
+
+    } catch (error) {
+        console.log(error)
+        return res.status(200).send({ satatus: false, msg: error.messege })
+    }
+}
+
+
+//---------------------------------------------Customer-Linked-service------------------------------------------------------------------------
+
+const Cust_Linked_Srevice = async (req, res) => {
+    try {
+
+        const cust_phone = req.body.Phone;
+        const orgID = req.body.OrgID;
+        const otp = req.body.otp;
+
+        if (!orgID) {
+            return res.status(200).send({ statsu: false, msg: "Please enter Organisation ID" })
+        }
+
+        if (!cust_phone) {
+            return res.status(200).send({ status: false, msg: "Please enter phone number" })
+        }
+
+        let find_org = await Organisation.findOne({ _id: orgID })
+
+        let org_name = find_org.name
+
+        if (!otp) {
+            return res.status(200).send({ statsu: false, msg: "Please enter OTP " })
+        }
+
+        let verify_OTP = await cutomerModel.findOne({ phone: cust_phone })
+
+        let all_organisations = verify_OTP.organisation
+
+        if (all_organisations.includes(orgID)) {
+            return res.status(200).send({ statsu: false, msg: `This customer already linked with ${org_name} organisation` })
+        }
+
+        if (verify_OTP.Linekd_Service_OTP != otp) {
+            return res.status(200).send({ status: false, msg: "Please enter Valid otp" })
+        }
+
+        let update_OTP = await cutomerModel.findOneAndUpdate({ phone: cust_phone }, { $push: { "organisation": orgID } }, { new: true })
+
+        let update_OTP_Again = await cutomerModel.findOneAndUpdate({ phone: cust_phone }, { Linekd_Service_OTP: "000@$#&*" })
+
+        return res.status(200).send({ status: true, msg: `Congratulation now you are also part of ${org_name}`, update_OTP })
+
+
+    } catch (error) {
+        console.log(error)
+        return res.status(200).send({ satatus: false, msg: error.messege })
+    }
+}
 
 
 
@@ -4073,3 +4192,5 @@ module.exports.pay_cust_emi = pay_cust_emi
 module.exports.Calculate_credit_Score = Calculate_credit_Score;
 module.exports.get_Insatallment_Loans = get_Insatallment_Loans;
 module.exports.send_Loan_Otp = send_Loan_Otp;
+module.exports.Cust_Linked_Srevice_send_OTP = Cust_Linked_Srevice_send_OTP;
+module.exports.Cust_Linked_Srevice = Cust_Linked_Srevice

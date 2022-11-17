@@ -4381,10 +4381,6 @@ const OrgChart = async (req, res) => {
             return res.status(200).send({ status: true, sorted })
 
         } else {
-
-
-
-
             for (let i of find) {
                 let findCust = await customerModel.find({ organisation: i._id })
 
@@ -4477,6 +4473,48 @@ const OrgTransectionChart = async (req, res) => {
     }
 }
 
+//----------------------------------Customer-organisation's------------------------------------------------------------------------------------
+
+const cust_organisation = async (req, res) => {
+    try {
+
+        const custID = req.params.custID;
+
+        if (!custID) {
+            return res.status(200).send({ status: false, msg: "Please enter customer ID" })
+        }
+
+        if (custID.length == 0) {
+            return res.status(200).send({ status: false, msg: "Please enter valid customer ID" })
+        }
+
+        let find_Oragnsiations = await customerModel.findOne({ _id: custID })
+
+        let Organisations = find_Oragnsiations.organisation
+
+        let result = [];
+        for (let i of Organisations) {
+            let find_Org = await Organisation.find({ _id: i }).select({ name: 1, logo: 1, })
+            result.push(find_Org)
+        }
+
+        let final = []
+        for (let organisations of result) {
+            for (let org of organisations) {
+                final.push(org)
+            }
+        }
+
+
+        return res.status(200).send({ status: true, final })
+
+
+    } catch (error) {
+        console.log(error)
+        return res.status(200).send({ status: false, msg: error.message })
+    }
+}
+
 
 module.exports.createAdmin = createAdmin;
 module.exports.AdminLogin = AdminLogin;
@@ -4554,4 +4592,5 @@ module.exports.bankWithCust = bankWithCust;
 module.exports.Block_Bank = Block_Bank;
 module.exports.Un_Block_Bank = Un_Block_Bank;
 module.exports.OrgChart = OrgChart
-module.exports.OrgTransectionChart = OrgTransectionChart
+module.exports.OrgTransectionChart = OrgTransectionChart;
+module.exports.cust_organisation = cust_organisation

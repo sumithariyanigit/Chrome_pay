@@ -341,7 +341,7 @@ const organisationLogin = async (req, res, next) => {
                 name: findData.name,
                 email: email,
                 ID: findData._id,
-                loginTime: time,
+                loginTime: time, 
                 IP: UserIP,
                 status: "Please enter valid email"
 
@@ -396,16 +396,12 @@ const organisationLogin = async (req, res, next) => {
         let OrganisationID = findData._id;
         let name = findData.name;
         let phone = findData.phoneNo;
+        let accessKeyId = findData.accessKeyId;
+        let secretAccessKey = findData.secretAccessKey
 
-
-
-
-        let token = jwt.sign({ OrganisationID, name, email, phone }, 'organisation')
+        let token = jwt.sign({ OrganisationID, name, email, phone, accessKeyId, secretAccessKey }, 'organisation')
         res.header("x-api-key", token);
-        //res.cookie('auth', token);
 
-
-        // let result = findData;
         if (findData) {
             let time = Date.now();
             let UserIP = ip.address()
@@ -3171,12 +3167,12 @@ const Cust_Loan_apply = async (req, res) => {
         }
         const { page = pageNO, limit = 10 } = req.query;
 
-        let find_Loans1 = await Loan_applay_customer.find({ OrganisationID: orgID })
+        let find_Loans1 = await Loan_applay_customer.find({ OrganisationID: orgID, Loan_status: "PENDING" })
 
         let totalRaow1 = find_Loans1.length
 
 
-        let find_Loans = await Loan_applay_customer.find({ OrganisationID: orgID }).populate('CustomerID', { 'fullname': 1 })
+        let find_Loans = await Loan_applay_customer.find({ OrganisationID: orgID, Loan_status: "PENDING" }).populate('CustomerID', { 'fullname': 1 })
             .populate('OrganisationID', { 'name': 1 })
             .limit(limit * 1)
             .skip((page - 1) * limit)

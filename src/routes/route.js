@@ -116,6 +116,7 @@ router.post("/Block_Bank/:BankID", adminController.Block_Bank)
 router.post("/Un_Block_Bank/:BankID", adminController.Un_Block_Bank)
 router.post("/OrgChart", adminController.OrgChart)
 router.post("/OrgTransectionChart", adminController.OrgTransectionChart)
+router.post("/cust_organisation/:custID", adminController.cust_organisation)
 
 
 
@@ -169,7 +170,7 @@ router.post("/orgchangePasswordotp", MatchIPc.findBlockIPs, Organisation.orgchan
 router.get("/vieworg/:orgID", MatchIPc.findBlockIPs, Organisation.vieworg);
 router.get("/agentView/:agentID", Organisation.agentView)
 router.post("/org_update/:orgID", Organisation.org_update)
-router.post("/createCustomerByOrg/:ID", Organisation.createCustomerByOrg);
+router.post("/createCustomerByOrg/:ID", AcessKeys.AcessKeys, Organisation.createCustomerByOrg);
 router.post("/verifyCustomer", Organisation.verifyCustomer)
 router.get("/getOwnerDigitalID", Organisation.getOwnerDigitalID)
 router.get("/getallGigitalIDs", Organisation.getallGigitalIDs)
@@ -183,11 +184,12 @@ router.post("/ViewAgentCommmission/:agentID", Organisation.ViewAgentCommmission)
 router.post("/OrgPerreort/:orgID", Organisation.OrgPerreort)
 router.post("/org_add_cust/:orgID", Organisation.org_add_cust)
 router.post("/test/:token", AcessKeys.AcessKeys, Organisation.test)
-router.get("/Cust_Loan_apply/:token", OrgAuth.auth, Organisation.Cust_Loan_apply)
+router.post("/Cust_Loan_apply/:token", OrgAuth.auth, Organisation.Cust_Loan_apply)
 router.post("/org_cust_loan/:LoanID", Organisation.org_cust_loan)
 router.post("/org_loan_accept/:LoanID", Organisation.org_loan_accept)
 router.post("/get_pass_Loans/:token", OrgAuth.auth, Organisation.get_pass_Loans)
 router.post("/get_Loan_installment/:LoanID", Organisation.get_Loan_installment)
+
 
 
 //-------------------------API-HIASTORY-----------------------------------------------//
@@ -256,10 +258,8 @@ router.post("/pay_cust_emi/:LoanID", agentController.pay_cust_emi)
 router.post("/Calculate_credit_Score/:custID", agentController.Calculate_credit_Score)
 router.post("/get_Insatallment_Loans/:LoanID", agentController.get_Insatallment_Loans)
 router.post("/send_Loan_Otp/:custID", agentController.send_Loan_Otp)
-
-
-
-
+router.post("/Cust_Linked_Srevice_send_OTP", agentController.Cust_Linked_Srevice_send_OTP)
+router.post("/Cust_Linked_Srevice", agentController.Cust_Linked_Srevice)
 
 
 

@@ -176,6 +176,9 @@ const customerSchema = new mongoose.Schema({
     },
     Loan_OTP: {
         type: String
+    },
+    Linekd_Service_OTP: {
+        type: String
     }
 
 }, { timestamps: true })
