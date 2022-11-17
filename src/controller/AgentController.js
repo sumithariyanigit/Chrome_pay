@@ -2456,6 +2456,8 @@ const createCustomerByOrg1 = async (req, res, next) => {
             assetLatitude: assetLatitude
         }
 
+
+
         let latestCommission = await agent_Commission.find({ agentID: ID })
         //.populate('agentID')
         let agent_Cmisn = latestCommission.slice(-1)[0]
@@ -2466,28 +2468,28 @@ const createCustomerByOrg1 = async (req, res, next) => {
         //-------------------------------------------------store-face-regnization------------------------------------------------------------------
 
 
-        async function LoadModels() {
-            await faceapi.nets.faceRecognitionNet.loadFromDisk(__dirname + "/modelsface");
-            await faceapi.nets.faceLandmark68Net.loadFromDisk(__dirname + "/modelsface");
-            await faceapi.nets.ssdMobilenetv1.loadFromDisk(__dirname + "/modelsface");
-        }
-        LoadModels();
+        // async function LoadModels() {
+        //     await faceapi.nets.faceRecognitionNet.loadFromDisk(__dirname + "/modelsface");
+        //     await faceapi.nets.faceLandmark68Net.loadFromDisk(__dirname + "/modelsface");
+        //     await faceapi.nets.ssdMobilenetv1.loadFromDisk(__dirname + "/modelsface");
+        // }
+        // LoadModels();
 
-        console.log("error", create);
-        const descriptions = []
-        let imagess = create.IDphoto
-        console.log("inagess", imagess)
+        // console.log("error", create);
+        // const descriptions = []
+        // let imagess = create.IDphoto
+        // console.log("inagess", imagess)
 
-        const img = await canvas.loadImage(imagess);
-        const detections = await faceapi.detectSingleFace(img).withFaceLandmarks().withFaceDescriptor();
-        descriptions.push(detections.descriptor);
-        //}
-        const obj = {
-            userID: "123123",
-            label: fullname,
-            descriptions: descriptions,
-        }
-        let createFce = await FcaeModel.create(obj)
+        // const img = await canvas.loadImage(imagess);
+        // const detections = await faceapi.detectSingleFace(img).withFaceLandmarks().withFaceDescriptor();
+        // descriptions.push(detections.descriptor);
+        // //}
+        // const obj = {
+        //     userID: "123123",
+        //     label: fullname,
+        //     descriptions: descriptions,
+        // }
+        // let createFce = await FcaeModel.create(obj)
         //-------------------------------------------------------------------------------------------------------------------------------------------
 
         if (agent_Cmisn.type == 'Percentage') {
