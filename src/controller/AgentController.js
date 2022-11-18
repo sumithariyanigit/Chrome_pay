@@ -29,6 +29,11 @@ const Loan_applay_customer = require("../models/Loan_apllied_by")
 const LoanInsatallMent = require("../models/LoanInsatallMent");
 var moment = require('moment');
 const cust_Bank = require("../models/customerBank")
+const bcrypt = require('bcrypt')
+const redis = require('redis')
+const { promisify } = require("util");
+const cust_wallet = require("../models/Cust_Wallet")
+
 
 
 //-------------------------
@@ -38,6 +43,25 @@ const { Canvas, Image } = require("canvas");
 const canvas = require("canvas");
 const fileUpload = require("express-fileupload");
 faceapi.env.monkeyPatch({ Canvas, Image });
+
+
+//Redis Connection
+// const redisClient = redis.createClient(
+//     11570,
+//     "redis-11570.c264.ap-south-1-1.ec2.cloud.redislabs.com",
+//     { no_ready_check: true }
+// );
+// redisClient.auth("ehBqDLZYo8lUseKNlWgsYCGOIbwVJoJ1", function (err) {
+//     if (err) throw err;
+// });
+
+// redisClient.on("connect", async function () {
+//     console.log("Connected to Redis..");
+// });
+
+
+// const SET_ASYNC = promisify(redisClient.SET).bind(redisClient);
+// const GET_ASYNC = promisify(redisClient.GET).bind(redisClient);
 
 
 //-----------------------------------------let-verify-token------------------------------------------------------------------------------------
@@ -53,12 +77,22 @@ async function decodeToken(token) {
 
 }
 
-//let ToeknAgentID = decodeToken()
+//-----------------------------------generate-Organisation-Password---------------------------------------------------------------------------------------
 
+const characters1 = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 
+function generateString1(length) {
+    let result = '';
+    const charactersLength = characters1.length;
+    for (let i = 0; i < length; i++) {
+        result += characters1.charAt(Math.floor(Math.random() * charactersLength));
+    }
 
-//---------------------------------generate-otp---------------------------------------------------------
-//console.log(ToeknAgentID)
+    return result;
+}
+
+//---------------------------------create-Agent---------------------------------------------------------
+
 
 const createAgent = async (req, res) => {
     try {
@@ -68,6 +102,12 @@ const createAgent = async (req, res) => {
         const data = req.body;
         const orgID = req.params.orgID
         let findOrg = await Organisation.findOne({ _id: orgID })
+        let AgentPass = generateString1(8)
+
+        const saltRounds = 10
+        const encryptedPassword = await bcrypt.hash(AgentPass, saltRounds)
+
+
 
         let orgName = findOrg.name;
 
@@ -101,9 +141,6 @@ const createAgent = async (req, res) => {
             return res.status(200).send({ status: false, msg: "Phone number already register please try unique number" })
         }
 
-        if (!password) {
-            return res.status(200).send({ status: false, msg: "Please enter password" })
-        }
         if (!country) {
             return res.status(200).send({ status: false, msg: "Please enter country" })
         }
@@ -124,7 +161,7 @@ const createAgent = async (req, res) => {
 
             name: name,
             email: email,
-            password: password,
+            password: encryptedPassword,
             phone: phone,
             agentCode: AgentCode,
             country: country,
@@ -166,7 +203,7 @@ const createAgent = async (req, res) => {
                 from: 'satyamrandwa141@gmail.com',
                 to: 'satyamthinkdebug@gmail.com',
                 subject: 'Agent Register',
-                text: `Hello ${name}! congratulation now you are part of ${orgName} family, your username ${email} & your password ${password}`
+                text: `Hello ${name}! congratulation now you are part of ${orgName} family, your username ${email} & your password ${AgentPass}`
             };
 
             transporter.sendMail(mailOptions, function (error, info) {
@@ -213,6 +250,8 @@ const agentLogin = async (req, res) => {
 
         const { email, password } = data
 
+        console.log(password)
+
         if (!email) {
             return res.status(200).send({ status: false, msg: "Please enter email" })
         }
@@ -221,15 +260,20 @@ const agentLogin = async (req, res) => {
             return res.status(200).send({ status: false, msg: "Please enter pasword" })
         }
 
-        let checkemail = await agentModel.findOne({ email: email })
 
+
+        let checkemail = await agentModel.findOne({ email: email })
 
         if (!checkemail) {
             return res.status(200).send({ status: false, msg: "Please enter valid email" })
         }
 
-        if (checkemail.password !== password) {
-            //let findAdmindata = await adminModel.findOne({ email: email });
+        const decryptedPassword = await bcrypt.compare(password, checkemail.password)
+
+
+
+
+        if (!decryptedPassword) {
             let UserIP = ip.address()
             let AgentID = checkemail._id
 
@@ -452,9 +496,7 @@ const forgotpassword = async (req, res) => {
 
 
         const sentEmail = async (req, res) => {
-            //var email = req.email;
-            //var otp = req.otp;
-            //console.log(email + " ==jk== " + otp);
+
 
             var transporter = nodemailer.createTransport({
                 host: 'smtp.gmail.com',
@@ -463,8 +505,7 @@ const forgotpassword = async (req, res) => {
                 auth: {
                     user: 'mailto:satyamrandwa141@gmail.com',
                     pass: 'czdkvnjunpkxecwh',
-                    // user: 'mailto:donotreply@d49.co.in',
-                    //   pass: '&4e=XSQB'
+
                 }
             });
 
@@ -1681,21 +1722,28 @@ const agentchangePassword = async (req, res) => {
             return res.status(200).send({ status: false, msg: "not getting valid agentID" })
         }
 
-        let findadmin = await agentModel.findOneAndUpdate({ _id: agentID }, { password: newPassword })
+        let findadmin = await agentModel.findOne({ _id: agentID })
+        const saltRounds = 10
+        const encryptedPassword = await bcrypt.hash(confirmPassword, saltRounds)
+
+        const decryptedPassword = await bcrypt.compare(oldPaasword, findadmin.password)
 
 
         if (!findadmin) {
             return res.status(200).send({ status: false, msg: "organisation not found" })
         }
 
-        if (findadmin.password != oldPaasword) {
+
+        if (!decryptedPassword) {
             return res.status(200).send({ status: false, msg: "Please enter valid old password" })
         }
+
+        let findadmin1 = await agentModel.findOneAndUpdate({ _id: agentID }, { password: encryptedPassword })
 
         return res.status(200).send({ status: true, msg: "Password Change Sucessfully" })
 
     } catch (error) {
-        conosle.log(error)
+        console.log(error)
         return res.status(200).send({ status: false, msg: error })
     }
 }
@@ -2323,6 +2371,9 @@ const createCustomerByOrg1 = async (req, res, next) => {
 
 
 
+
+
+
         console.log("=recidence==>", files.length - 1)
         let findsubAdminID = await subAdmin.findOne({ _id: ID })
 
@@ -2508,6 +2559,10 @@ const createCustomerByOrg1 = async (req, res, next) => {
         // }
         // let createFce = await FcaeModel.create(obj)
         //-------------------------------------------------------------------------------------------------------------------------------------------
+
+        if (!agent_Cmisn) {
+            return res.status(200).send({ status: false, msg: "Agent commisiion is missing" })
+        }
 
         if (agent_Cmisn.type == 'Percentage') {
 
@@ -3709,7 +3764,8 @@ const pay_cust_emi = async (req, res) => {
             Installment_No: test + 1,
             Installment_Pay_Amount: Amount,
             Pay_Date: new Date(),
-            Installment_Date: find_Installment.Installment_Pay_Date
+            Installment_Date: find_Installment.Installment_Pay_Date,
+            status: "Paid"
 
         }
 
@@ -4097,7 +4153,6 @@ const Cust_Linked_Srevice_send_OTP = async (req, res) => {
 
 const Cust_Linked_Srevice = async (req, res) => {
     try {
-
         const cust_phone = req.body.Phone;
         const orgID = req.body.OrgID;
         const otp = req.body.otp;
@@ -4142,6 +4197,42 @@ const Cust_Linked_Srevice = async (req, res) => {
         return res.status(200).send({ satatus: false, msg: error.messege })
     }
 }
+
+//-----------------------------------------get-next-Month-emi----------------------------------------------------------------------------------------
+
+const get_next_month_emi = async (req, res) => {
+    try {
+
+        const LoanID = req.params.LoanID;
+
+        if (!LoanID) {
+            return res.status(200).send({ status: false, msg: "Please enter LoanID" })
+        }
+
+        if (LoanID.length != 24) {
+            return res.status(200).send({ status: false, msg: "Please enter valid LoanID" })
+        }
+
+        let getInsatllment = await LoanInsatallMent.findOne({ Loan_ID: LoanID })
+        let Emi_pay_date = getInsatllment.Installment_Pay_Date
+        let installments = getInsatllment.Installments_History;
+        let getDay = Emi_pay_date.getDate()
+        let current = new Date()
+        let current_Month = current.getMonth() + 1;
+        let current_year = current.getFullYear();
+        console.log(("date", current_Month))
+        let Next_EMI = `${getDay}-${current_Month}-${current_year}`
+        let Amount = getInsatllment.Installment_Amount
+        return res.status(200).send({ status: true, Next_EMI, Amount })
+
+
+    } catch (error) {
+        console.log(error)
+        return res.status(200).send({ statsu: false, msg: error.messege })
+    }
+}
+
+
 
 
 
@@ -4193,4 +4284,5 @@ module.exports.Calculate_credit_Score = Calculate_credit_Score;
 module.exports.get_Insatallment_Loans = get_Insatallment_Loans;
 module.exports.send_Loan_Otp = send_Loan_Otp;
 module.exports.Cust_Linked_Srevice_send_OTP = Cust_Linked_Srevice_send_OTP;
-module.exports.Cust_Linked_Srevice = Cust_Linked_Srevice
+module.exports.Cust_Linked_Srevice = Cust_Linked_Srevice;
+module.exports.get_next_month_emi = get_next_month_emi

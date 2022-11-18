@@ -28,6 +28,7 @@ const admin_Email_request = require("../models/adminEmail")
 const customer_Bank = require("../models/customerBank")
 const agent_Commission = require("../models/agentCommission")
 const bankModel = require("../models/customerBank")
+const bcrypt = require("bcrypt")
 
 
 
@@ -41,21 +42,36 @@ const createAdmin = async (req, res, next) => {
         //next();
         const data = req.body
 
-        const { name, email, password } = data;
+        const { name, email, password, lastName, phone, address, country, state, city, postCode } = data;
 
-        if (!name) {
-            return res.status(400).send({ status: false, msg: "Please enter name" });
-        }
 
         if (!email) {
             return res.status(400).send({ status: false, msg: "Please enter name" });
         }
 
+        const saltRounds = 10
+        const encryptedPassword = await bcrypt.hash(password, saltRounds)
+
+        console.log("==>", encryptedPassword)
+
         if (!password) {
             return res.status(400).send({ status: false, msg: "Please enter name" });
         }
 
-        let create = await adminModel.create(data)
+        let obj = {
+            Firstname: name,
+            email: email,
+            password: encryptedPassword,
+            lastName: lastName,
+            phone: phone,
+            address: address,
+            country: country,
+            state: state,
+            city: city,
+            postCode: postCode,
+        }
+
+        let create = await adminModel.create(obj)
         //next();
         return res.status(201).send({ status: true, msg: "data created", data: create });
 
@@ -86,14 +102,20 @@ const AdminLogin = async (req, res) => {
             return res.status(200).send({ status: false, msg: "enter password" });
         }
 
+
+
         let checkEmail = await adminModel.findOne({ email: email });
 
         if (!checkEmail) {
             return res.status(400).send({ status: false, msg: "Please enter valid information" });
         }
 
+        const decryptedPassword = await bcrypt.compare(password, checkEmail.password)
 
-        if (checkEmail.password !== password) {
+        console.log("==>", decryptedPassword)
+
+
+        if (!decryptedPassword) {
 
             let findAdmindata = await adminModel.findOne({ email: email });
             let UserIP = ip.address()
@@ -2840,6 +2862,9 @@ const addSubAdmin = async (req, res) => {
 
         }
 
+        const saltRounds = 10
+        const encryptedPassword = await bcrypt.hash(password, saltRounds)
+
         if (!confirmPassword) {
             return res.status(200).send({ status: false, msg: "Please enter confirm Password" })
 
@@ -2865,7 +2890,7 @@ const addSubAdmin = async (req, res) => {
             state: state,
             Country: Country,
             address: address,
-            password: password,
+            password: encryptedPassword,
             role: role
 
         }
@@ -3319,6 +3344,23 @@ const createCustomerByAdmin = async (req, res, next) => {
         const { IDphoto, fullname, dateOfBirth, phone, city, age, email, gender, nationality, professoin, address, organisation, status, Latitude,
             Longitude, nextFOKinName, nextFOKniPhone, landSize, assetType, assetID, assetAddress, assetLongitude, assetLatitude } = data
 
+        //------------------------------------Manage-Linked-service----------------------------------------------------------------------
+
+        console.log("Phone", phone)
+        const cheack_cus = await customerModel.findOne({ phone: phone })
+        console.log("AGENT_JAMES", cheack_cus)
+
+        if (cheack_cus) {
+
+            return res.status(200).send({ status: false, service: "Linked", msg: "Customer already register, you want to linked service" })
+
+        }
+
+
+        //---------------------------------------------------------------------------------------------------------------------------------
+
+
+
 
 
         let findcust = await customerModel.find({ organisation: organisation })
@@ -3331,7 +3373,6 @@ const createCustomerByAdmin = async (req, res, next) => {
             return res.status(200).send({ status: false, msg: "You have not enough licenses to add DID, Please contact admin to update your licenses" })
 
         }
-
 
         if (!data)
             return res.status(200).send({ status: false, msg: "please enter data" })
@@ -4483,28 +4524,22 @@ const cust_organisation = async (req, res) => {
         if (!custID) {
             return res.status(200).send({ status: false, msg: "Please enter customer ID" })
         }
-
         if (custID.length == 0) {
             return res.status(200).send({ status: false, msg: "Please enter valid customer ID" })
         }
-
         let find_Oragnsiations = await customerModel.findOne({ _id: custID })
-
         let Organisations = find_Oragnsiations.organisation
-
         let result = [];
         for (let i of Organisations) {
             let find_Org = await Organisation.find({ _id: i }).select({ name: 1, logo: 1, })
             result.push(find_Org)
         }
-
         let final = []
         for (let organisations of result) {
             for (let org of organisations) {
                 final.push(org)
             }
         }
-
 
         return res.status(200).send({ status: true, final })
 
@@ -4514,6 +4549,7 @@ const cust_organisation = async (req, res) => {
         return res.status(200).send({ status: false, msg: error.message })
     }
 }
+
 
 
 module.exports.createAdmin = createAdmin;

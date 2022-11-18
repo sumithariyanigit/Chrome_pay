@@ -34,6 +34,8 @@ const Organisation_Loans_Interestrate = require("../models/LoanIntrestRate")
 const Loan_applay_customer = require("../models/Loan_apllied_by")
 const Installment_Process = require("../models/LoanInsatallMent");
 const LoanInsatallMent = require("../models/LoanInsatallMent");
+const bcrypt = require("bcrypt")
+const cust_wallet_Model = require("../models/Cust_Wallet")
 
 
 
@@ -148,6 +150,8 @@ const createOrganisation = async (req, res, next) => {
 
         let Code = generateString(10);
         let Orgpassword = generateString1(8)
+        const saltRounds = 10
+        const encryptedPassword = await bcrypt.hash(Orgpassword, saltRounds)
         let JoiningDate = new Date().toISOString().substring(0, 10)
         console.log(JoiningDate)
 
@@ -256,7 +260,7 @@ const createOrganisation = async (req, res, next) => {
         let finalData = {
             logo: profilePicture, code: Code, name: name, phoneNo: phone, email: email,
             country: country, city: city, joiningDate: JoiningDate,
-            postCode: postCode, address: address, password: Orgpassword, totlaLicense: totlaLicense, accessKeyId: AccessKey,
+            postCode: postCode, address: address, password: encryptedPassword, totlaLicense: totlaLicense, accessKeyId: AccessKey,
             secretAccessKey: SceretKey
         }
 
@@ -332,7 +336,12 @@ const organisationLogin = async (req, res, next) => {
             return res.status(200).send({ status: false, msg: "password field required" })
         }
 
+
+
+
         let findData = await Organisation.findOne({ email: email })
+
+
         if (!findData) {
             let time = Date.now();
             let UserIP = ip.address()
@@ -341,7 +350,7 @@ const organisationLogin = async (req, res, next) => {
                 name: findData.name,
                 email: email,
                 ID: findData._id,
-                loginTime: time, 
+                loginTime: time,
                 IP: UserIP,
                 status: "Please enter valid email"
 
@@ -349,10 +358,11 @@ const organisationLogin = async (req, res, next) => {
             let createLogHistory = await organisationLog.create(data)
         }
 
-        if (findData.password !== password) {
+        const decryptedPassword = await bcrypt.compare(password, findData.password)
+
+        if (!decryptedPassword) {
             let time = Date.now();
             let UserIP = ip.address()
-            //.log(findData._id)
             let data = {
                 name: findData.name,
                 email: email,
@@ -1826,16 +1836,30 @@ const changePassword = async (req, res) => {
             return res.status(200).send({ status: false, msg: "not getting valid orgID" })
         }
 
-        let findadmin = await Organisation.findOneAndUpdate({ _id: orgID }, { password: newPassword })
+        let findadmin = await Organisation.findOne({ _id: orgID })
+
+        console.log(findadmin)
 
 
         if (!findadmin) {
             return res.status(200).send({ status: false, msg: "organisation not found" })
         }
 
-        if (findadmin.password !== oldPaasword) {
+        const decryptedPassword = await bcrypt.compare(oldPaasword, findadmin.password)
+
+        console.log(decryptedPassword)
+        console.log("old", findadmin.password)
+
+
+        if (!decryptedPassword) {
             return res.status(200).send({ status: false, msg: "Please enter valid old password" })
         }
+
+        const saltRounds = 10
+        const encryptedPassword = await bcrypt.hash(newPassword, saltRounds)
+
+        let findadmin1 = await Organisation.findOneAndUpdate({ _id: orgID }, { password: encryptedPassword })
+
 
         return res.status(200).send({ status: false, msg: "Password Change Sucessfully" })
 
@@ -1973,7 +1997,10 @@ const orgchangePasswordotp = async (req, res) => {
             return res.status(200).send({ status: false, msg: "Please enter valid otp" })
         }
 
-        let updatePassword = await Organisation.findOneAndUpdate({ email: email }, { password: confirmPassword })
+        const saltRounds = 10
+        const encryptedPassword = await bcrypt.hash(confirmPassword, saltRounds)
+
+        let updatePassword = await Organisation.findOneAndUpdate({ email: email }, { password: encryptedPassword })
 
         if (!updatePassword) {
             return res.status(200).send({ status: false, msg: "Password not changed, Please try again" })
@@ -2242,6 +2269,20 @@ const createCustomerByOrg = async (req, res, next) => {
             Longitude, nextFOKinName, nextFOKniPhone, landSize, assetType, assetID, assetAddress, assetLongitude, assetLatitude } = data
 
 
+        //------------------------------------Manage-Linked-service----------------------------------------------------------------------
+
+        // console.log("Phone", phone)
+        // const cheack_cus = await cutomerModel.findOne({ phone: phone })
+        // if (cheack_cus) {
+
+        //     return res.status(200).send({ status: false, service: "Linked", msg: "Customer already register, you want to linked service" })
+
+        // }
+
+        //---------------------------------------------------------------------------------------------------------------------------------
+
+
+
         console.log("orgID", ID)
 
         let findcust = await customerModel.find({ organisation: ID })
@@ -2278,7 +2319,6 @@ const createCustomerByOrg = async (req, res, next) => {
 
         if (checkPhone) {
             return res.status(200).send({ status: false, msg: "Number already register" })
-            //next();
         }
 
 
@@ -2385,6 +2425,9 @@ let verifyCustomer = async (req, res) => {
             phoneNumber: phoneNo
         }
 
+        console.log("phone", phoneNo)
+        console.log("OTP", OTP)
+
 
         let res1 = axios.post('http://13.127.64.68:7008/api/mainnet/generate-digitalid', {
             code: OTP,
@@ -2400,22 +2443,6 @@ let verifyCustomer = async (req, res) => {
 
 
                 let findCust = await temp_Cust.findOne({ phone: phoneNo1 })
-
-                // let checkCust = await cutomerModel.find({ phone: phoneNo })
-
-                // if (checkCust) {
-                //     return respons.status(200).send({ status: false, msg: "customer already present" })
-                // }
-
-
-
-
-                // console.log("hash ==", data1.hash)
-                // console.log("owner ==", data1.response.owner)
-                // console.log("privateKey ==", data1.response.privateKey)
-                // console.log("privateKey ==", data1.response.walletAddress)
-
-
 
                 let newCust = {
                     IDphoto: findCust.IDphoto, fullname: findCust.fullname,
@@ -2433,9 +2460,6 @@ let verifyCustomer = async (req, res) => {
                 }
 
 
-
-                // console.log("LAT==", findCust.Latitude)
-                // console.log("Long==", findCust.Longitude)
                 let create = await cutomerModel.create(newCust)
 
                 let OrganisationList = await org_Licenses.findOne({ OrganisationID: findCust.organisation })
@@ -2448,18 +2472,27 @@ let verifyCustomer = async (req, res) => {
 
                 let Remainig = calculateRemainig
 
-                let updateLicenses = await org_Licenses.findOneAndUpdate({ OrganisationID: findCust.organisation }, { RemainingLicenses: Remainig })
 
 
+                let updateLicenses = await org_Licenses.findOneAndUpdate({ OrganisationID: findCust.organisation }, { RemainingLicenses: Remainig }, { new: true })
 
-                console.log("2")
+                console.log("orgTEST", create._id)
+                let cust_wallet = `00x${generateString1(43)}`
+                let obj = {
+                    customer_ID: create._id,
+                    phone: create.phone,
+                    wallet_Address: cust_wallet
+                }
+                let create_Wallet = await cust_wallet_Model.create(obj)
+
+                console.log("create_Wallet", create_Wallet)
+
                 return res.status(200).send({ status: true, msg: "customer register sucessfully", create })
 
 
 
             })
             .catch(error => {
-                // console.log(error.response.data)
                 return res.status(200).send({ status: false, msg: "failed please try again" })
             });
 
@@ -2505,23 +2538,7 @@ const getOwnerDigitalID = async (req, res) => {
 }
 
 
-// //---------------------------------get-all-digitalIDs------------------------------------------------------------------------------------
 
-
-// const getallGigitalIDs = async (req, res) => {
-//     try {
-
-//         let options = await axios.get(`http://13.127.64.68:7008/api/testnet/getAllDigitalId`)
-
-//         let result = options.data.data;
-
-//         return res.status(200).send({ status: true, result })
-
-//     } catch (error) {
-//         conosle.log(error)
-//         return res.status(200).send({ status: false, msg: error.message })
-//     }
-// }
 //---------------------------------get-all-digitalIDs------------------------------------------------------------------------------------
 
 
@@ -3322,6 +3339,55 @@ const get_Loan_installment = async (req, res) => {
     }
 }
 
+//---------------------------------------------Customer-Linked-service------------------------------------------------------------------------
+
+const Cust_Linked_Srevice_Org = async (req, res) => {
+    try {
+
+        const cust_phone = req.body.Phone;
+        const orgID = req.orgID
+        const otp = req.body.otp;
+
+        if (!orgID) {
+            return res.status(200).send({ statsu: false, msg: "Please enter Organisation ID" })
+        }
+
+        if (!cust_phone) {
+            return res.status(200).send({ status: false, msg: "Please enter phone number" })
+        }
+
+        let find_org = await Organisation.findOne({ _id: orgID })
+
+        let org_name = find_org.name
+
+        if (!otp) {
+            return res.status(200).send({ statsu: false, msg: "Please enter OTP " })
+        }
+
+        let verify_OTP = await cutomerModel.findOne({ phone: cust_phone })
+
+        let all_organisations = verify_OTP.organisation
+
+        if (all_organisations.includes(orgID)) {
+            return res.status(200).send({ statsu: false, msg: `This customer already linked with ${org_name} organisation` })
+        }
+
+        if (verify_OTP.Linekd_Service_OTP != otp) {
+            return res.status(200).send({ status: false, msg: "Please enter Valid otp" })
+        }
+
+        let update_OTP = await cutomerModel.findOneAndUpdate({ phone: cust_phone }, { $push: { "organisation": orgID } }, { new: true })
+
+        let update_OTP_Again = await cutomerModel.findOneAndUpdate({ phone: cust_phone }, { Linekd_Service_OTP: "000@$#&*" })
+
+        return res.status(200).send({ status: true, msg: `Congratulation now you are also part of ${org_name}`, update_OTP })
+
+
+    } catch (error) {
+        console.log(error)
+        return res.status(200).send({ satatus: false, msg: error.messege })
+    }
+}
 
 
 
@@ -3380,3 +3446,4 @@ module.exports.org_cust_loan = org_cust_loan
 module.exports.org_loan_accept = org_loan_accept
 module.exports.get_pass_Loans = get_pass_Loans
 module.exports.get_Loan_installment = get_Loan_installment
+module.exports.Cust_Linked_Srevice_Org = Cust_Linked_Srevice_Org

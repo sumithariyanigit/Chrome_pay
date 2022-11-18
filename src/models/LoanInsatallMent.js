@@ -74,6 +74,10 @@ const Loan_Insatallment = new mongoose.Schema({
             Installment_Date: {
                 type: Date,
                 default: new Date()
+            },
+            status: {
+                type: String,
+                default: "Due"
             }
 
         }
