@@ -263,6 +263,7 @@ router.post("/send_Loan_Otp/:custID", agentController.send_Loan_Otp)
 router.post("/Cust_Linked_Srevice_send_OTP", agentController.Cust_Linked_Srevice_send_OTP)
 router.post("/Cust_Linked_Srevice", agentController.Cust_Linked_Srevice)
 router.post("/get_next_month_emi/:LoanID", agentController.get_next_month_emi)
+router.post("/Chrome_pay_transection/:custID", wallet_controller.Chrome_pay_transection)
 
 
 

@@ -1,5 +1,6 @@
 const Cust_Wallet = require("../models/Cust_Wallet");
 const Wallet_MOdel = require("../models/Cust_Wallet")
+const transactionModel = require("../models/transaction")
 
 
 //===================================================generation-work==========================================================================
@@ -81,45 +82,34 @@ const Chrome_pay_transection = async (req, res, next) => {
         const custID = req.params.custID;
 
         if (!custID) {
-            return res.status(200).send({ status: false, msg: "Please enter customer ID" })
+            return res.status(200).send({ status: false, msg: "please enter customer ID" })
         }
 
         let find_Limit = await Cust_Wallet.findOne({ customer_ID: custID })
 
         let tran_limit = find_Limit.Transection_limit
+        let phoneNO = find_Limit.phone
 
-
+        if (reciever_phone == phoneNO) {
+            return res.statsu(200).send({ status: false, msg: "Permission denied!, your phone number is same" })
+        }
 
         if (amount > tran_limit) {
             return res.status(200).send({ status: false, msg: `Failed!, Maximum limit for transection ${tran_limit}` })
         }
 
-        if (!sender_phone) {
-            return res.send("Please fill all fields")
-        }
-
         if (!reciever_phone) {
-            return res.send("Please fill all fields")
+            return res.status(200).send({ status: false, msg: "please fill all fields" })
         }
 
         if (!amount1) {
-            return res.send("Please fill all fields")
+            return res.status(200).send({ status: false, msg: "please fill all fields" })
         }
 
+        let findrecieverID = await Cust_Wallet.findOne({ phone: reciever_phone })
 
-        let findOrganisation = await Organisation.findById({ _id: organisationID })
-
-
-        if (!findOrganisation) {
-            return res.status(200).send({ status: false, msg: "Organisation not found Please select other One" })
-        }
-
-
-        let findrecieverID = await Cust_Wallet.findById({ phone: sender_phone })
-
-
-        if (!findsenderID) {
-            return res.status(200).send({ status: false, msg: "You are not available to transection" })
+        if (!findrecieverID) {
+            return res.status(200).send({ status: false, msg: "This user is not available in chrome pay" })
         }
 
         let findrecevrID = await customerModel.findById({ _id: reciever })
@@ -196,4 +186,5 @@ const Chrome_pay_transection = async (req, res, next) => {
 
 
 
-module.exports.get_Cust_wallet = get_Cust_wallet
+module.exports.get_Cust_wallet = get_Cust_wallet;
+module.exports.Chrome_pay_transection = Chrome_pay_transection;

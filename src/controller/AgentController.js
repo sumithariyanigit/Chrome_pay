@@ -4104,7 +4104,7 @@ const Cust_Linked_Srevice_send_OTP = async (req, res) => {
         const cust_phone = req.body.Phone;
 
         if (!cust_phone) {
-            return res.statsu(200).send({ statsu: false, msg: "Please enter user phone number" })
+            return res.status(200).send({ statsu: false, msg: "Please enter user phone number" })
         }
 
         let check_cust = await cutomerModel.findOne({ phone: cust_phone })
@@ -4158,7 +4158,7 @@ const Cust_Linked_Srevice = async (req, res) => {
         const otp = req.body.otp;
 
         if (!orgID) {
-            return res.status(200).send({ statsu: false, msg: "Please enter Organisation ID" })
+            return res.status(200).send({ status: false, msg: "Please enter Organisation ID" })
         }
 
         if (!cust_phone) {
