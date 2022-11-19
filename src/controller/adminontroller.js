@@ -277,6 +277,7 @@ const verifyOTP = async (req, res) => {
         const OTP = req.body.OTP;
         //const userID = req.body.userID;
         let admminID = req.params.ID
+        console.log("ID", admminID)
 
         if (!OTP) {
             return res.status(200).send({ status: false, msg: "Please Enter OTP" })

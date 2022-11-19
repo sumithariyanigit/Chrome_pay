@@ -2368,6 +2368,8 @@ const createCustomerByOrg1 = async (req, res, next) => {
         let ID = req.params.agentID;
         let orgID = req.params.orgID;
 
+        console.log("===>", files)
+
 
 
 
