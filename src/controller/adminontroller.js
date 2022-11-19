@@ -95,7 +95,7 @@ const AdminLogin = async (req, res) => {
         //const { email, password } = data
 
         if (!email) {
-            return res.status(400).send({ 'status': false, 'msg': "enter email" });
+            return res.status(200).send({ 'status': false, 'msg': "enter email" });
         }
 
         if (!password) {
@@ -107,7 +107,7 @@ const AdminLogin = async (req, res) => {
         let checkEmail = await adminModel.findOne({ email: email });
 
         if (!checkEmail) {
-            return res.status(400).send({ status: false, msg: "Please enter valid information" });
+            return res.status(200).send({ status: false, msg: "Please enter valid information" });
         }
 
         const decryptedPassword = await bcrypt.compare(password, checkEmail.password)
