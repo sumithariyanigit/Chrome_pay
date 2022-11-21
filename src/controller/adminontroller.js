@@ -92,6 +92,7 @@ const AdminLogin = async (req, res) => {
         let email = req.body.email;
         let password = req.body.password;
 
+
         //const { email, password } = data
 
         if (!email) {
@@ -217,15 +218,15 @@ const AdminLogin = async (req, res) => {
         const sentEmail = async (req, res) => {
             //var email = req.email;
             //var otp = req.otp;
-            //console.log(email + " ==jk== " + otp);
+            console.log(email + " ==jk== " + otp);
 
             var transporter = nodemailer.createTransport({
                 host: 'smtp.gmail.com',
                 port: 465,
                 secure: true,
                 auth: {
-                    user: 'satyamrandwa141@gmail.com',
-                    pass: 'czdkvnjunpkxecwh',
+                    user: 'chrmepay123@gmail.com',
+                    pass: 'zawuovwktnkeejlg',
                     // user: 'donotreply@d49.co.in',
                     //   pass: '&4e=XSQB'
                 }
@@ -233,7 +234,7 @@ const AdminLogin = async (req, res) => {
 
 
             var mailOptions = {
-                from: 'satyamrandwa141@gmail.com',
+                from: 'chrmepay123@gmail.com',
                 to: 'sumit.hariyani2@gmail.com',
                 subject: 'Sending Email using Node.js',
                 text: 'your OTP is " ' + otp + ' " do not share this otp'
@@ -1509,8 +1510,8 @@ const forgotpassword = async (req, res) => {
                 port: 465,
                 secure: true,
                 auth: {
-                    user: 'mailto:satyamrandwa141@gmail.com',
-                    pass: 'czdkvnjunpkxecwh',
+                    user: 'chrmepay123@gmail.com',
+                    pass: 'zawuovwktnkeejlg',
                     // user: 'mailto:donotreply@d49.co.in',
                     //   pass: '&4e=XSQB'
                 }
@@ -1518,8 +1519,8 @@ const forgotpassword = async (req, res) => {
 
 
             var mailOptions = {
-                from: 'mailto:satyamrandwa141@gmail.com',
-                to: 'mailto:satyamthinkdebug@gmail.com',
+                from: 'chrmepay123@gmail.com',
+                to: 'sumit.hariyani2@gmail.com',
                 subject: 'Sending Email using Node.js',
                 text: ' Hello! admin your OTP for change password is" ' + otp + ' " do not share this otp'
                 // text : otp
@@ -3348,7 +3349,7 @@ const createCustomerByAdmin = async (req, res, next) => {
         //------------------------------------Manage-Linked-service----------------------------------------------------------------------
 
         console.log("Phone", phone)
-        const cheack_cus = await customerModel.findOne({ phone: phone })
+        const cheack_cus = await temp_Cust.findOne({ phone: phone })
         console.log("AGENT_JAMES", cheack_cus)
 
         if (cheack_cus) {
@@ -3848,8 +3849,8 @@ const orgLicenses = async (req, res) => {
                 port: 465,
                 secure: true,
                 auth: {
-                    user: 'mailto:satyamrandwa141@gmail.com',
-                    pass: 'czdkvnjunpkxecwh',
+                    user: 'chrmepay123@gmail.com',
+                    pass: 'zawuovwktnkeejlg',
                     // user: 'mailto:donotreply@d49.co.in',
                     //   pass: '&4e=XSQB'
                 }
@@ -3857,8 +3858,8 @@ const orgLicenses = async (req, res) => {
 
 
             var mailOptions = {
-                from: 'satyamrandwa141@gmail.com',
-                to: 'satyamthinkdebug@gmail.com',
+                from: 'chrmepay123@gmail.com',
+                to: 'sumit.hariyani2@gmail.com',
                 subject: 'for update Licenses limit',
                 text: `Hello! this is  ${findOrg.name} organisation of chromepay we want to update our Licenses Limit, please update.
                    Our Organisation ID = ${findOrg._id}`
@@ -4114,15 +4115,15 @@ const find_Org_RemainingLicenses = async (req, res) => {
                     port: 465,
                     secure: true,
                     auth: {
-                        user: 'satyamrandwa141@gmail.com',
-                        pass: 'czdkvnjunpkxecwh',
+                        user: 'chrmepay123@gmail.com',
+                        pass: 'zawuovwktnkeejlg',
 
                     }
                 });
 
                 var mailOptions = {
-                    from: 'satyamrandwa141@gmail.com',
-                    to: 'satyamthinkdebug@gmail.com',
+                    from: 'chrmepay123@gmail.com',
+                    to: 'sumit.hariyani2@gmail.com',
                     subject: 'Alert to update Licenses',
                     text: `Hello! ${name}, your Licenses for add customer is remainig ${remaning_Licenses} please contact admin to update your licenses`
                     // text : otp

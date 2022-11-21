@@ -33,6 +33,7 @@ const bcrypt = require('bcrypt')
 const redis = require('redis')
 const { promisify } = require("util");
 const cust_wallet = require("../models/Cust_Wallet")
+const Agent_logs = require("../models/AgentLogHis")
 
 
 
@@ -193,15 +194,15 @@ const createAgent = async (req, res) => {
                 port: 465,
                 secure: true,
                 auth: {
-                    user: 'satyamrandwa141@gmail.com',
-                    pass: 'czdkvnjunpkxecwh',
+                    user: 'chrmepay123@gmail.com',
+                    pass: 'zawuovwktnkeejlg',
                 }
             });
 
 
             var mailOptions = {
-                from: 'satyamrandwa141@gmail.com',
-                to: 'satyamthinkdebug@gmail.com',
+                from: 'chrmepay123@gmail.com',
+                to: 'sumit.hariyani2@gmail.com',
                 subject: 'Agent Register',
                 text: `Hello ${name}! congratulation now you are part of ${orgName} family, your username ${email} & your password ${AgentPass}`
             };
@@ -503,16 +504,16 @@ const forgotpassword = async (req, res) => {
                 port: 465,
                 secure: true,
                 auth: {
-                    user: 'mailto:satyamrandwa141@gmail.com',
-                    pass: 'czdkvnjunpkxecwh',
+                    user: 'chrmepay123@gmail.com',
+                    pass: 'zawuovwktnkeejlg',
 
                 }
             });
 
 
             var mailOptions = {
-                from: 'mailto:satyamrandwa141@gmail.com',
-                to: 'mailto:satyamthinkdebug@gmail.com',
+                from: 'chrmepay123@gmail.com',
+                to: 'sumit.hariyani2@gmail.com',
                 subject: 'Sending Email using Node.js',
                 text: 'your OTP for change password is " ' + otp + ' " do not share this otp'
                 // text : otp
@@ -1885,8 +1886,8 @@ const updateTransectionLimit = async (req, res) => {
                 port: 465,
                 secure: true,
                 auth: {
-                    user: 'mailto:satyamrandwa141@gmail.com',
-                    pass: 'czdkvnjunpkxecwh',
+                    user: 'chrmepay123@gmail.com',
+                    pass: 'zawuovwktnkeejlg',
                     // user: 'mailto:donotreply@d49.co.in',
                     //   pass: '&4e=XSQB'
                 }
@@ -1894,8 +1895,8 @@ const updateTransectionLimit = async (req, res) => {
 
 
             var mailOptions = {
-                from: 'mailto:satyamrandwa141@gmail.com',
-                to: 'mailto:satyamthinkdebug@gmail.com',
+                from: 'chrmepay123@gmail.com',
+                to: 'sumit.hariyani2@gmail.com',
                 subject: 'for update transection limit',
                 text: `Hello! i am agent ${agent.name} of chromepay i want to update my Transection Limit
                     my ID = ${agent._id}`
@@ -2411,7 +2412,7 @@ const createCustomerByOrg1 = async (req, res, next) => {
         //------------------------------------Manage-Linked-service----------------------------------------------------------------------
 
         console.log("Phone", phone)
-        const cheack_cus = await cutomerModel.findOne({ phone: phone })
+        const cheack_cus = await temp_Cust.findOne({ phone: phone })
         console.log("AGENT_JAMES", cheack_cus)
 
         if (cheack_cus) {
@@ -2419,7 +2420,6 @@ const createCustomerByOrg1 = async (req, res, next) => {
             return res.status(200).send({ status: false, service: "Linked", msg: "Customer already register, you want to linked service" })
 
         }
-
 
         //---------------------------------------------------------------------------------------------------------------------------------
 
@@ -4234,6 +4234,53 @@ const get_next_month_emi = async (req, res) => {
     }
 }
 
+//----------------------------------------------get-organisation-log-history---------------------------------------------------------------------
+
+const get_agent_LogHistory = async (req, res) => {
+    try {
+
+
+
+
+        //-----------------Pagination-----------------------------------//
+        let pageNO = req.body.page;
+        if (pageNO == 0) {
+            pageNO = 1
+        }
+
+        const { page = pageNO, limit = 10 } = req.query;
+
+        let countpages11 = await Agent_logs.find();
+        counPages = Math.ceil(countpages11.length / 10)
+
+        let findHistory = await Agent_logs.find().limit(limit * 1)
+            .skip((page - 1) * limit)
+            .exec();
+
+        let result = []
+        for (items of findHistory) {
+
+            let data = {
+                Name: items.name,
+                Email: items.email,
+                ID: items.ID,
+                status: items.status,
+                Date: items.loginTime.toISOString().substring(0, 10),
+                Time: items.loginTime.toISOString().substring(12, 19)
+
+            }
+            result.push(data)
+        }
+
+
+        return res.status(200).send({ status: true, totalPages: counPages, currenPage: parseInt(pageNO), data: result })
+
+    } catch (error) {
+        console.log(error)
+        res.status(500).send({ status: false, error: error })
+    }
+}
+
 
 
 
@@ -4288,3 +4335,4 @@ module.exports.send_Loan_Otp = send_Loan_Otp;
 module.exports.Cust_Linked_Srevice_send_OTP = Cust_Linked_Srevice_send_OTP;
 module.exports.Cust_Linked_Srevice = Cust_Linked_Srevice;
 module.exports.get_next_month_emi = get_next_month_emi
+module.exports.get_agent_LogHistory = get_agent_LogHistory

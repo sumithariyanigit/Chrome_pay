@@ -227,8 +227,8 @@ const createOrganisation = async (req, res, next) => {
                 port: 465,
                 secure: true,
                 auth: {
-                    user: 'mailto:satyamrandwa141@gmail.com',
-                    pass: 'czdkvnjunpkxecwh',
+                    user: 'chrmepay123@gmail.com',
+                    pass: 'zawuovwktnkeejlg',
                     // user: 'mailto:donotreply@d49.co.in',
                     //   pass: '&4e=XSQB'
                 }
@@ -236,8 +236,8 @@ const createOrganisation = async (req, res, next) => {
 
 
             var mailOptions = {
-                from: 'satyamrandwa141@gmail.com',
-                to: 'satyamthinkdebug@gmail.com',
+                from: 'chrmepay123@gmail.com',
+                to: 'sumit.hariyani2@gmail.com',
                 subject: 'From Chromepay',
                 text: ` Hello! ${name} Welcome to ChromePay family your Password for Login is ${Orgpassword} 
                  your secret Access Key = ${SceretKey} and Your access Key Id = ${AccessKey} do not share this Information to anyone `
@@ -652,12 +652,12 @@ const getTransections = async (req, res, next) => {
 
 //----------------------------------------------get-organisation-log-history---------------------------------------------------------------------
 
-const getLogHistory = async (req, res, next) => {
+const getLogHistory = async (req, res) => {
     try {
 
         url = "http://localhost:3000/getHistory";
 
-        next();
+
         //-----------------Pagination-----------------------------------//
         let pageNO = req.body.page;
         if (pageNO == 0) {
@@ -669,8 +669,7 @@ const getLogHistory = async (req, res, next) => {
         let countpages11 = await organisationLog.find();
         counPages = Math.ceil(countpages11.length / 10)
 
-
-
+        console.log("asdfghj")
 
 
 
@@ -692,8 +691,8 @@ const getLogHistory = async (req, res, next) => {
             result.push(data)
 
         }
-        next();
-        return res.status(200).send({ totalPages: counPages, currenPage: parseInt(pageNO), data: result })
+
+        return res.status(200).send({ status: true, totalPages: counPages, currenPage: parseInt(pageNO), data: result })
 
     } catch (error) {
         console.log(error)
@@ -1906,8 +1905,8 @@ const orgforgotpassword = async (req, res) => {
                 port: 465,
                 secure: true,
                 auth: {
-                    user: 'mailto:satyamrandwa141@gmail.com',
-                    pass: 'czdkvnjunpkxecwh',
+                    user: 'chrmepay123@gmail.com',
+                    pass: 'zawuovwktnkeejlg',
                     // user: 'mailto:donotreply@d49.co.in',
                     //   pass: '&4e=XSQB'
                 }
@@ -1915,8 +1914,8 @@ const orgforgotpassword = async (req, res) => {
 
 
             var mailOptions = {
-                from: 'mailto:satyamrandwa141@gmail.com',
-                to: 'mailto:satyamthinkdebug@gmail.com',
+                from: 'chrmepay123@gmail.com',
+                to: 'sumit.hariyani2@gmail.com',
                 subject: 'Sending Email using Node.js',
                 text: ' Hello! admin your OTP for change password is " ' + otp + ' " do not share this otp'
                 // text : otp
@@ -2269,17 +2268,17 @@ const createCustomerByOrg = async (req, res, next) => {
             Longitude, nextFOKinName, nextFOKniPhone, landSize, assetType, assetID, assetAddress, assetLongitude, assetLatitude } = data
 
 
-        //------------------------------------Manage-Linked-service----------------------------------------------------------------------
+       // ------------------------------------Manage - Linked - service----------------------------------------------------------------------
 
-        // console.log("Phone", phone)
-        // const cheack_cus = await cutomerModel.findOne({ phone: phone })
-        // if (cheack_cus) {
+        console.log("Phone", phone)
+        const cheack_cus = await temp_Cust.findOne({ phone: phone })
+        if (cheack_cus) {
 
-        //     return res.status(200).send({ status: false, service: "Linked", msg: "Customer already register, you want to linked service" })
+            return res.status(200).send({ status: false, service: "Linked", msg: "Customer already register, you want to linked service" })
 
-        // }
+        }
 
-        //---------------------------------------------------------------------------------------------------------------------------------
+       // ---------------------------------------------------------------------------------------------------------------------------------
 
 
 
@@ -2808,8 +2807,8 @@ const applyUpdateLicenses = async (req, res) => {
                 port: 465,
                 secure: true,
                 auth: {
-                    user: 'mailto:satyamrandwa141@gmail.com',
-                    pass: 'czdkvnjunpkxecwh',
+                    user: 'chrmepay123@gmail.com',
+                    pass: 'zawuovwktnkeejlg',
                     // user: 'mailto:donotreply@d49.co.in',
                     //   pass: '&4e=XSQB'
                 }
@@ -2817,8 +2816,8 @@ const applyUpdateLicenses = async (req, res) => {
 
 
             var mailOptions = {
-                from: 'satyamrandwa141@gmail.com',
-                to: 'satyamthinkdebug@gmail.com',
+                from: 'chrmepay123@gmail.com',
+                to: 'sumit.hariyani2@gmail.com',
                 subject: 'Request for update licenses',
                 text: ` Hello! this is ${name} we want to update our licenses please add ${Licenses} Licenses in our licenses account, thakyou`
                 // text : otp

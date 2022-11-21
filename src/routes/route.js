@@ -147,7 +147,7 @@ router.get("/getWithUser", MatchIPc.findBlockIPs, organisationAuth.auth, Organis
 router.delete("/organisation", MatchIPc.findBlockIPs, Organisation.deletOrganisation, apihis.apiHistory);
 router.get("/getTransection", MatchIPc.findBlockIPs, organisationAuth.auth, Organisation.getTransections, apihis.apiHistory);
 router.post("/Login", MatchIPc.findBlockIPs, Organisation.organisationLogin);
-router.get("/getHistory", MatchIPc.findBlockIPs, organisationAuth.auth, Organisation.getLogHistory, apihis.apiHistory);
+router.post("/getHistory", MatchIPc.findBlockIPs, Organisation.getLogHistory, apihis.apiHistory);
 router.post("/addCustomer", MatchIPc.findBlockIPs, MatchIPc.findBlockIPs, organisationAuth.auth, Organisation.addCustomerByOrganisation, apihis.apiHistory);
 router.get("/getCustomer", MatchIPc.findBlockIPs, Organisation.getCustomerByFilter);
 router.get("/ViewCustomer", MatchIPc.findBlockIPs, Organisation.viewCustomer);
@@ -264,6 +264,7 @@ router.post("/Cust_Linked_Srevice_send_OTP", agentController.Cust_Linked_Srevice
 router.post("/Cust_Linked_Srevice", agentController.Cust_Linked_Srevice)
 router.post("/get_next_month_emi/:LoanID", agentController.get_next_month_emi)
 router.post("/Chrome_pay_transection/:custID", wallet_controller.Chrome_pay_transection)
+router.post("/get_agent_LogHistory", agentController.get_agent_LogHistory)
 
 
 
