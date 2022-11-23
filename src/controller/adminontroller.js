@@ -29,6 +29,9 @@ const customer_Bank = require("../models/customerBank")
 const agent_Commission = require("../models/agentCommission")
 const bankModel = require("../models/customerBank")
 const bcrypt = require("bcrypt")
+const Org_logs = require("../models/Organisationlog")
+const aget_logs = require("../models/AgentLogHis")
+const api_his = require("../models/apiHistory")
 
 
 
@@ -3493,6 +3496,7 @@ const createCustomerByAdmin = async (req, res, next) => {
                 phoneNumber: `+91${phone}`
             }
 
+            console.log("payload", payload)
 
             let res = await axios.post('http://13.127.64.68:7008/api/mainnet/getUserData', payload);
             let data1 = res.data;
@@ -4552,6 +4556,110 @@ const cust_organisation = async (req, res) => {
     }
 }
 
+//--------------------------------------chrome_pay_logs--------------------------------------------------------------------------------------
+
+const chrome_pay_logs = async (req, res) => {
+    try {
+
+        const API_HIS = await api_his.find();
+        data = req.body;
+        const { IP, Category, toDate, fromDate, status } = data
+
+        let pageNO = req.body.page;
+        if (pageNO == 0) {
+            pageNO = 1
+        }
+        const { page = pageNO, limit = 10 } = req.query;
+
+        //---------------------------------------------------------------------------------------
+
+        if (Object.keys(req.body).length <= 1) {
+            let countpages1 = await api_his.find().sort({ createdAt: -1 })
+            let totalRaow1 = countpages1.length;
+            let filter = await api_his.find().sort({ createdAt: -1 })
+                .limit(limit * 1)
+                .skip((page - 1) * limit)
+                .exec();
+            // let totlaRow = filter.length;
+            if (filter.length == 0) {
+                return res.status(200).send({ status: false, msg: "No Customer Found" })
+            }
+            return res.status(200).send({ statussss: true, totlaRow: totalRaow1, currenPage: parseInt(pageNO), filter })
+        }
+
+
+
+
+
+        let option = [{ IPAdress: IP }, { BY: Category }, { status: status }]
+        let countpages2 = await api_his.find({ $or: option })
+        let contRow = countpages2.length
+        const filter = await api_his.find({ $or: option }).sort({ time: -1 })
+            .limit(limit * 1)
+            .skip((page - 1) * limit)
+            .exec();
+
+
+
+        //------------------------------date-filter--------------------------------------------------------
+
+        if (req.body.fromDate) {
+
+            let option = [
+
+                {
+                    time: {
+                        $gte: new Date(req.body.fromDate).toISOString(),
+                        $lte: new Date(req.body.toDate).toISOString()
+                    }
+                }
+
+            ]
+            let countpages2 = await api_his.find({ $or: option })
+            let contRow = countpages2.length
+            let filter = await api_his.find({ $or: option }).sort({ time: -1 })
+                .limit(limit * 1)
+                .skip((page - 1) * limit)
+                .exec();
+            let totlaRow = filter.length;
+            return res.status(200).send({ status: true, totlaRow: contRow, currenPage: parseInt(pageNO), filter })
+
+        }
+
+
+        return res.status(200).send({ status: true, totlaRow: contRow, currenPage: parseInt(pageNO), filter })
+    } catch (error) {
+        console.log(error)
+        return res.status(200).send({ status: false, msg: error.message })
+
+    }
+}
+
+
+//------------------------------------------------get-force-ips---------------------------------------------------------------------------------
+
+const Force_IP_Block = async (req, res) => {
+    try {
+
+        let data = req.body;
+
+        let sum = []
+        if (!data.length) {
+
+            sum.push(1)
+
+        }
+
+        console.log(sum)
+
+
+    } catch (error) {
+        console.log(error)
+        return res.status(200).send({ status: false, msg: error.message })
+    }
+}
+
+
 
 
 module.exports.createAdmin = createAdmin;
@@ -4631,4 +4739,6 @@ module.exports.Block_Bank = Block_Bank;
 module.exports.Un_Block_Bank = Un_Block_Bank;
 module.exports.OrgChart = OrgChart
 module.exports.OrgTransectionChart = OrgTransectionChart;
-module.exports.cust_organisation = cust_organisation
+module.exports.cust_organisation = cust_organisation;
+module.exports.chrome_pay_logs = chrome_pay_logs;
+module.exports.Force_IP_Block = Force_IP_Block

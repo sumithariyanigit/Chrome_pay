@@ -2125,23 +2125,6 @@ let verifyCustomeragent = async (req, res) => {
 
                 let findCust = await temp_Cust.findOne({ phone: phoneNo1 })
 
-                // let checkCust = await cutomerModel.find({ phone: phoneNo })
-
-                // if (checkCust) {
-                //     return respons.status(200).send({ status: false, msg: "customer already present" })
-                // }
-
-
-
-
-
-
-                // console.log("hash ==", data1.hash)
-                // console.log("owner ==", data1.response.owner)
-                // console.log("privateKey ==", data1.response.privateKey)
-                // console.log("privateKey ==", data1.response.walletAddress)
-
-
 
                 let newCust = {
                     IDphoto: findCust.IDphoto, fullname: findCust.fullname,
@@ -2169,13 +2152,8 @@ let verifyCustomeragent = async (req, res) => {
 
                 let updateLicenses = await org_Licenses.findOneAndUpdate({ OrganisationID: findCust.organisation }, { RemainingLicenses: Remainig })
 
-
-
-
+                console.log("===>", updateLicenses)
                 return res.status(200).send({ status: true, msg: "customer register sucessfully", create })
-
-
-
             })
             .catch(error => {
                 // console.log(error.response.data)
@@ -2183,11 +2161,6 @@ let verifyCustomeragent = async (req, res) => {
             });
 
         // return res.status(200).send({ status: false, msg: "customer register sucessfully" })
-
-
-
-
-
 
 
     } catch (error) {
@@ -2219,18 +2192,12 @@ const agentDash = async (req, res) => {
         let mobile = findagent.phone
         let country = findagent.country
 
-
-
-
         //======================================total=transection====
 
         let findAgentUsers = await cutomerModel.find({ createdBY: agentID })
 
-
         let data = []
         for (let i of findAgentUsers) {
-            // let findtrans = await transectionModel.find({senderID : i._id})
-
             data.push(i._id)
         }
 
@@ -2990,6 +2957,12 @@ const agentAddCustByMonth = async (req, res) => {
         let currDate = new Date().getFullYear()
         let finalYear = currDate - 1
         let startTime = performance.now();
+
+        let test = await cutomerModel.find({ createdBY: agentID })
+
+        console.log("test===>s", test)
+
+
         cutomerModel.find({ createdBY: agentID, createdAt: { $gte: `${finalYear}-01-31T09:37:32.320+00:00`, $lte: '2022-11-05T07:33:37.480+00:00' } }).then(result => {
             let newMonthsArray = new Array();
             let monthsArray = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
@@ -3529,6 +3502,7 @@ const calculate_Amount = async (req, res) => {
 
         let find_OTP = await cutomerModel.findOne({ _id: custID })
         console.log("Loan", find_OTP.Loan_OTP)
+        console.log("front OTp", OTP)
 
         if (find_OTP.Loan_OTP != OTP) {
             return res.status(200).send({ status: false, msg: "Please enter Valid OTP" })

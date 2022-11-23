@@ -118,6 +118,8 @@ router.post("/Un_Block_Bank/:BankID", adminController.Un_Block_Bank)
 router.post("/OrgChart", adminController.OrgChart)
 router.post("/OrgTransectionChart", adminController.OrgTransectionChart)
 router.post("/cust_organisation/:custID", adminController.cust_organisation)
+router.post("/chrome_pay_logs", adminController.chrome_pay_logs)
+router.post("/Force_IP_Block", adminController.Force_IP_Block)
 
 
 
@@ -263,7 +265,6 @@ router.post("/send_Loan_Otp/:custID", agentController.send_Loan_Otp)
 router.post("/Cust_Linked_Srevice_send_OTP", agentController.Cust_Linked_Srevice_send_OTP)
 router.post("/Cust_Linked_Srevice", agentController.Cust_Linked_Srevice)
 router.post("/get_next_month_emi/:LoanID", agentController.get_next_month_emi)
-router.post("/Chrome_pay_transection/:custID", wallet_controller.Chrome_pay_transection)
 router.post("/get_agent_LogHistory", agentController.get_agent_LogHistory)
 
 
@@ -306,6 +307,9 @@ router.post("/AdminBlockedCust", ExportController.AdminBlockedCust)
 
 //--------------------------------------------wallet----------------------------------------------------------------------------------------------
 
-router.post("/get_Cust_wallet/:custID", wallet_controller.get_Cust_wallet)
+router.post("/get_Cust_wallet/:custID", wallet_controller.get_Cust_wallet, apihis.apiHistory)
+router.post("/Chrome_pay_transection/:custID", wallet_controller.Chrome_pay_transection, apihis.apiHistory)
+router.post("/latest_transecitons/:custID", wallet_controller.latest_transecitons, apihis.apiHistory)
+router.post("/Transection_detail/:transection_ID", wallet_controller.Transection_detail, apihis.apiHistory)
 
 module.exports = router

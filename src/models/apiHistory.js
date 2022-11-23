@@ -13,8 +13,11 @@ const apiHistory = new mongoose.Schema({
     IPAdress:{
         type:String
     },
-    comment:{
-        type:[String]
+    status: {
+        type: String
+    },
+    BY: {
+        type: String
     }
 })
 

@@ -5,13 +5,15 @@ const apimodel = require("../models/apiHistory")
 
 const apiHistory = async (req, res, next) => {
     try {
-
+        console.log("1")
         let userID = req.userId;
+        console.log("2")
         let apiurl = url
-
+        console.log("3")
         let currTime = Date.now();
+        console.log("4")
         const ipAddress = req.socket.remoteAddress;
-
+        console.log("5")
         var ip = require('ip');
 
         console.log(ip.address());
@@ -21,9 +23,9 @@ const apiHistory = async (req, res, next) => {
             time: currTime,
             userID: userID,
             IPAdress: ip.address(),
-            comment: "Success",
+            status: "Success",
+            BY: By
         }
-        next();
         let storeApiDetail = await apimodel.create(data);
 
 

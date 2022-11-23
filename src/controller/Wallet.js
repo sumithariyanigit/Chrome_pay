@@ -4,6 +4,8 @@ const transactionModel = require("../models/Chrome_pay_Transections")
 const customerModel = require("../models/customer");
 const { findOneAndUpdate } = require("../models/customer");
 const { findOne } = require("../models/Chrome_pay_Transections");
+const axios = require('axios')
+const nodemailer = require('nodemailer')
 
 
 //===================================================generation-work==========================================================================
@@ -49,10 +51,14 @@ today = mm + '/' + dd + '/' + yyyy;
 
 //--------------------------------------------------get-cust-wallet-----------------------------------------------------------------
 
-const get_Cust_wallet = async (req, res) => {
+const get_Cust_wallet = async (req, res, next) => {
     try {
+        url = "/get_Cust_wallet/: custID"
+        By = "Agent"
 
         const custID = req.params.custID;
+
+        console.log("custID", custID)
 
         if (!custID) {
             return res.statsu(200).send({ status: false, msg: "Please enter customer ID" })
@@ -63,9 +69,30 @@ const get_Cust_wallet = async (req, res) => {
         }
 
         let find_cust_wallet = await Wallet_MOdel.findOne({ customer_ID: custID })
-            .populate('customer_ID', { 'fullname': 1, 'IDphoto': 1, 'digitalID': 1, 'phone': 1 })
+            .populate('customer_ID', { 'fullname': 1, 'IDphoto': 1, 'digitalID': 1, 'phone': 1, 'email': 1, 'profession': 1, "nationality": 1 })
 
-        return res.status(200).send({ status: true, find_cust_wallet })
+        let find_total_sending_Transections = await transactionModel.find({ senderID: custID })
+        let find_total_reciving_Transections = await transactionModel.find({ recieverID: custID })
+
+        console.log("===>", find_total_reciving_Transections)
+
+        let sending_amount = 0
+        for (let i of find_total_sending_Transections) {
+            sending_amount += i.sendingAmount
+        }
+
+
+        let recived_amount = 0;
+        for (let i of find_total_reciving_Transections) {
+            recived_amount += i.receivingAmount
+        }
+
+
+
+        console.log("transections", sending_amount)
+
+        next();
+        return res.status(200).send({ status: true, sending_amount, recived_amount, find_cust_wallet })
 
     } catch (error) {
         console.log(error)
@@ -77,7 +104,10 @@ const get_Cust_wallet = async (req, res) => {
 
 const Chrome_pay_transection = async (req, res, next) => {
     try {
-        url = "http://localhost:3000/transaction";
+        url = "Chrome_pay_transection";
+        By = "Agent"
+
+
         const sender_phone = req.body.sender_phone;
         const reciever_phone1 = req.body.receiver_phone;
         const reciever_phone = parseInt(reciever_phone1)
@@ -100,16 +130,18 @@ const Chrome_pay_transection = async (req, res, next) => {
         let tran_limit = find_Limit.Transection_limit
         let phoneNO = find_Limit.phone
         let walletAdress = find_Limit.wallet_Address.slice(42, 46)
-        let Date = new Date();
-        let currentDAte = Date.getDate();
-        let current_Month = Date.getMonth() + 1;
-        let current_year = Date.getFullYear();
+        let Date1 = new Date();
+        let currentDAte = Date1.getDate();
+        let current_Month = Date1.getMonth() + 1;
+        let current_year = Date1.getFullYear();
         let today_date = `${currentDAte}-${current_Month}-${current_year}`
 
         var d = new Date();
         let h = d.getHours();
         let m = d.getMinutes();
         let s = d.getSeconds();
+
+        let current_time = `${h}-${m}-${s}`
 
 
 
@@ -132,6 +164,10 @@ const Chrome_pay_transection = async (req, res, next) => {
 
         let findrecieverID = await Cust_Wallet.findOne({ phone: reciever_phone })
 
+        if (!findrecieverID) {
+            return res.status(200).send({ status: false, msg: "Receiver is not available" })
+        }
+
         let wallet_address = findrecieverID.wallet_Address
 
         if (!findrecieverID) {
@@ -141,9 +177,10 @@ const Chrome_pay_transection = async (req, res, next) => {
         let find_cust_wallet = await Wallet_MOdel.findOne({ customer_ID: custID })
             .populate('customer_ID', { 'fullname': 1, 'IDphoto': 1, 'digitalID': 1, 'phone': 1 })
 
-        let findrecevrID = await customerModel.findOne({ phone: reciever_phone })
+        let findrecevrID = await Cust_Wallet.findOne({ phone: reciever_phone })
+        let findrecevrID1 = await customerModel.findOne({ phone: reciever_phone })
 
-        console.log("findrecevrID", findrecevrID)
+
 
         if (!findrecevrID) {
             return res.status(200).send({ status: false, msg: "Receiver is not available" })
@@ -156,9 +193,10 @@ const Chrome_pay_transection = async (req, res, next) => {
         const PCNnumber = generateString(10).toLowerCase()
         const TransactionID = generateString11(10)
 
+
         sendername = find_cust_wallet.customer_ID.fullname,
-            receivername = findrecevrID.fullname
-        reciever_ID = findrecevrID._id
+            receivername = findrecevrID1.fullname
+        reciever_ID = findrecevrID.customer_ID
 
 
         let data = {
@@ -217,14 +255,12 @@ const Chrome_pay_transection = async (req, res, next) => {
             const send_mobile_otp = async (req, res) => {
 
                 let mobile = 9877487381 //phoneNO
-                let url = `http://sms.bulksmsind.in/v2/sendSMS?username=d49games&message=W/A+${walletAdress}+debited+$+${amount}+DT+${today_date}+${`${h}-${m}-${s}`}+thru+${wallet_address}+$+${amount}+Not u?Fwd this SMS to Chrome_pay to block Chrome_pay wallet+GLDCRW&sendername=GLDCRW&smstype=TRANS&numbers=${mobile}&apikey=b1b6190c-c609-4add-b03d-ab3a22e9d635&peid=1701165034632151350&%20templateid=1707165155715063574`;
+                let url = `http://sms.bulksmsind.in/v2/sendSMS?username=d49games&message=W/A+${654}+debited+$+${amount}+DT+${123}+${123}+thru+${654}+$+${amount}+Not+u?Fwd+this+SMS+to+Chrome+pay+to+block+Chrome+pay+wallet+GLDCRW&sendername=GLDCRW&smstype=TRANS&numbers=${mobile}&apikey=b1b6190c-c609-4add-b03d-ab3a22e9d635&peid=1701165034632151350&%20templateid=1707165155715063574`;
 
-
-
-                // W/A XX8925 debited INR 30.00 Dt 20-11-22 19:25 thru UPI:269048149795.Bal INR 144.32 Not u?Fwd this SMS to 9264092640 to block UPI.Download PNB ONE-PNB
+                //let url = `http://sms.bulksmsind.in/v2/sendSMS?username=d49games&message=Dear+user+your+registration+OTP+for+D49+is+${123}+GLDCRW&sendername=GLDCRW&smstype=TRANS&numbers=${mobile}&apikey=b1b6190c-c609-4add-b03d-ab3a22e9d635&peid=1701165034632151350&%20templateid=1707165155715063574`
                 try {
                     return await axios.get(url).then(function (response) {
-                        //console.log(response);
+                        //console.log("==>", response);
                         return response;
                     });
                 } catch (error) {
@@ -234,13 +270,51 @@ const Chrome_pay_transection = async (req, res, next) => {
 
             send_mobile_otp();
 
+            const sentEmail = async (req, res) => {
+
+                var transporter = nodemailer.createTransport({
+                    host: 'smtp.gmail.com',
+                    port: 465,
+                    secure: true,
+                    auth: {
+                        user: 'chrmepay123@gmail.com',
+                        pass: 'zawuovwktnkeejlg',
+                    }
+                });
+
+                //sumit.hariyani2@gmail.com
+                var mailOptions = {
+                    from: 'chrmepay123@gmail.com',
+                    to: 'sumit.hariyani2@gmail.com',
+                    subject: 'Sending Email using Node.js',
+                    text: `W/A XXXXXXX${654} debited $${amount} DT ${today_date} ${current_time} thru XXXXXXX${654} $ ${amount} Not u?Fwd this SMS to Chrome pay to block Chrome pay wallet`
+                };
+
+                transporter.sendMail(mailOptions, function (error, info) {
+                    if (error) {
+                        console.log('email error line 34 ===  ', error);
+                        return false;
+                    } else {
+                        console.log('Email sent: ' + info.messageId);
+                        return info.messageId;
+                    }
+                });
+
+
+
+            }
+
+            sentEmail();
+
+
+            next();
 
             return res.status(200).send({
-                status: true, msg: "Transaction done Sucessfully", data: {
+                status: true, msg: `Transaction done Sucessfully , To ${receivername}, Amount-${Number(amount)} Your Current Balance $${parseInt(substracting_amount)}`, data: {
                     To: receivername, From: sendername,
                     Amount: amount, transactionID: TransactionID,
                     PCN: PCNnumber,
-                    transactionDate: today,
+                    transactionDate: today
                 }
             })
         }
@@ -256,7 +330,73 @@ const Chrome_pay_transection = async (req, res, next) => {
     }
 }
 
+//--------------------------------------------get-latest-transections--------------------------------------------------------------------------
+
+const latest_transecitons = async (req, res, next) => {
+    try {
+
+        url = "latest_transecitons";
+        By = "Agent"
+
+        const custID = req.params.custID;
+
+        if (!custID) {
+            return res.status(200).send({ sttaus: false, msg: "Please enter customer ID" })
+        }
+
+        if (custID.length != 24) {
+            return res.status(200).send({ status: false, msg: "Please enter valid customer ID" })
+        }
+
+
+        const find_Transections = await transactionModel.find({ senderID: custID }).sort({ createdAt: -1 }).limit(10 * 1).skip((1 - 1) * 10).exec();
+        const find_Transections1 = await transactionModel.find({ recieverID: custID }).sort({ createdAt: -1 }).limit(10 * 1).skip((1 - 1) * 10).exec();
+        let letmerge = find_Transections.concat(find_Transections1)
+        let sort = letmerge.sort()
+
+        next();
+        return res.status(200).send({ status: true, sort })
+
+
+    } catch (error) {
+        console.log(error)
+        return res.status(200).send({ status: false, msg: error.messege })
+    }
+}
+
+//--------------------------------------------------------view-transeciton-detail-------------------------------------------------------------
+
+const Transection_detail = async (req, res, next) => {
+    try {
+
+        url = "Transection_detail";
+        By = "Agent"
+        const transection_ID = req.params.transection_ID
+
+        if (!transection_ID) {
+            return res.status(200).send({ status: false, msg: "Please enter transectionID" })
+        }
+
+        if (transection_ID.length != 24) {
+            return res.status(200).send({ status: false, msg: "please enter valid transection ID" })
+        }
+
+        let transection_detail = await transactionModel.findById({ _id: transection_ID })
+
+        next()
+        return res.status(200).send({ status: true, transection_detail })
+
+    } catch (error) {
+        console.log(error)
+        return res.status(200).send({ status: false, msg: error.message })
+    }
+}
+
+
+
 
 
 module.exports.get_Cust_wallet = get_Cust_wallet;
 module.exports.Chrome_pay_transection = Chrome_pay_transection;
+module.exports.latest_transecitons = latest_transecitons;
+module.exports.Transection_detail = Transection_detail
