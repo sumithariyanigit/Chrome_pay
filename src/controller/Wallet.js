@@ -155,7 +155,7 @@ const Chrome_pay_transection = async (req, res, next) => {
         }
 
         if (!reciever_phone) {
-            return res.status(200).send({ status: false, msg: "please fill all fields" })
+            return res.status(200).send({ status: false, msg: "please fill all fields " })
         }
 
         if (!amount1) {
@@ -345,7 +345,7 @@ const latest_transecitons = async (req, res, next) => {
         }
 
         if (custID.length != 24) {
-            return res.status(200).send({ status: false, msg: "Please enter valid customer ID" })
+            return res.status(200).send({ status: false, msg: "Please enter valid  customer ID" })
         }
 
 

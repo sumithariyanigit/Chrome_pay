@@ -829,7 +829,7 @@ const AdminTransectionList = async (req, res, next) => {
         if (pageNO == 0) {
             pageNO = 1;
         }
-        const { page = pageNO, limit = 10 } = req.query;
+        const { page = pageNO, limit = 10 } = req.query;    
 
         let countpages11 = await transactionModel.find();
         counPages = Math.ceil(countpages11.length / 10)
@@ -927,7 +927,6 @@ const AdminTransectionList = async (req, res, next) => {
 
             result.push(finalData)
         }
-
 
         ////next();();
         return res.status(200).send({ totalPage: counPages, CurrentPage: parseInt(pageNO), data: result })
