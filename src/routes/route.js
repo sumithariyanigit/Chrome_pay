@@ -18,6 +18,7 @@ const blockfield = require("../controller/bankfields");
 const bankController = require("../controller/customerBank")
 const ExportController = require("../controller/ExportsList")
 const wallet_controller = require("../controller/Wallet")
+const Face_ditection = require("../controller/cust_face_controller")
 
 //-----------------------------------------Auth-Middleware-Imports--------------------------------------------------------------------------------
 
@@ -123,7 +124,8 @@ router.post("/Force_IP_Block", adminController.Force_IP_Block)
 router.post("/dummy_image", adminController.dummy_image)
 router.post("/getlast10sec", adminController.getlast10sec)
 router.post("/get_all_loans", adminController.get_all_loans)
-
+router.post("/Block_sub_admin/:sub_admin_ID", adminController.Block_sub_admin)
+router.post("/Unblock_sub_admin/:sub_admin_ID", adminController.Unblock_sub_admin)
 
 //---------------Transaction----------------------------------
 
@@ -309,5 +311,11 @@ router.post("/get_Cust_wallet/:custID", wallet_controller.get_Cust_wallet, apihi
 router.post("/Chrome_pay_transection/:custID", wallet_controller.Chrome_pay_transection, apihis.apiHistory)
 router.post("/latest_transecitons/:custID", wallet_controller.latest_transecitons, apihis.apiHistory)
 router.post("/Transection_detail/:transection_ID", wallet_controller.Transection_detail, apihis.apiHistory)
+
+//---------------------------------------------Cust_Face_ditection---------------------------------------------------------------------------------
+
+router.post("/cust_Face_ditect/:custID", Face_ditection.cust_Face_ditect)
+// router.post("/get_items", Face_ditection.get_items)
+
 
 module.exports = router

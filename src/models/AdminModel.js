@@ -76,6 +76,16 @@ const adminSchema = new mongoose.Schema({
     },
     role: {
         type: String
+    },
+
+    blocked: {
+        type: Number,
+        default: 0
+    },
+
+    isDeleted: {
+        type: Number,
+        default: 0
     }
 
 
