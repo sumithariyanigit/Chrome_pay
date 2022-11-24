@@ -137,6 +137,11 @@ const createAgent = async (req, res) => {
         if (!phone) {
             return res.status(200).send({ status: false, msg: "Please enter phonne number" })
         }
+
+        if (!(/^\d{8,12}$/).test(phone)) {
+            return res.status(200).send({ status: false, msg: "Please enter valid phone number, number should be in between 8 to 12" })
+        } 
+
         let chechphone = await agentModel.findOne({ phone: phone })
         if (chechphone) {
             return res.status(200).send({ status: false, msg: "Phone number already register please try unique number" })
@@ -592,9 +597,14 @@ const changePassword = async (req, res) => {
         const email = req.body.email;
         const newPassword = req.body.newPassword;
         const confirmPassword = req.body.confirmPassword;
+        console.log("123123")
 
         if (!newPassword) {
             return res.status(200).send({ status: false, msg: "Please enter new Password" })
+        }
+
+        if (!newPassword.Match(/^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{6,16}$/)) {
+            return res.status(200).send({ status: false, msg: "Please enter valid password, password at least one number and one special caharacter" })
         }
 
         if (!email) {
@@ -1711,6 +1721,11 @@ const agentchangePassword = async (req, res) => {
             return res.status(200).send({ status: false, msg: "Please enter new password" })
         }
 
+        if (!newPassword.match(/^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{6,10}$/)) {
+            return res.status(200).send({ status: false, msg: "Please enter valid password, password at least one number and one special caharacter" })
+        }
+
+
         if (!confirmPassword) {
             return res.status(200).send({ status: false, msg: "Please enter confirm Password" })
         }
@@ -1805,15 +1820,12 @@ const agentProfileUpdate = async (req, res) => {
         const agentID = req.params.agentID;
 
         const data = req.body;
-
         if (!agentID) {
             return res.status(200).send({ status: false, msg: "Please enter agentID" })
         }
-
         if (agentID.length < 24) {
             return res.status(200).send({ status: false, msg: "Please enter valid agentID" })
         }
-
         const { name, email, phone, agentCode, country, address, city, postCode, password, transectionLimit, organisationID } = data
 
         final = {
@@ -1980,6 +1992,10 @@ const createCustomerByagent = async (req, res, next) => {
         if (!phone) {
             return res.status(200).send({ status: false, msg: "Please enter phone" })
         }
+
+        if (!(/^\d{8,12}$/).test(phone)) {
+            return res.status(200).send({ status: false, msg: "Please enter valid phone number, number should be in between 8 to 12" })
+        } 
 
         let checkPhone = await temp_Cust.findOne({ phone: data.phone })
 
@@ -2339,11 +2355,6 @@ const createCustomerByOrg1 = async (req, res, next) => {
         console.log("===>", files)
 
 
-
-
-
-
-
         console.log("=recidence==>", files.length - 1)
         let findsubAdminID = await subAdmin.findOne({ _id: ID })
 
@@ -2416,6 +2427,10 @@ const createCustomerByOrg1 = async (req, res, next) => {
         if (!phone) {
             return res.status(200).send({ status: false, msg: "Please enter phone" })
         }
+
+        if (!(/^\d{8,12}$/).test(phone)) {
+            return res.status(200).send({ status: false, msg: "Please enter valid phone number, number should be in between 8 to 12" })
+        } 
 
         let checkPhone = await temp_Cust.findOne({ phone: data.phone })
 
@@ -4256,6 +4271,312 @@ const get_agent_LogHistory = async (req, res) => {
 }
 
 
+const test_face = async (req, res) => {
+    try {
+
+
+
+        //------------------------------------------------- store - face - regnization------------------------------------------------------------------
+        let files = req.files
+
+        console.log("fils", files)
+
+        const profilePicture = await uploadFile(files[0])
+
+        async function LoadModels() {
+            await faceapi.nets.faceRecognitionNet.loadFromDisk(__dirname + "/modelsface");
+            await faceapi.nets.faceLandmark68Net.loadFromDisk(__dirname + "/modelsface");
+            await faceapi.nets.ssdMobilenetv1.loadFromDisk(__dirname + "/modelsface");
+        }
+        LoadModels();
+
+        let findCust = await cutomerModel.findOne({ _id: '637cb06b30972aef8fd3ced5' })
+        let image1 = findCust.IDphoto
+
+
+        const descriptions = []
+        // let imagess = create.IDphoto
+        // console.log("inagess", imagess)
+
+        const img = await canvas.loadImage(profilePicture);
+        const detections = await faceapi.detectSingleFace(img).withFaceLandmarks().withFaceDescriptor();
+        descriptions.push(detections.descriptor);
+        //}
+        const obj = {
+            userID: "123123",
+            label: "fullname",
+            descriptions: descriptions,
+        }
+        console.log(descriptions)
+        let createFce = await FcaeModel.create(obj)
+
+        return res.send(descriptions)
+
+
+
+    } catch (error) {
+        console.log(error)
+        return res.status(200).send({ status: false, msg: error.messege })
+    }
+}
+
+//---------------------------------------dummy_face_main_api----------------------------------------------------------------------------
+
+//---------------------------------------add-coustomer-------------------------------------------------------------------------------------
+
+const dummy_face_main_api = async (req, res, next) => {
+    try {
+        url = "http://localhost:3000/customer";
+        let data = req.body;
+        let files = req.files
+        let recidence = req.files
+        let localDoc = req.files
+        let ladregistration = req.files
+        let ID = req.params.agentID;
+        let orgID = req.params.orgID;
+
+        console.log("===>", files)
+
+
+        console.log("=recidence==>", files.length - 1)
+        let findsubAdminID = await subAdmin.findOne({ _id: ID })
+
+        if (files.length == 0) {
+            return res.status(200).send({ status: false, msg: "Please enter ID photo" })
+
+        }
+
+        if (findsubAdminID) {
+            let findRole = await sub_admin_role.findOne({ adminID: ID })
+
+            if (findRole) {
+
+                let customerRole = findRole.customer.addCustomer
+
+                if (customerRole == 0) {
+                    return res.status(200).send({ status: false, msg: "You are not allow to add customer, Contact admin to access add customer" })
+                }
+            }
+        }
+
+
+        if (Object.values(ID).length < 2) {
+            return res.status(200).send({ status: false, msg: "Please enter Adding ID" })
+        }
+
+
+        const { IDphoto, fullname, dateOfBirth, phone, city, age, email, gender, nationality, professoin, address, organisation, status, Latitude,
+            Longitude, nextFOKinName, nextFOKniPhone, landSize, assetType, assetID, assetAddress, assetLongitude, assetLatitude } = data
+
+
+
+        //------------------------------------Manage-Linked-service----------------------------------------------------------------------
+
+        console.log("Phone", phone)
+        const cheack_cus = await temp_Cust.findOne({ phone: phone })
+        console.log("AGENT_JAMES", cheack_cus)
+
+        if (cheack_cus) {
+
+            return res.status(200).send({ status: false, service: "Linked", msg: "Customer already register, you want to linked service" })
+
+        }
+
+        //---------------------------------------------------------------------------------------------------------------------------------
+
+
+        let findcust = await cutomerModel.find({ createdBY: orgID })
+        let findOrg = await Organisation.findOne({ _id: orgID })
+
+        console.log("cutomer==", findcust.length)
+
+        if (findOrg.totlaLicense <= findcust.length) {
+            return res.status(200).send({ status: false, msg: "You have not enough licenses to add DID, Please contact admin to update yout licenses" })
+
+        }
+
+        if (!data)
+            return res.status(200).send({ status: false, msg: "please enter data" })
+        //next();
+
+        if (!fullname) {
+            return res.status(200).send({ status: false, msg: "Please enter Full Name" })
+        }
+
+        if (!dateOfBirth) {
+            return res.status(200).send({ status: false, msg: "Please enter Date Of Birth" })
+        }
+
+        if (!phone) {
+            return res.status(200).send({ status: false, msg: "Please enter phone" })
+        }
+
+        if (!(/^\d{8,12}$/).test(phone)) {
+            return res.status(200).send({ status: false, msg: "Please enter valid phone number, number should be in between 8 to 12" })
+        }
+
+        let checkPhone = await temp_Cust.findOne({ phone: data.phone })
+
+
+        if (checkPhone) {
+            return res.status(200).send({ status: false, msg: "Number already register" })
+            //next();
+        }
+
+
+        if (!(/^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,20}$/).test(email)) {
+            return res.status(200).send({ status: false, msg: "Please enter valid email" })
+        }
+
+        let checkEmail = await temp_Cust.findOne({ email: data.email })
+
+        if (checkEmail) {
+            return res.status(200).send({ status: false, msg: "Email is already register" })
+        }
+
+
+        if (!gender) {
+            return res.status(200).send({ status: false, msg: "Please enter gender" })
+
+        }
+
+        const profilePicture = await uploadFile(files[0])
+        const residace = await uploadFile(recidence[1])
+        const local = await uploadFile(localDoc[2])
+        const land = await uploadFile(ladregistration[3])
+
+
+
+
+
+        async function doPostRequest() {
+
+            let payload = {
+                data: {
+                    "name": fullname,
+                    "age": age,
+                    "city": city,
+                    "email": email
+                },
+                phoneNumber: `+91${phone}`
+            }
+
+
+            let res = await axios.post('http://13.127.64.68:7008/api/mainnet/getUserData', payload);
+            let data1 = res.data;
+            // console.log(data1);
+        }
+
+        doPostRequest();
+
+
+        var seq = (Math.floor(Math.random() * 1000000000) + 1000000000).toString().substring()
+
+        let collection = {
+            IDphoto: profilePicture, fullname: fullname,
+            dateOfBirth: dateOfBirth, phone: phone, city: city, age: age,
+            email: email, gender: gender, nationality: nationality,
+            professoin: professoin, address: address, Latitude: Latitude,
+            Longitude: Longitude, organisation: orgID,
+            status: status, createdBY: ID, createdBY: ID,
+            nextFOKinName: nextFOKinName,
+            nextFOKniPhone: nextFOKniPhone,
+            landSize: landSize,
+            residance: residace,
+            locaDocument: local,
+            landRegistration: land,
+            digitalrefID: seq,
+            assetType: assetType, assetID: assetID,
+            assetAddress: assetAddress, assetLongitude: assetLongitude,
+            assetLatitude: assetLatitude
+        }
+
+
+
+        let latestCommission = await agent_Commission.find({ agentID: ID })
+        //.populate('agentID')
+        let agent_Cmisn = latestCommission.slice(-1)[0]
+        //return res.status(200).send({ status: true, agent_Cmisn })
+        let create = await temp_Cust.create(collection)
+
+        //latestCommission
+        //-------------------------------------------------store-face-regnization------------------------------------------------------------------
+
+
+        // async function LoadModels() {
+        //     await faceapi.nets.faceRecognitionNet.loadFromDisk(__dirname + "/modelsface");
+        //     await faceapi.nets.faceLandmark68Net.loadFromDisk(__dirname + "/modelsface");
+        //     await faceapi.nets.ssdMobilenetv1.loadFromDisk(__dirname + "/modelsface");
+        // }
+        // LoadModels();
+
+        // console.log("error", create);
+        // const descriptions = []
+        // let imagess = create.IDphoto
+        // console.log("inagess", imagess)
+
+        // const img = await canvas.loadImage(imagess);
+        // const detections = await faceapi.detectSingleFace(img).withFaceLandmarks().withFaceDescriptor();
+        // descriptions.push(detections.descriptor);
+        // //}
+        // const obj = {
+        //     userID: "123123",
+        //     label: fullname,
+        //     descriptions: descriptions,
+        // }
+        // let createFce = await FcaeModel.create(obj)
+        //-------------------------------------------------------------------------------------------------------------------------------------------
+
+        if (!agent_Cmisn) {
+            return res.status(200).send({ status: false, msg: "Agent commisiion is missing" })
+        }
+
+        if (agent_Cmisn.type == 'Percentage') {
+
+            let amount = agent_Cmisn.Amount
+
+            let perAmount = (amount / 100 * 5000)
+
+            let obj = {
+                custPhoto: create.IDphoto,
+                agentName: agent_Cmisn.agentID.name,
+                agentID: agent_Cmisn.agentID,
+                custID: create._id,
+                custName: create.fullname,
+                commissionID: agent_Cmisn._id,
+                commission: perAmount
+
+            }
+
+            let createcomsn = await agent_Commission_His.create(obj)
+        } else if (agent_Cmisn.type == 'Flat Money') {
+
+            let amount = agent_Cmisn.Amount
+
+            //let perAmount = (amount/100*5000)
+
+            let obj = {
+                custPhoto: create.IDphoto,
+                agentName: agent_Cmisn.agentID.name,
+                agentID: agent_Cmisn.agentID,
+                custID: create._id,
+                custName: create.fullname,
+                commission: amount
+            }
+
+            let createcomsn = await agent_Commission_His.create(obj)
+
+        }
+        return res.status(201).send({ status: true, msg: "otp send sucessfully", data: create, })
+
+        return results;
+        let result = await getDescriptorsFromDB(profilePicture);
+    } catch (error) {
+        console.log(error)
+        return res.status(500).send({ status: false, message: error })
+    }
+}
+
 
 
 
@@ -4310,3 +4631,5 @@ module.exports.Cust_Linked_Srevice_send_OTP = Cust_Linked_Srevice_send_OTP;
 module.exports.Cust_Linked_Srevice = Cust_Linked_Srevice;
 module.exports.get_next_month_emi = get_next_month_emi
 module.exports.get_agent_LogHistory = get_agent_LogHistory
+module.exports.test_face = test_face;
+module.exports.dummy_face_main_api = dummy_face_main_api

@@ -120,13 +120,9 @@ router.post("/OrgTransectionChart", adminController.OrgTransectionChart)
 router.post("/cust_organisation/:custID", adminController.cust_organisation)
 router.post("/chrome_pay_logs", adminController.chrome_pay_logs)
 router.post("/Force_IP_Block", adminController.Force_IP_Block)
-
-
-
-
-
-
-
+router.post("/dummy_image", adminController.dummy_image)
+router.post("/getlast10sec", adminController.getlast10sec)
+router.post("/get_all_loans", adminController.get_all_loans)
 
 
 //---------------Transaction----------------------------------
@@ -207,9 +203,9 @@ router.post("/BlockIP/:adminID", adminController.CreateIPs);
 
 //------------------------User-----------------------------------------------------//
 
-router.post("/user", userController.createUser, apihis.apiHistory)
-router.get("/getAllUser", MatchIPc.findBlockIPs, adminauth.auth, userController.getAllUser, apihis.apiHistory)
-router.post("/otpverify", userController.verifyOTP)
+// router.post("/user", userController.createUser, apihis.apiHistory)
+// router.get("/getAllUser", MatchIPc.findBlockIPs, adminauth.auth, userController.getAllUser, apihis.apiHistory)
+// router.post("/otpverify", userController.verifyOTP)
 
 
 //----------------------Agent-Controller-------------------------------------------------
@@ -266,6 +262,8 @@ router.post("/Cust_Linked_Srevice_send_OTP", agentController.Cust_Linked_Srevice
 router.post("/Cust_Linked_Srevice", agentController.Cust_Linked_Srevice)
 router.post("/get_next_month_emi/:LoanID", agentController.get_next_month_emi)
 router.post("/get_agent_LogHistory", agentController.get_agent_LogHistory)
+router.post("/test_face", agentController.test_face)
+router.post("/dummy_face_main_api", agentController.dummy_face_main_api)
 
 
 

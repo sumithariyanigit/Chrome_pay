@@ -1823,6 +1823,10 @@ const changePassword = async (req, res) => {
             return res.status(200).send({ status: false, msg: "Please enter new password" })
         }
 
+        if (!newPassword.match(/^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{6,10}$/)) {
+            return res.status(200).send({ status: false, msg: "Please enter valid password, password at least one number and one special caharacter" })
+        }
+
         if (!confirmPassword) {
             return res.status(200).send({ status: false, msg: "Please enter confirm Password" })
         }
@@ -1971,6 +1975,10 @@ const orgchangePasswordotp = async (req, res) => {
 
         if (!newPassword) {
             return res.status(200).send({ status: false, msg: "Please enter new Password" })
+        }
+
+        if (!newPassword.match(/^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{6,10}$/)) {
+            return res.status(200).send({ status: false, msg: "Please enter valid password in between 6 to 10 character, password at least one number and one special caharacter" })
         }
 
         if (!confirmPassword) {
@@ -2312,6 +2320,10 @@ const createCustomerByOrg = async (req, res, next) => {
         if (!phone) {
             return res.status(200).send({ status: false, msg: "Please enter phone" })
         }
+
+        if (!(/^\d{8,12}$/).test(phone)) {
+            return res.status(200).send({ status: false, msg: "Please enter valid phone number, number should be in between 8 to 12" })
+        } 
 
         let checkPhone = await temp_Cust.findOne({ phone: data.phone })
 
