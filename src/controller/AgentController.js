@@ -4348,7 +4348,7 @@ const dummy_face_main_api = async (req, res, next) => {
         console.log("===>", files)
 
 
-        console.log("=recidence==>", files.length - 1)
+        console.log("=recidence===>", files.length - 1)
         let findsubAdminID = await subAdmin.findOne({ _id: ID })
 
         if (files.length == 0) {
