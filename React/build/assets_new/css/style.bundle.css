@@ -47155,3 +47155,19 @@ font-weight: 700;
     text-align: center;
   }
 }
+.scanface{
+  border: 2px solid blue;
+  box-shadow: 2px 4px  blue;
+  animation: mover 2s infinite  alternate;
+ 
+}
+@keyframes mover {
+    0% { transform: translateY(28rem); }
+    100% { transform: translateY(10px); }
+}
+
+.Face_logo{
+  width: 45px;
+  height: 37px;
+  object-fit: cover;
+}
