@@ -4643,7 +4643,6 @@ const Customer_Bank_view = async (req, res) => {
 
 //-------------------------------------------verify-customer-----------------------------------------------------------------------------------
 
-
 const new_verify_customer = async (req, res) => {
     try {
 
@@ -4665,8 +4664,6 @@ const new_verify_customer = async (req, res) => {
         console.log("123")
 
         let res1 = await axios.post('http://13.127.64.68:7008/api/mainnet/generate-digitalid', payload)
-
-
 
             .then(async (respons) => {
 
@@ -4695,10 +4692,7 @@ const new_verify_customer = async (req, res) => {
                     assetAddress: findCust.assetAddress, assetLongitude: findCust.assetLongitude,
                     assetLatitude: findCust.assetLatitude
                 }
-
-
                 let create = await cutomerModel.create(newCust)
-
                 console.log("1")
                 let OrganisationList = await org_Licenses.findOne({ OrganisationID: findCust.organisation })
                 console.log("2")

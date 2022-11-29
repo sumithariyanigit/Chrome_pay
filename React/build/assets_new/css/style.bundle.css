@@ -47171,3 +47171,7 @@ font-weight: 700;
   height: 37px;
   object-fit: cover;
 }
+::placeholder {
+  color: red;
+
+}
