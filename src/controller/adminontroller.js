@@ -1758,11 +1758,6 @@ const blockIPList = async (req, res) => {
             return res.status(200).send({ status: false, totlaRow: totlaRow, totalPages: counPages, currenPage: parseInt(pageNO), filter })
         }
 
-
-
-
-
-
     } catch (error) {
         console.log(error)
         return res.status(200).send({ status: false, msg: error.message })
