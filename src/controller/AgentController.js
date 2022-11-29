@@ -2389,6 +2389,7 @@ const createCustomerByOrg1 = async (req, res, next) => {
             Longitude, nextFOKinName, nextFOKniPhone, landSize, assetType, assetID, assetAddress, assetLongitude, assetLatitude } = data
 
 
+        console.log("DOB====>", dateOfBirth)    
 
         //------------------------------------Manage-Linked-service----------------------------------------------------------------------
 
@@ -4651,7 +4652,7 @@ const new_verify_customer = async (req, res) => {
         const phoneNo = `+91${phoneNo1}`
 
         console.log(OTP)
-        console.log("phoneNo", phoneNo)
+        console.log("phoneNo11111111", phoneNo)
 
         if (!phoneNo1) {
             return res.status(200).send({ Status: false, msg: "Please enter Phone No." })
@@ -4728,9 +4729,9 @@ const new_verify_customer = async (req, res) => {
                 const phoneNo1 = req.body.phoneNo
                 let find = await cutomerModel.findOne({ phone: phoneNo1 })
                 if (find) {
-                    return res.status(200).send({ status: false, msg: "customer register sucessfully" })
+                    return res.status(200).send({ status: true, msg: "customer register sucessfully" })
                 }
-                console.log(error)
+                //console.log(error)
                 return res.status(200).send({ status: false, msg: "Please try again" })
             })
 

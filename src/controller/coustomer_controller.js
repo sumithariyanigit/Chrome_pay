@@ -15,12 +15,6 @@ const cust_login = async (req, res) => {
         }
 
 
-
-
-
-
-
-
     } catch (error) {
         console.log(error)
         return res.status(200).send({ status: false, msg: error.message })
