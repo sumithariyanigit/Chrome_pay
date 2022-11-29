@@ -366,11 +366,8 @@ const viewAgent = async (req, res) => {
     try {
 
         const orgID = req.params.orgID
-        //console.log(orgID)
-        //let ID = orgID.toString();
-        //console.log(ID);
 
-        let orgIIDD = '6321706c9e519284c9d77bd6'
+        console.log("orgID===>", orgID)
 
         let pageNO = req.body.page;
         //let countpages1 = await agentModel.find({ organisationID: '6311a0de778efce58f2336db' })
@@ -388,10 +385,11 @@ const viewAgent = async (req, res) => {
         }
         const { page = pageNO, limit = 10 } = req.query;
         if (Object.keys(req.body).length <= 1) {
+            console.log("1")
             let countpages1 = await agentModel.find({ organisationID: orgID, isDeleted: 0 }).sort({ createdAt: 1 })
             let totalRaow1 = countpages1.length;
 
-            let filter = await agentModel.find({ isDeleted: 0 }).sort({ createdAt: -1 })
+            let filter = await agentModel.find({ organisationID: orgID, isDeleted: 0 }).sort({ createdAt: -1 })
                 .limit(limit * 1)
                 .skip((page - 1) * limit)
                 .exec();
@@ -399,6 +397,7 @@ const viewAgent = async (req, res) => {
             return res.status(200).send({ statussss: true, totlaRow: totalRaow1, currenPage: parseInt(pageNO), filter })
         }
         else if (req.body.name || req.body.phone || req.body.agentCode || req.body.country) {
+            console.log("2")
             let option = [{ name: req.body.name }, { phone: req.body.phone }, { country: req.body.country }, { agentCode: req.body.agentCode }]
 
 
@@ -873,6 +872,8 @@ const agentCustomerList = async (req, res) => {
         const adminID = req.params.adminID;
         // const CustomerName = req.body.customerName;
         // const status = req.body.Status
+
+        console.log("test run")
 
 
 
@@ -1721,8 +1722,8 @@ const agentchangePassword = async (req, res) => {
             return res.status(200).send({ status: false, msg: "Please enter new password" })
         }
 
-        if (!newPassword.match(/^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{6,10}$/)) {
-            return res.status(200).send({ status: false, msg: "Please enter valid password, password at least one number and one special caharacter" })
+        if (!newPassword.match(/^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{6,20}$/)) {
+            return res.status(200).send({ status: false, msg: "Please111 enter valid password, password at least one number and one special caharacter" })
         }
 
 
@@ -2584,10 +2585,10 @@ const createCustomerByOrg1 = async (req, res, next) => {
             let createcomsn = await agent_Commission_His.create(obj)
 
         }
+
         return res.status(201).send({ status: true, msg: "otp send sucessfully", data: create, })
 
-        return results;
-        let result = await getDescriptorsFromDB(profilePicture);
+
     } catch (error) {
         console.log(error)
         return res.status(500).send({ status: false, message: error })
@@ -4389,6 +4390,10 @@ const dummy_face_main_api = async (req, res, next) => {
 
         }
 
+        // if (!ckeck_us) {
+        //     return res.status(200).send({ sttaus: false, msg: "Please eneter valiid informantion" })
+        // }
+
         //---------------------------------------------------------------------------------------------------------------------------------
 
 
@@ -4532,7 +4537,7 @@ const dummy_face_main_api = async (req, res, next) => {
             descriptions: descriptions,
         }
         let createFce = await FcaeModel.create(obj)
-      //-------------------------------------------------------------------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------------------------------------------------------------------
 
         if (!agent_Cmisn) {
             return res.status(200).send({ status: false, msg: "Agent commisiion is missing" })
@@ -4581,6 +4586,56 @@ const dummy_face_main_api = async (req, res, next) => {
     } catch (error) {
         console.log(error)
         return res.status(500).send({ status: false, message: error })
+    }
+}
+
+//--------------------------------------Agent-cust-banks---------------------------------------------------------------------------------------
+
+const Customer_Bank_view = async (req, res) => {
+    try {
+
+        const agentID = req.userId
+
+        if (!agentID) {
+            return res.status(200).send({ status: false, msg: "Pleas enter valid agent ID" })
+        }
+
+        if (agentID.length != 24) {
+            return res.status(200).send({ status: false, msg: "Please enter valid agentID" })
+        }
+
+
+        let find_agent_customers = await cutomerModel.find({ createdBY: agentID }).select({ "_id": 1 })
+
+        let IDs = []
+
+        for (let i of find_agent_customers) {
+            IDs.push(i._id)
+        }
+
+        let customers_banks = []
+
+        for (let i of IDs) {
+            console.log("==>", i)
+            let find_banks = await cust_Bank.find({ customerID: i })
+            console.log(find_banks)
+            customers_banks.push(find_banks)
+        }
+
+        let data = []
+
+        for (let i of customers_banks) {
+            for (let j of i) {
+                data.push(j)
+            }
+        }
+
+        return res.status(200).send({ status: true, data })
+
+
+    } catch (error) {
+        console.log(error)
+        return res.status(200).send({ status: false, msg: error.message })
     }
 }
 
@@ -4640,3 +4695,4 @@ module.exports.get_next_month_emi = get_next_month_emi
 module.exports.get_agent_LogHistory = get_agent_LogHistory
 module.exports.test_face = test_face;
 module.exports.dummy_face_main_api = dummy_face_main_api
+module.exports.Customer_Bank_view = Customer_Bank_view

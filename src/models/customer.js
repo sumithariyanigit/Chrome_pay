@@ -42,7 +42,8 @@ const customerSchema = new mongoose.Schema({
         type: String
     },
     address: {
-        type: String
+        type: String,
+        default: ""
     },
 
     Latitude: {
@@ -142,37 +143,37 @@ const customerSchema = new mongoose.Schema({
         type: Number,
         default: ""
     },
-    facialIdentification:{
-        type:Number,
-        default:0
+    facialIdentification: {
+        type: Number,
+        default: 0
     },
-    faceDiscription:{
-        type:Array
+    faceDiscription: {
+        type: Array
     },
-    digitalID:{
-        type:String
+    digitalID: {
+        type: String
     },
-    digitalrefID:{
-        type:String
+    digitalrefID: {
+        type: String
     },
-    Location:{
-        type:Number,
-        default : 0
+    Location: {
+        type: Number,
+        default: 0
     },
-    assetType:{
-        type:String
+    assetType: {
+        type: String
     },
-    assetID:{
-        type:String
+    assetID: {
+        type: String
     },
-    assetAddress:{
-        type:String
+    assetAddress: {
+        type: String
     },
-    assetLongitude:{
-        type:String
+    assetLongitude: {
+        type: String
     },
-    assetLatitude:{
-        type:String
+    assetLatitude: {
+        type: String
     },
     Loan_OTP: {
         type: String

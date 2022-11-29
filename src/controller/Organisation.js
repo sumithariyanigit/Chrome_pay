@@ -2418,10 +2418,7 @@ let verifyCustomer = async (req, res) => {
         const OTP = req.body.OTP
         const phoneNo1 = req.body.phoneNo
         const phoneNo = `+91${phoneNo1}`
-        console.log(phoneNo)
 
-        console.log(OTP)
-        console.log(phoneNo)
 
         var result = [];
 
@@ -2436,21 +2433,15 @@ let verifyCustomer = async (req, res) => {
             phoneNumber: phoneNo
         }
 
-        console.log("phone", phoneNo)
-        console.log("OTP", OTP)
 
 
         let res1 = axios.post('http://13.127.64.68:7008/api/mainnet/generate-digitalid', {
             code: OTP,
             phoneNumber: phoneNo
-        })
-            .then(async respons => {
+        }).then(async respons => {
 
 
                 let data1 = respons.data
-
-                console.log(data1.response.owner);
-
 
 
                 let findCust = await temp_Cust.findOne({ phone: phoneNo1 })
@@ -2473,38 +2464,44 @@ let verifyCustomer = async (req, res) => {
 
                 let create = await cutomerModel.create(newCust)
 
+            console.log("1")
+
                 let OrganisationList = await org_Licenses.findOne({ OrganisationID: findCust.organisation })
-
+            console.log("2")
                 let totalLicenses = OrganisationList.totalLicenses
-
+            console.log("3")
                 let findreaminig = await customerModel.find({ organisation: findCust.organisation })
-
+            console.log("4")
                 let calculateRemainig = totalLicenses - findreaminig.length;
-
+            console.log("5")
                 let Remainig = calculateRemainig
 
 
 
                 let updateLicenses = await org_Licenses.findOneAndUpdate({ OrganisationID: findCust.organisation }, { RemainingLicenses: Remainig }, { new: true })
+            console.log("6")
 
-                console.log("orgTEST", create._id)
                 let cust_wallet = `00x${generateString1(43)}`
                 let obj = {
                     customer_ID: create._id,
                     phone: create.phone,
                     wallet_Address: cust_wallet
                 }
+            console.log("7")
+
                 let create_Wallet = await cust_wallet_Model.create(obj)
-
-                console.log("create_Wallet", create_Wallet)
-
-                return res.status(200).send({ status: true, msg: "customer register sucessfully", create })
+            console.log("8")
 
 
+            let delete_cust = await temp_Cust.findOneAndDelete({ phone: phoneNo1 })
+            return res.status(200).send({ status: true, msg: "customer register sucessfully" })
 
-            })
-            .catch(error => {
-                return res.status(200).send({ status: false, msg: "failed please try again" })
+
+
+        }).catch(async error => {
+            let delete_cust = await temp_Cust.findOneAndDelete({ phone: phoneNo1 })
+            console.log(error)
+            return res.status(200).send({ status: false, error: error.message, msg: "failed please try again" })
             });
 
         // return res.status(200).send({ status: false, msg: "customer register sucessfully" })

@@ -173,7 +173,7 @@ const AdminLogin = async (req, res) => {
 
 
             let MakeLogHIstory = await logHistory.create(logData);
-            return res.status(400).send({ status: false, msg: `Invalid password remaining chances ${remainingchance}` });
+            return res.status(200).send({ status: false, msg: `Invalid password remaining chances ${remainingchance}` });
         }
 
         //---------Login_History-------------//
@@ -1675,12 +1675,6 @@ const CreateIPs = async (req, res) => {
             }
 
         }
-
-
-
-
-
-
 
         if (!IP) {
             return res.status(400).send({ status: false, msg: "Please enter IP" })

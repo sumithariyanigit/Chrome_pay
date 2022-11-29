@@ -9,55 +9,6 @@ const { promisify } = require("util");
 //const redisclient = redis.createClient();
 
 
-
-
-//-------------------------------------------Redis-connection--------------------------------------------------
-//Redis Connection 
-
-
-
-
-const redis = require('redis');
-const client = redis.createClient({
-    socket: {
-        host: 'redis-11639.c212.ap-south-1-1.ec2.cloud.redislabs.com',
-        port: 11639,
-    },
-    password: 'mUlxK2wfOPJ18TJypJRULgF1PvPRmvxJ'
-});
-
-client.on('error', err => {
-    console.log('Error ' + err);
-});
-
-client.connect()
-
-const SET_ASYNC = promisify(client.SET).bind(client);
-const GET_ASYNC = promisify(client.GET).bind(client);
-
-
-// const get_items = async (req, res) => {
-//     try {
-
-//         const cust = await customerModel.find();
-//         await SET_ASYNC(`${"123"}`, JSON.stringify("123456789"))
-//         let longUrlFromcached = await GET_ASYNC(`${"123"}`)
-
-//         console.log("==>", longUrlFromcached)
-
-//         return res.status(200).send({ status: true, longUrlFromcached })
-
-
-//     } catch (error) {
-//         console.log(error)
-//         return res.status(200).send({ status: false, msg: error.messege })
-//     }
-// }
-
-
-
-
-
 const cust_Face_ditect = async (req, res) => {
     try {
 
