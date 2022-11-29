@@ -52,7 +52,10 @@ const cust_Face_ditect = async (req, res) => {
         // async function getDescriptorsFromDB(image) {
 
         let faces = await Face_model.find();
+
         for (i = 0; i < faces.length; i++) {
+
+            console.log("==>", faces[i])
 
             for (j = 0; j < faces[i].descriptions.length; j++) {
                 faces[i].descriptions[j] = new Float32Array(Object.values(faces[i].descriptions[j]));
@@ -61,7 +64,7 @@ const cust_Face_ditect = async (req, res) => {
             faces[i] = new faceapi.LabeledFaceDescriptors(faces[i].name, faces[i].descriptions);
         }
 
-
+        console.log("time test")
 
         const faceMatcher = new faceapi.FaceMatcher(faces, 0.6);
         const img = await canvas.loadImage(profilePicture);
@@ -71,10 +74,8 @@ const cust_Face_ditect = async (req, res) => {
         const detections = await faceapi.detectAllFaces(img).withFaceLandmarks().withFaceDescriptors();
         const resizedDetections = faceapi.resizeResults(detections, displaySize);
         const results = resizedDetections.map((d) => faceMatcher.findBestMatch(d.descriptor));
-        console.log("tag")
-        // console.log(results);
-        for (items of results) {
-
+        console.log("tag", results)
+        for (let items of results) {
             if (items._label === "unknown") {
                 console.log("8")
                 const descriptions = []

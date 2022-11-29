@@ -34,6 +34,8 @@ const redis = require('redis')
 const { promisify } = require("util");
 const cust_wallet = require("../models/Cust_Wallet")
 const Agent_logs = require("../models/AgentLogHis")
+const cust_wallet_Model = require("../models/Cust_Wallet")
+
 
 
 
@@ -2485,7 +2487,7 @@ const createCustomerByOrg1 = async (req, res, next) => {
             // console.log(data1);
         }
 
-        doPostRequest();
+        await doPostRequest();
 
 
         var seq = (Math.floor(Math.random() * 1000000000) + 1000000000).toString().substring()
@@ -4639,6 +4641,113 @@ const Customer_Bank_view = async (req, res) => {
     }
 }
 
+//-------------------------------------------verify-customer-----------------------------------------------------------------------------------
+
+
+const new_verify_customer = async (req, res) => {
+    try {
+
+        const OTP = req.body.OTP
+        const phoneNo1 = req.body.phoneNo
+        const phoneNo = `+91${phoneNo1}`
+
+        console.log(OTP)
+        console.log("phoneNo", phoneNo)
+
+        if (!phoneNo1) {
+            return res.status(200).send({ Status: false, msg: "Please enter Phone No." })
+        }
+
+        let payload = {
+            code: OTP,
+            phoneNumber: phoneNo
+        }
+        console.log("123")
+
+        let res1 = await axios.post('http://13.127.64.68:7008/api/mainnet/generate-digitalid', payload)
+
+
+
+            .then(async (respons) => {
+
+                console.log("res120")
+
+                let data1 = respons.data
+
+                console.log("3", data1)
+
+                console.log("wallet", data1.response.walletAddress)
+
+
+                let findCust = await temp_Cust.findOne({ phone: phoneNo1 })
+
+                let newCust = {
+                    IDphoto: findCust.IDphoto, fullname: findCust.fullname,
+                    dateOfBirth: findCust.dateOfBirth, phone: findCust.phone, city: findCust.city, age: findCust.age,
+                    email: findCust.email, gender: findCust.gender, nationality: findCust.nationality, hash: data1.hash,
+                    owner: data1.response.owner, privateKey: data1.response.privateKey, walletAddress: data1.response.walletAddress,
+                    professoin: findCust.professoin, address: findCust.address, organisation: findCust.organisation,
+                    createdBY: findCust.createdBY, imageDescriptions: findCust.imageDescriptions, Latitude: findCust.Latitude,
+                    Longitude: findCust.Longitude, digitalrefID: findCust.digitalrefID, residance: findCust.residance,
+                    locaDocument: findCust.locaDocument, landRegistration: findCust.landRegistration, landSize: findCust.landSize,
+                    digitalID: findCust.digitalID, nextFOKniPhone: findCust.nextFOKniPhone, nextFOKinName: findCust.nextFOKinName,
+                    assetType: findCust.assetType, assetID: findCust.assetID,
+                    assetAddress: findCust.assetAddress, assetLongitude: findCust.assetLongitude,
+                    assetLatitude: findCust.assetLatitude
+                }
+
+
+                let create = await cutomerModel.create(newCust)
+
+                console.log("1")
+                let OrganisationList = await org_Licenses.findOne({ OrganisationID: findCust.organisation })
+                console.log("2")
+                let totalLicenses = OrganisationList.totalLicenses
+                console.log("3")
+                let findreaminig = await cutomerModel.find({ organisation: findCust.organisation })
+                console.log("4")
+                let calculateRemainig = totalLicenses - findreaminig.length;
+                console.log("5")
+                let Remainig = calculateRemainig
+
+                let updateLicenses = await org_Licenses.findOneAndUpdate({ OrganisationID: findCust.organisation }, { RemainingLicenses: Remainig }, { new: true })
+                console.log("6")
+
+                let cust_wallet = `00x${generateString1(43)}`
+                let obj = {
+                    customer_ID: create._id,
+                    phone: create.phone,
+                    wallet_Address: cust_wallet
+                }
+                console.log("7")
+
+                let create_Wallet = await cust_wallet_Model.create(obj)
+                console.log("8")
+                let delete_cust = await temp_Cust.findOneAndDelete({ phone: phoneNo1 })
+
+                if (delete_cust) {
+                    console.log("123")
+                    return res.status(200).send({ status: true, msg: "customer register sucessfully" })
+                }
+
+            }).catch(async (error) => {
+                const phoneNo1 = req.body.phoneNo
+                let find = await cutomerModel.findOne({ phone: phoneNo1 })
+                if (find) {
+                    return res.status(200).send({ status: false, msg: "customer register sucessfully" })
+                }
+                console.log(error)
+                return res.status(200).send({ status: false, msg: "Please try again" })
+            })
+
+
+    } catch (error) {
+
+        console.log(error)
+        return res.status(200).send({ status: false, msg: "Failed Please try again" })
+    }
+}
+
 
 
 
@@ -4696,3 +4805,4 @@ module.exports.get_agent_LogHistory = get_agent_LogHistory
 module.exports.test_face = test_face;
 module.exports.dummy_face_main_api = dummy_face_main_api
 module.exports.Customer_Bank_view = Customer_Bank_view
+module.exports.new_verify_customer = new_verify_customer
