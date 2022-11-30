@@ -15,7 +15,8 @@ const auth = async (req, res, next) => {
             return res.status(200).send({ status: false, message: `Invalid authentication token in request` });
         }
 
-        req.userId = decoded.agentID
+        req.userId = decoded.custID
+        req.email = decoded.email
 
         console.log("middleware==>", req.userId)
 

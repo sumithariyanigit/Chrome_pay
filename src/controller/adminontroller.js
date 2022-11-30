@@ -2133,7 +2133,7 @@ const custdetail = async (req, res) => {
             proPercentage += 33
             var location = 1
         } else {
-            var location = 0
+            var location = 0    
         }
 
         //  console.log(location)
@@ -3357,15 +3357,12 @@ const createCustomerByAdmin = async (req, res, next) => {
             Longitude, nextFOKinName, nextFOKniPhone, landSize, assetType, assetID, assetAddress, assetLongitude, assetLatitude } = data
 
         //------------------------------------Manage-Linked-service----------------------------------------------------------------------
-
-        console.log("Phone", phone)
+        console.log("Phone11", phone)
         const cheack_cus = await temp_Cust.findOne({ phone: phone })
         console.log("AGENT_JAMES", cheack_cus)
 
         if (cheack_cus) {
-
             return res.status(200).send({ status: false, service: "Linked", msg: "Customer already register, you want to linked service" })
-
         }
 
 

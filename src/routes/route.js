@@ -26,6 +26,7 @@ const customer_controller = require("../controller/coustomer_controller")
 const AgentAuth = require("../middleware/agentAuth")
 const OrgAuth = require("../middleware/OrgAuth")
 const AcessKeys = require("../middleware/OrganisationKeys")
+const cust_auth = require("../middleware/customer_auth")
 
 
 //--------------------------------------------------------------------------------------------------------------------------------------------------
@@ -318,11 +319,15 @@ router.post("/Transection_detail/:transection_ID", wallet_controller.Transection
 //---------------------------------------------Cust_Face_ditection---------------------------------------------------------------------------------
 
 router.post("/cust_Face_ditect/:custID", Face_ditection.cust_Face_ditect)
+router.post("/pre_cust_Face_ditect", Face_ditection.pre_cust_Face_ditect)
 // router.post("/get_items", Face_ditection.get_items)
 
 //-----------------------------------------------Customer-Controller-----------------------------------------------------------------------------
 
 router.post("/customer_controller", customer_controller.cust_login)
 router.post("/cust_opt_verify", customer_controller.cust_opt_verify)
+router.post("/get_cust_org/:token", cust_auth.auth, customer_controller.get_cust_org)
+router.post("/Calculate_credit_Score_customer/:token", cust_auth.auth, customer_controller.Calculate_credit_Score_customer)
+router.post("/customer_dash/:token", cust_auth.auth, customer_controller.customer_dash)
 
 module.exports = router
