@@ -35,6 +35,7 @@ const { promisify } = require("util");
 const cust_wallet = require("../models/Cust_Wallet")
 const Agent_logs = require("../models/AgentLogHis")
 const cust_wallet_Model = require("../models/Cust_Wallet")
+const nodemailer = require('nodemailer')
 
 
 
@@ -1995,11 +1996,9 @@ const createCustomerByagent = async (req, res, next) => {
         if (!phone) {
             return res.status(200).send({ status: false, msg: "Please enter phone" })
         }
-
         if (!(/^\d{8,12}$/).test(phone)) {
             return res.status(200).send({ status: false, msg: "Please enter valid phone number, number should be in between 8 to 12" })
         }
-
         let checkPhone = await temp_Cust.findOne({ phone: data.phone })
 
 
@@ -2355,10 +2354,10 @@ const createCustomerByOrg1 = async (req, res, next) => {
         let ID = req.params.agentID;
         let orgID = req.params.orgID;
 
-        console.log("===>", files)
 
 
-        console.log("=recidence==>", files.length - 1)
+
+
         let findsubAdminID = await subAdmin.findOne({ _id: ID })
 
         if (files.length == 0) {
@@ -2389,18 +2388,14 @@ const createCustomerByOrg1 = async (req, res, next) => {
             Longitude, nextFOKinName, nextFOKniPhone, landSize, assetType, assetID, assetAddress, assetLongitude, assetLatitude } = data
 
 
-        console.log("DOB====>", dateOfBirth)    
 
         //------------------------------------Manage-Linked-service----------------------------------------------------------------------
 
-        console.log("Phone", phone)
+        console.log("Phone120", phone)
         const cheack_cus = await temp_Cust.findOne({ phone: phone })
-        console.log("AGENT_JAMES", cheack_cus)
 
         if (cheack_cus) {
-
             return res.status(200).send({ status: false, service: "Linked", msg: "Customer already register, you want to linked service" })
-
         }
 
         //---------------------------------------------------------------------------------------------------------------------------------
@@ -2409,7 +2404,6 @@ const createCustomerByOrg1 = async (req, res, next) => {
         let findcust = await cutomerModel.find({ createdBY: orgID })
         let findOrg = await Organisation.findOne({ _id: orgID })
 
-        console.log("cutomer==", findcust.length)
 
         if (findOrg.totlaLicense <= findcust.length) {
             return res.status(200).send({ status: false, msg: "You have not enough licenses to add DID, Please contact admin to update yout licenses" })
@@ -2432,9 +2426,9 @@ const createCustomerByOrg1 = async (req, res, next) => {
             return res.status(200).send({ status: false, msg: "Please enter phone" })
         }
 
-        if (!(/^\d{8,12}$/).test(phone)) {
-            return res.status(200).send({ status: false, msg: "Please enter valid phone number, number should be in between 8 to 12" })
-        }
+        // if (!(/^\d{8,12}$/).test(phone)) {
+        //     return res.status(200).send({ status: false, msg: "Please enter valid phone number, number should be in between 8 to 12" })
+        // }
 
         let checkPhone = await temp_Cust.findOne({ phone: data.phone })
 
@@ -2479,8 +2473,10 @@ const createCustomerByOrg1 = async (req, res, next) => {
                     "city": city,
                     "email": email
                 },
-                phoneNumber: `+91${phone}`
+                phoneNumber: `${phone}`
+
             }
+
 
 
             let res = await axios.post('http://13.127.64.68:7008/api/mainnet/getUserData', payload);
@@ -4506,8 +4502,6 @@ const dummy_face_main_api = async (req, res, next) => {
             assetLatitude: assetLatitude
         }
 
-
-
         let latestCommission = await agent_Commission.find({ agentID: ID })
         //.populate('agentID')
         let agent_Cmisn = latestCommission.slice(-1)[0]
@@ -4649,11 +4643,7 @@ const new_verify_customer = async (req, res) => {
 
         const OTP = req.body.OTP
         const phoneNo1 = req.body.phoneNo
-        const phoneNo = `+91${phoneNo1}`
-
-        console.log(OTP)
-        console.log("phoneNo11111111", phoneNo)
-
+        const phoneNo = `+${phoneNo1}`
         if (!phoneNo1) {
             return res.status(200).send({ Status: false, msg: "Please enter Phone No." })
         }
@@ -4670,14 +4660,8 @@ const new_verify_customer = async (req, res) => {
 
             .then(async (respons) => {
 
-                console.log("res120")
-
                 let data1 = respons.data
-
-                console.log("3", data1)
-
-                console.log("wallet", data1.response.walletAddress)
-
+                let cust_password = generateString1(10)
 
                 let findCust = await temp_Cust.findOne({ phone: phoneNo1 })
 
@@ -4693,22 +4677,22 @@ const new_verify_customer = async (req, res) => {
                     digitalID: findCust.digitalID, nextFOKniPhone: findCust.nextFOKniPhone, nextFOKinName: findCust.nextFOKinName,
                     assetType: findCust.assetType, assetID: findCust.assetID,
                     assetAddress: findCust.assetAddress, assetLongitude: findCust.assetLongitude,
-                    assetLatitude: findCust.assetLatitude
+                    assetLatitude: findCust.assetLatitude, password: cust_password
                 }
                 let create = await cutomerModel.create(newCust)
-                console.log("1")
+
                 let OrganisationList = await org_Licenses.findOne({ OrganisationID: findCust.organisation })
-                console.log("2")
+
                 let totalLicenses = OrganisationList.totalLicenses
-                console.log("3")
+
                 let findreaminig = await cutomerModel.find({ organisation: findCust.organisation })
-                console.log("4")
+
                 let calculateRemainig = totalLicenses - findreaminig.length;
-                console.log("5")
+
                 let Remainig = calculateRemainig
 
                 let updateLicenses = await org_Licenses.findOneAndUpdate({ OrganisationID: findCust.organisation }, { RemainingLicenses: Remainig }, { new: true })
-                console.log("6")
+
 
                 let cust_wallet = `00x${generateString1(43)}`
                 let obj = {
@@ -4716,16 +4700,68 @@ const new_verify_customer = async (req, res) => {
                     phone: create.phone,
                     wallet_Address: cust_wallet
                 }
-                console.log("7")
+
 
                 let create_Wallet = await cust_wallet_Model.create(obj)
-                console.log("8")
+
                 let delete_cust = await temp_Cust.findOneAndDelete({ phone: phoneNo1 })
+
+
+
+
+
+                //----------------------------------------------------------------------------------------
+
+                const sentEmail = async (req, res) => {
+
+
+                    var transporter = nodemailer.createTransport({
+                        host: 'smtp.gmail.com',
+                        port: 465,
+                        secure: true,
+                        auth: {
+                            user: 'chrmepay123@gmail.com',
+                            pass: 'jgiplcgrbddvktkl',
+                        }
+                    });
+
+
+                    var mailOptions = {
+                        from: 'chrmepay123@gmail.com',
+                        to: 'sumit.hariyani2@gmail.com',
+                        subject: 'Sending Email using Node.js',
+                        text: `Hello! welcome to chrome pay your login password is ${cust_password}`
+
+                    };
+
+                    transporter.sendMail(mailOptions, function (error, info) {
+                        if (error) {
+                            console.log('email error line 34 ===  ', error);
+                            return false;
+                        } else {
+                            console.log('Email sent: ' + info.messageId);
+                            return info.messageId;
+                        }
+                    });
+
+
+
+                }
+
+                sentEmail();
+
+
+                //---------------------------------------------------------------------------------------------------------------
+
+
+                let update_pass = await cutomerModel.findOneAndUpdate({ phone: phoneNo1 }, { password: cust_password })
 
                 if (delete_cust) {
                     console.log("123")
                     return res.status(200).send({ status: true, msg: "customer register sucessfully" })
                 }
+
+
 
             }).catch(async (error) => {
                 const phoneNo1 = req.body.phoneNo

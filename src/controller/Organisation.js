@@ -2442,6 +2442,8 @@ let verifyCustomer = async (req, res) => {
 
 
                 let data1 = respons.data
+            let cust_password = generateString1(10)
+
 
 
                 let findCust = await temp_Cust.findOne({ phone: phoneNo1 })
@@ -2458,41 +2460,74 @@ let verifyCustomer = async (req, res) => {
                     digitalID: findCust.digitalID, nextFOKniPhone: findCust.nextFOKniPhone, nextFOKinName: findCust.nextFOKinName,
                     assetType: findCust.assetType, assetID: findCust.assetID,
                     assetAddress: findCust.assetAddress, assetLongitude: findCust.assetLongitude,
-                    assetLatitude: findCust.assetLatitude
+                    assetLatitude: findCust.assetLatitude, password: cust_password
                 }
 
 
                 let create = await cutomerModel.create(newCust)
 
-            console.log("1")
-
                 let OrganisationList = await org_Licenses.findOne({ OrganisationID: findCust.organisation })
-            console.log("2")
+
                 let totalLicenses = OrganisationList.totalLicenses
-            console.log("3")
+
                 let findreaminig = await customerModel.find({ organisation: findCust.organisation })
-            console.log("4")
+
                 let calculateRemainig = totalLicenses - findreaminig.length;
-            console.log("5")
+
                 let Remainig = calculateRemainig
 
 
 
-                let updateLicenses = await org_Licenses.findOneAndUpdate({ OrganisationID: findCust.organisation }, { RemainingLicenses: Remainig }, { new: true })
-            console.log("6")
+            //----------------------------------------------------------------------------------------
 
+            const sentEmail = async (req, res) => {
+
+
+                var transporter = nodemailer.createTransport({
+                    host: 'smtp.gmail.com',
+                    port: 465,
+                    secure: true,
+                    auth: {
+                        user: 'chrmepay123@gmail.com',
+                        pass: 'jgiplcgrbddvktkl',
+                    }
+                });
+
+
+                var mailOptions = {
+                    from: 'chrmepay123@gmail.com',
+                    to: 'sumit.hariyani2@gmail.com',
+                    subject: 'Sending Email using Node.js',
+                    text: `Hello! welcome to chrome pay your login password is ${cust_password}`
+
+                };
+
+                transporter.sendMail(mailOptions, function (error, info) {
+                    if (error) {
+                        console.log('email error line 34 ===  ', error);
+                        return false;
+                    } else {
+                        console.log('Email sent: ' + info.messageId);
+                        return info.messageId;
+                    }
+                });
+
+
+
+            }
+
+            sentEmail();
+
+
+
+            let updateLicenses = await org_Licenses.findOneAndUpdate({ OrganisationID: findCust.organisation }, { RemainingLicenses: Remainig }, { new: true })
                 let cust_wallet = `00x${generateString1(43)}`
                 let obj = {
                     customer_ID: create._id,
                     phone: create.phone,
                     wallet_Address: cust_wallet
                 }
-            console.log("7")
-
-                let create_Wallet = await cust_wallet_Model.create(obj)
-            console.log("8")
-
-
+            let create_Wallet = await cust_wallet_Model.create(obj)
             let delete_cust = await temp_Cust.findOneAndDelete({ phone: phoneNo1 })
             return res.status(200).send({ status: true, msg: "customer register sucessfully" })
 
@@ -2599,9 +2634,6 @@ const getInfoByDigitalID = async (req, res) => {
     try {
 
         const digitalID = req.body.digitalID;
-        //let digiID = '0xc0aee9966d48b5741f4fd8ffd2c81dda9e1f03b48d5b74dd5bbbbd72f47b7f3f'
-
-        //console.log(digiID)
 
         if (!digitalID) {
             return res.status(200).send({ status: false, msg: "please enter digital ID" })

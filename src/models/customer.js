@@ -180,6 +180,21 @@ const customerSchema = new mongoose.Schema({
     },
     Linekd_Service_OTP: {
         type: String
+    },
+    password: {
+        type: String,
+        default: ""
+    },
+    wrongOTP: {
+        type: Number,
+        default: 0
+    },
+    wrong_pass: {
+        type: Number,
+        default: 0
+    },
+    login_otp: {
+        type: Number
     }
 
 }, { timestamps: true })

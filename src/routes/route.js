@@ -19,6 +19,7 @@ const bankController = require("../controller/customerBank")
 const ExportController = require("../controller/ExportsList")
 const wallet_controller = require("../controller/Wallet")
 const Face_ditection = require("../controller/cust_face_controller")
+const customer_controller = require("../controller/coustomer_controller")
 
 //-----------------------------------------Auth-Middleware-Imports--------------------------------------------------------------------------------
 
@@ -319,5 +320,9 @@ router.post("/Transection_detail/:transection_ID", wallet_controller.Transection
 router.post("/cust_Face_ditect/:custID", Face_ditection.cust_Face_ditect)
 // router.post("/get_items", Face_ditection.get_items)
 
+//-----------------------------------------------Customer-Controller-----------------------------------------------------------------------------
+
+router.post("/customer_controller", customer_controller.cust_login)
+router.post("/cust_opt_verify", customer_controller.cust_opt_verify)
 
 module.exports = router
