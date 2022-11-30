@@ -4658,6 +4658,8 @@ const new_verify_customer = async (req, res) => {
             return res.status(200).send({ Status: false, msg: "Please enter Phone No." })
         }
 
+
+
         let payload = {
             code: OTP,
             phoneNumber: phoneNo
@@ -4727,6 +4729,7 @@ const new_verify_customer = async (req, res) => {
 
             }).catch(async (error) => {
                 const phoneNo1 = req.body.phoneNo
+                console.log("jkl", phoneNo1)
                 let find = await cutomerModel.findOne({ phone: phoneNo1 })
                 if (find) {
                     return res.status(200).send({ status: true, msg: "customer register sucessfully" })
