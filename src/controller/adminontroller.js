@@ -245,7 +245,7 @@ const AdminLogin = async (req, res) => {
 
             var mailOptions = {
                 from: 'chrmepay123@gmail.com',
-                to: 'satyamthinkdebug@gmail.com',
+                to: 'sumit.hariyani2@gmail.com',
                 subject: 'Sending Email using Node.js',
                 text: 'your OTP is " ' + otp + ' " do not share this otp'
                 // text : otp
