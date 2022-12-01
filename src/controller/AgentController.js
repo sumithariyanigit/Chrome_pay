@@ -4761,8 +4761,6 @@ const new_verify_customer = async (req, res) => {
                     return res.status(200).send({ status: true, msg: "customer register sucessfully" })
                 }
 
-
-
             }).catch(async (error) => {
                 const phoneNo1 = req.body.phoneNo
                 console.log("jkl", phoneNo1)

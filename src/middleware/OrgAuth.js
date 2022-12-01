@@ -24,7 +24,7 @@ const auth = async (req, res, next) => {
 
         req.orgID = decoded.OrganisationID
 
-        console.log("middleware==>", req.orgID)
+        console.log("middleware==>org", req.orgID)
 
 
 

@@ -22,7 +22,7 @@ const auth = async (req, res, next) => {
 
         req.userId = decoded.agentID
 
-        console.log("middleware==>", req.userId)
+        console.log("middleware==>agent", req.userId)
 
 
 

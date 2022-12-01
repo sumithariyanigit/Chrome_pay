@@ -331,5 +331,9 @@ router.post("/Calculate_credit_Score_customer/:token", cust_auth.auth, customer_
 router.post("/customer_dash/:token", cust_auth.auth, customer_controller.customer_dash)
 router.post("/Fuse_wallet_transections/:token", cust_auth.auth, customer_controller.Fuse_wallet_transections)
 router.post("/Fuse_wallet_dash/:token", cust_auth.auth, customer_controller.Fuse_wallet_dash)
+router.post("/Chrome_pay_trans/:token", cust_auth.auth, customer_controller.Chrome_pay_trans)
+router.post("/Chrome_pay_dash/:token", cust_auth.auth, customer_controller.Chrome_pay_dash)
+router.post("/Chrome_pay_cust_transection/:token", cust_auth.auth, customer_controller.Chrome_pay_cust_transection)
+
 
 module.exports = router

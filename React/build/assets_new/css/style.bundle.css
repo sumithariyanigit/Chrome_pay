@@ -47175,3 +47175,84 @@ font-weight: 700;
   color: red;
 
 }
+.card0 {
+  box-shadow: 0px 4px 8px 0px #757575;
+  border-radius: 0px;
+      border-radius: 11px;
+}
+
+
+.card2 {
+  margin: 0px 40px;
+}
+.logo-cust {
+  width: 80px;
+  margin-top: 20px;
+  margin-left: 35px;
+}
+.my.container-fluid.mx-auto
+{
+	    height: 100vh;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    justify-content: center;
+}
+.border-line {
+  border-right: 1px solid #EEEEEE;
+}
+.image-cust {
+  width: 360px;
+  height: 280px;
+}
+.btn-blue {
+  background-color: #1A237E;
+  width: 150px;
+  color: #fff !important;
+  border-radius: 2px;
+  background-image: linear-gradient(-45deg, #2c486d 0%, #449a9b 100%);
+  border: none;
+  border-radius: 6px;
+  height: 49px;
+}
+.btn-blue:hover {
+  background-color: #000;
+  cursor: pointer;
+}
+
+.bg-blue {
+  color: #fff;
+  background-color: #1A237E;
+}
+.text-sm {
+  font-size: 14px !important;
+}
+.custom-control-inline {
+  /* display: -ms-inline-flexbox; */
+  display: inline-flex;
+  margin-right: 1rem;
+}
+.forget-link a{
+  text-decoration: none;
+  color: inherit;
+    cursor: pointer;
+}
+@media screen and (max-width: 991px) {
+  .logo-cust {
+      margin-left: 0px;
+  }
+
+  .image-cust {
+      width: 300px;
+      height: 220px;
+  }
+
+  .border-line {
+      border-right: none;
+  }
+
+  .card2 {
+      border-top: 1px solid #EEEEEE !important;
+      margin: 0px 15px;
+  }
+}
