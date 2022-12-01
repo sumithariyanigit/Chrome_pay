@@ -329,5 +329,7 @@ router.post("/cust_opt_verify", customer_controller.cust_opt_verify)
 router.post("/get_cust_org/:token", cust_auth.auth, customer_controller.get_cust_org)
 router.post("/Calculate_credit_Score_customer/:token", cust_auth.auth, customer_controller.Calculate_credit_Score_customer)
 router.post("/customer_dash/:token", cust_auth.auth, customer_controller.customer_dash)
+router.post("/Fuse_wallet_transections/:token", cust_auth.auth, customer_controller.Fuse_wallet_transections)
+router.post("/Fuse_wallet_dash/:token", cust_auth.auth, customer_controller.Fuse_wallet_dash)
 
 module.exports = router

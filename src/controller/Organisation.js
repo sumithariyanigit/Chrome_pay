@@ -228,7 +228,7 @@ const createOrganisation = async (req, res, next) => {
                 secure: true,
                 auth: {
                     user: 'chrmepay123@gmail.com',
-                    pass: 'zawuovwktnkeejlg',
+                    pass: 'jgiplcgrbddvktkl',
                     // user: 'mailto:donotreply@d49.co.in',
                     //   pass: '&4e=XSQB'
                 }
@@ -1910,7 +1910,7 @@ const orgforgotpassword = async (req, res) => {
                 secure: true,
                 auth: {
                     user: 'chrmepay123@gmail.com',
-                    pass: 'zawuovwktnkeejlg',
+                    pass: 'jgiplcgrbddvktkl',
                     // user: 'mailto:donotreply@d49.co.in',
                     //   pass: '&4e=XSQB'
                 }
@@ -2279,7 +2279,11 @@ const createCustomerByOrg = async (req, res, next) => {
        // ------------------------------------Manage - Linked - service----------------------------------------------------------------------
 
         console.log("Phone", phone)
-        const cheack_cus = await temp_Cust.findOne({ phone: phone })
+        let trim = phone.replaceAll(' ', '')
+        let remove_character = trim.replace('-', '')
+        let convert_Number = parseInt(remove_character)
+        console.log("trim", convert_Number)
+        const cheack_cus = await temp_Cust.findOne({ phone: convert_Number })
         if (cheack_cus) {
 
             return res.status(200).send({ status: false, service: "Linked", msg: "Customer already register, you want to linked service" })
@@ -2321,11 +2325,11 @@ const createCustomerByOrg = async (req, res, next) => {
             return res.status(200).send({ status: false, msg: "Please enter phone" })
         }
 
-        if (!(/^\d{8,12}$/).test(phone)) {
-            return res.status(200).send({ status: false, msg: "Please enter valid phone number, number should be in between 8 to 12" })
-        } 
+        // if (!(/^\d{8,20}$/).test(phone)) {
+        //     return res.status(200).send({ status: false, msg: "Please enter valid phone number, number should be in between 8 to 12" })
+        // } 
 
-        let checkPhone = await temp_Cust.findOne({ phone: data.phone })
+        let checkPhone = await temp_Cust.findOne({ phone: convert_Number })
 
 
         if (checkPhone) {
@@ -2333,7 +2337,7 @@ const createCustomerByOrg = async (req, res, next) => {
         }
 
 
-        if (!(/^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,20}$/).test(email)) {
+        if (!(/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/).test(email)) {
             return res.status(200).send({ status: false, msg: "Please enter valid email" })
         }
 
@@ -2365,9 +2369,10 @@ const createCustomerByOrg = async (req, res, next) => {
                     "city": city,
                     "email": email
                 },
-                phoneNumber: `+91${phone}`
+                phoneNumber: `+${convert_Number}`
             }
 
+            console.log("paylaod", payload)
 
             let res = await axios.post('http://13.127.64.68:7008/api/mainnet/getUserData', payload);
             let data1 = res.data;
@@ -2383,7 +2388,7 @@ const createCustomerByOrg = async (req, res, next) => {
 
         let collection = {
             IDphoto: profilePicture, fullname: fullname,
-            dateOfBirth: dateOfBirth, phone: phone, city: city, age: age,
+            dateOfBirth: dateOfBirth, phone: convert_Number, city: city, age: age,
             email: email, gender: gender, nationality: nationality,
             professoin: professoin, address: address, Latitude: Latitude,
             Longitude: Longitude, organisation: ID,
@@ -2417,7 +2422,12 @@ let verifyCustomer = async (req, res) => {
 
         const OTP = req.body.OTP
         const phoneNo1 = req.body.phoneNo
-        const phoneNo = `+91${phoneNo1}`
+        const phoneNo = phoneNo1
+
+        let trim = phoneNo.replaceAll(' ', '')
+        let remove_character = trim.replace('-', '')
+        let convert_Number = parseInt(remove_character)
+        console.log("trim", convert_Number)
 
 
         var result = [];
@@ -2430,14 +2440,15 @@ let verifyCustomer = async (req, res) => {
 
         let payload = {
             code: OTP,
-            phoneNumber: phoneNo
+            phoneNumber: `+${convert_Number}`
         }
 
+        console.log("Payload", payload)
 
 
         let res1 = axios.post('http://13.127.64.68:7008/api/mainnet/generate-digitalid', {
             code: OTP,
-            phoneNumber: phoneNo
+            phoneNumber: `+${convert_Number}`
         }).then(async respons => {
 
 
@@ -2446,7 +2457,7 @@ let verifyCustomer = async (req, res) => {
 
 
 
-                let findCust = await temp_Cust.findOne({ phone: phoneNo1 })
+            let findCust = await temp_Cust.findOne({ phone: convert_Number })
 
                 let newCust = {
                     IDphoto: findCust.IDphoto, fullname: findCust.fullname,
@@ -2528,13 +2539,13 @@ let verifyCustomer = async (req, res) => {
                     wallet_Address: cust_wallet
                 }
             let create_Wallet = await cust_wallet_Model.create(obj)
-            let delete_cust = await temp_Cust.findOneAndDelete({ phone: phoneNo1 })
+            let delete_cust = await temp_Cust.findOneAndDelete({ phone: convert_Number })
             return res.status(200).send({ status: true, msg: "customer register sucessfully" })
 
 
 
         }).catch(async error => {
-            let delete_cust = await temp_Cust.findOneAndDelete({ phone: phoneNo1 })
+            let delete_cust = await temp_Cust.findOneAndDelete({ phone: convert_Number })
             console.log(error)
             return res.status(200).send({ status: false, error: error.message, msg: "failed please try again" })
             });
@@ -2849,7 +2860,7 @@ const applyUpdateLicenses = async (req, res) => {
                 secure: true,
                 auth: {
                     user: 'chrmepay123@gmail.com',
-                    pass: 'zawuovwktnkeejlg',
+                    pass: 'jgiplcgrbddvktkl',
                     // user: 'mailto:donotreply@d49.co.in',
                     //   pass: '&4e=XSQB'
                 }

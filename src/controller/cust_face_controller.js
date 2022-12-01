@@ -159,8 +159,6 @@ const pre_cust_Face_ditect = async (req, res) => {
 
         for (i = 0; i < faces.length; i++) {
 
-            console.log("==>", faces[i])
-
             for (j = 0; j < faces[i].descriptions.length; j++) {
                 faces[i].descriptions[j] = new Float32Array(Object.values(faces[i].descriptions[j]));
             }
@@ -179,6 +177,9 @@ const pre_cust_Face_ditect = async (req, res) => {
         const resizedDetections = faceapi.resizeResults(detections, displaySize);
         const results = resizedDetections.map((d) => faceMatcher.findBestMatch(d.descriptor));
         console.log("tag", results)
+        if (results.length == 0) {
+            return res.status(200).send({ status: false, msg: "Please enter valid Image" })
+        }
         for (let items of results) {
             if (items._label === "unknown") {
                 return res.status(200).send({ status: true, msg: "Face identify Successfully" })

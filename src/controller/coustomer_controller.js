@@ -4,6 +4,7 @@ const transectionModel = require("../models/transaction");
 const cust_Bank = require("../models/customerBank")
 const Chrome_pay_wallet = require("../models/Cust_Wallet")
 const cust_bank = require('../models/customerBank')
+const Chrome_pay_transections = require("../models/Chrome_pay_Transections")
 const axios = require('axios')
 const jwt = require('jsonwebtoken')
 var moment = require('moment');
@@ -526,6 +527,131 @@ const customer_dash = async (req, res) => {
 }
 
 
+//----------------------------------------------------fuse-wallet-------------------------------------------------------------------------------
+
+const Fuse_wallet_transections = async (req, res) => {
+    try {
+
+        const custID = req.userId
+
+        //-----------------Pagination-----------------------------------//
+        let pageNO = req.body.page;
+        if (pageNO == 0) {
+            pageNO = 1
+        }
+
+        const { page = pageNO, limit = 10 } = req.query;
+
+        let find_fuse_sending_trans1 = await transectionModel.find({ senderID: custID })
+        let find_fuse_recived_trans1 = await transectionModel.find({ recieverID: custID })
+        let transecions1 = find_fuse_sending_trans1.concat(find_fuse_recived_trans1)
+        let countPages = transecions1.length
+
+
+        let find_fuse_sending_trans = await transectionModel.find({ senderID: custID }).limit(limit * 1)
+            .skip((page - 1) * limit)
+            .exec();
+        let find_fuse_recived_trans = await transectionModel.find({ recieverID: custID }).limit(limit * 1)
+            .skip((page - 1) * limit)
+            .exec();
+        let transecions = find_fuse_sending_trans.concat(find_fuse_recived_trans)
+
+        let sort_trans = []
+        transecions.sort(function (a, b) {
+
+            return new Date(b.createdAt) - new Date(a.createdAt);
+        });
+
+        return res.status(200).send({ status: true, totalPages: countPages, currenPage: parseInt(pageNO), transecions })
+
+    } catch (error) {
+        console.log(error)
+        return res.status(200).send({ status: false, msg: error.message })
+    }
+}
+
+
+const Fuse_wallet_dash = async (req, res) => {
+    try {
+
+        const custID = req.userId;
+
+        let find_cust = await customer_Model.findById({ _id: custID }).select({ IDphoto: 1, email: 1, fullname: 1, phone: 1 })
+
+        let findsendingAmount = await transectionModel.find({ senderID: custID })
+
+
+        var sendindAmount = 0;
+        for (let i of findsendingAmount) {
+            sendindAmount += i.sendingAmount
+        }
+
+        let findrecievingAmount = await transectionModel.find({ recieverID: custID })
+
+        var receiveAmount = 0;
+        for (let i of findrecievingAmount) {
+            receiveAmount += i.sendingAmount
+        }
+
+        let totalAmount = sendindAmount + receiveAmount;
+
+        return res.status(200).send({ status: true, find_cust, totalAmount, receiveAmount, sendindAmount })
+
+
+
+    } catch (error) {
+        console.log(error)
+        return res.status(200).send({ status: false, msg: error.message })
+    }
+}
+
+//--------------------------------------Chrome_pay_transections-------------------------------------------------------------------------------
+
+const Chrome_pay_trans = async (req, res) => {
+    try {
+
+        const custID = req.userId;
+
+
+        let pageNO = req.body.page;
+        if (pageNO == 0) {
+            pageNO = 1
+        }
+
+        const { page = pageNO, limit = 10 } = req.query;
+
+        let find_fuse_sending_trans1 = await Chrome_pay_transections.find({ senderID: custID })
+        let find_fuse_recived_trans1 = await Chrome_pay_transections.find({ recieverID: custID })
+        let transecions1 = find_fuse_sending_trans1.concat(find_fuse_recived_trans1)
+        let countPages = transecions1.length
+
+
+        let find_fuse_sending_trans = await Chrome_pay_transections.find({ senderID: custID }).limit(limit * 1)
+            .skip((page - 1) * limit)
+            .exec();
+        let find_fuse_recived_trans = await Chrome_pay_transections.find({ recieverID: custID }).limit(limit * 1)
+            .skip((page - 1) * limit)
+            .exec();
+        let transecions = find_fuse_sending_trans.concat(find_fuse_recived_trans)
+
+        let sort_trans = []
+        transecions.sort(function (a, b) {
+
+            return new Date(b.createdAt) - new Date(a.createdAt);
+        });
+
+        return res.status(200).send({ status: true, totalPages: countPages, currenPage: parseInt(pageNO), transecions })
+
+
+
+
+    } catch (error) {
+        console.log(error)
+        return res.status(200).send({ status: false, msg: error.message })
+    }
+}
+
+
 
 
 
@@ -534,4 +660,6 @@ module.exports.cust_login = cust_login;
 module.exports.cust_opt_verify = cust_opt_verify;
 module.exports.get_cust_org = get_cust_org;
 module.exports.Calculate_credit_Score_customer = Calculate_credit_Score_customer;
-module.exports.customer_dash = customer_dash
+module.exports.customer_dash = customer_dash;
+module.exports.Fuse_wallet_transections = Fuse_wallet_transections;
+module.exports.Fuse_wallet_dash = Fuse_wallet_dash

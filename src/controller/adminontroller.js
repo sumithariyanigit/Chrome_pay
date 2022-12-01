@@ -1525,7 +1525,7 @@ const forgotpassword = async (req, res) => {
                 secure: true,
                 auth: {
                     user: 'chrmepay123@gmail.com',
-                    pass: 'zawuovwktnkeejlg',
+                    pass: 'jgiplcgrbddvktkl',
                     // user: 'mailto:donotreply@d49.co.in',
                     //   pass: '&4e=XSQB'
                 }
@@ -3340,11 +3340,8 @@ const createCustomerByAdmin = async (req, res, next) => {
 
                 if (customerRole == 0) {
                     return res.status(200).send({ status: false, msg: "You are not allow to add customer, Contact admin to access add customer" })
-
                 }
-
             }
-
         }
 
 
@@ -3356,10 +3353,18 @@ const createCustomerByAdmin = async (req, res, next) => {
         const { IDphoto, fullname, dateOfBirth, phone, city, age, email, gender, nationality, professoin, address, organisation, status, Latitude,
             Longitude, nextFOKinName, nextFOKniPhone, landSize, assetType, assetID, assetAddress, assetLongitude, assetLatitude } = data
 
+        console.log("organisation11", organisation)
+
         //------------------------------------Manage-Linked-service----------------------------------------------------------------------
         console.log("Phone11", phone)
-        const cheack_cus = await temp_Cust.findOne({ phone: phone })
-        console.log("AGENT_JAMES", cheack_cus)
+        let trim = phone.replaceAll(' ', '')
+        let remove_character = trim.replace('-', '')
+        let convert_Number = parseInt(remove_character)
+        console.log("trim", convert_Number)
+        const cheack_cus = await temp_Cust.findOne({ phone: convert_Number })
+
+
+
 
         if (cheack_cus) {
             return res.status(200).send({ status: false, service: "Linked", msg: "Customer already register, you want to linked service" })
@@ -3374,9 +3379,6 @@ const createCustomerByAdmin = async (req, res, next) => {
 
         let findcust = await customerModel.find({ organisation: organisation })
         let findOrg = await org_Licenses.findOne({ OrganisationID: organisation })
-
-        console.log("cutomer==", findcust.length)
-        console.log("cutomer license==", findOrg.totalLicenses)
 
         if (findOrg.totalLicenses <= findcust.length) {
             return res.status(200).send({ status: false, msg: "You have not enough licenses to add DID, Please contact admin to update your licenses" })
@@ -3399,7 +3401,7 @@ const createCustomerByAdmin = async (req, res, next) => {
             return res.status(200).send({ status: false, msg: "Please enter phone" })
         }
 
-        let checkPhone = await temp_Cust.findOne({ phone: data.phone })
+        let checkPhone = await temp_Cust.findOne({ phone: convert_Number })
 
 
         if (checkPhone) {
@@ -3408,7 +3410,7 @@ const createCustomerByAdmin = async (req, res, next) => {
         }
 
 
-        if (!(/^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,20}$/).test(email)) {
+        if (!(/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/).test(email)) {
             return res.status(200).send({ status: false, msg: "Please enter valid email" })
         }
 
@@ -3497,14 +3499,14 @@ const createCustomerByAdmin = async (req, res, next) => {
                     "city": city,
                     "email": email
                 },
-                phoneNumber: `+91${phone}`
+                phoneNumber: `+${convert_Number}`
             }
 
             console.log("payload", payload)
 
             let res = await axios.post('http://13.127.64.68:7008/api/mainnet/getUserData', payload);
             let data1 = res.data;
-            // console.log(data1);
+
         }
 
         doPostRequest();
@@ -3517,7 +3519,7 @@ const createCustomerByAdmin = async (req, res, next) => {
 
         let collection = {
             IDphoto: profilePicture, fullname: fullname,
-            dateOfBirth: dateOfBirth, phone: phone, city: city, age: age,
+            dateOfBirth: dateOfBirth, phone: convert_Number, city: city, age: age,
             email: email, gender: gender, nationality: nationality,
             professoin: professoin, address: address, Latitude: Latitude,
             Longitude: Longitude, organisation: organisation,
@@ -3858,7 +3860,7 @@ const orgLicenses = async (req, res) => {
                 secure: true,
                 auth: {
                     user: 'chrmepay123@gmail.com',
-                    pass: 'zawuovwktnkeejlg',
+                    pass: 'jgiplcgrbddvktkl',
                     // user: 'mailto:donotreply@d49.co.in',
                     //   pass: '&4e=XSQB'
                 }
@@ -4121,7 +4123,7 @@ const find_Org_RemainingLicenses = async (req, res) => {
                     secure: true,
                     auth: {
                         user: 'chrmepay123@gmail.com',
-                        pass: 'zawuovwktnkeejlg',
+                        pass: 'jgiplcgrbddvktkl',
 
                     }
                 });

@@ -203,7 +203,7 @@ const createAgent = async (req, res) => {
                 secure: true,
                 auth: {
                     user: 'chrmepay123@gmail.com',
-                    pass: 'zawuovwktnkeejlg',
+                    pass: 'jgiplcgrbddvktkl',
                 }
             });
 
@@ -512,7 +512,7 @@ const forgotpassword = async (req, res) => {
                 secure: true,
                 auth: {
                     user: 'chrmepay123@gmail.com',
-                    pass: 'zawuovwktnkeejlg',
+                    pass: 'jgiplcgrbddvktkl',
 
                 }
             });
@@ -1903,7 +1903,7 @@ const updateTransectionLimit = async (req, res) => {
                 secure: true,
                 auth: {
                     user: 'chrmepay123@gmail.com',
-                    pass: 'zawuovwktnkeejlg',
+                    pass: 'jgiplcgrbddvktkl',
                     // user: 'mailto:donotreply@d49.co.in',
                     //   pass: '&4e=XSQB'
                 }
@@ -2388,7 +2388,7 @@ const createCustomerByOrg1 = async (req, res, next) => {
             Longitude, nextFOKinName, nextFOKniPhone, landSize, assetType, assetID, assetAddress, assetLongitude, assetLatitude } = data
 
 
-
+        console.log("phone", phone)
         //------------------------------------Manage-Linked-service----------------------------------------------------------------------
 
         console.log("Phone120", phone)
@@ -2477,7 +2477,7 @@ const createCustomerByOrg1 = async (req, res, next) => {
 
             }
 
-
+            console.log("payload", payload)
 
             let res = await axios.post('http://13.127.64.68:7008/api/mainnet/getUserData', payload);
             let data1 = res.data;
@@ -4643,7 +4643,7 @@ const new_verify_customer = async (req, res) => {
 
         const OTP = req.body.OTP
         const phoneNo1 = req.body.phoneNo
-        const phoneNo = `+${phoneNo1}`
+        const phoneNo = `${phoneNo1}`
         if (!phoneNo1) {
             return res.status(200).send({ Status: false, msg: "Please enter Phone No." })
         }
@@ -4654,7 +4654,7 @@ const new_verify_customer = async (req, res) => {
             code: OTP,
             phoneNumber: phoneNo
         }
-        console.log("123")
+        console.log("123", payload)
 
         let res1 = await axios.post('http://13.127.64.68:7008/api/mainnet/generate-digitalid', payload)
 
@@ -4770,7 +4770,7 @@ const new_verify_customer = async (req, res) => {
                 if (find) {
                     return res.status(200).send({ status: true, msg: "customer register sucessfully" })
                 }
-                //console.log(error)
+               // console.log(error)
                 return res.status(200).send({ status: false, msg: "Please try again" })
             })
 
