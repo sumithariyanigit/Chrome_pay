@@ -257,13 +257,15 @@ const agentLogin = async (req, res) => {
 
         const data = req.body;
 
-        const { email, password } = data
+        const { username, password } = data
 
         console.log(password)
 
-        if (!email) {
-            return res.status(200).send({ status: false, msg: "Please enter email" })
+        if (!username) {
+            return res.status(200).send({ status: false, msg: "Please enter email or phone number" })
         }
+
+        console.log(username)
 
         if (!password) {
             return res.status(200).send({ status: false, msg: "Please enter pasword" })
@@ -271,11 +273,110 @@ const agentLogin = async (req, res) => {
 
 
 
-        let checkemail = await agentModel.findOne({ email: email })
+        let checkemail = await agentModel.findOne({ email: username })
 
         if (!checkemail) {
-            return res.status(200).send({ status: false, msg: "Please enter valid email" })
+            let checkemail = await agentModel.findOne({ phone: username })
+
+            if (!checkemail) {
+                return res.status(200).send({ status: false, msg: "Please enter valid email or phone" })
+            } else {
+
+
+
+
+                const decryptedPassword = await bcrypt.compare(password, checkemail.password)
+
+
+
+
+                if (!decryptedPassword) {
+                    let UserIP = ip.address()
+                    let AgentID = checkemail._id
+
+                    let findLoginTime = Date.now();
+
+                    let logData = {
+                        email: email,
+                        UserID: checkemail._id,
+                        loginTime: findLoginTime,
+                        IP: UserIP,
+                        status: "Please enter valid password",
+
+                    }
+
+                    let admindata = await adminModel.findOne();
+                    let currStatus = await agentModel.findOne({ email: email })
+                    let wrongCount = currStatus.WrongPassword + 1;
+                    let update = await agentModel.findOneAndUpdate({ email: email }, { WrongPassword: wrongCount })
+                    let remainingchance = admindata.agentpasswordlimit - update.WrongPassword
+
+                    if (update.WrongPassword >= admindata.agentpasswordlimit) {
+                        let UserIP = ip.address()
+                        let data = {
+                            IP: UserIP
+                        }
+                        let blockIP = await BlockIP.create(data)
+                        let update = await agentModel.findOneAndUpdate({ email: checkemail.email }, { WrongPassword: 0 })
+
+                        setTimeout(async () => {
+                            let UserIP = ip.address()
+                            let findIP = await BlockIP.findOneAndDelete({ IP: UserIP })
+
+                        }, "10000")
+
+                        return res.status(200).send({ status: false, msg: "You are blocked due to access try Please try againn after 10 mintutes" })
+
+                    }
+
+
+
+
+
+
+                    let MakeLogHIstory = await logHistory.create(logData);
+
+                    return res.status(200).send({ status: false, msg: `Invalid password remaining chances ${remainingchance}` });
+                }
+
+                let agentID = checkemail._id;
+                let name = checkemail.name
+                let orgID = checkemail.organisationID
+
+                let token = jwt.sign({ name, agentID, orgID, username, }, 'Agent')
+
+                let setTooken = await agentModel.findOneAndUpdate({ email: checkemail.email }, { token: token })
+                let UserIP = ip.address()
+                let AgentID = checkemail._id;
+
+                let findLoginTime = Date.now();
+
+                let logData = {
+                    email: checkemail.email,
+                    UserID: checkemail._id,
+                    loginTime: findLoginTime,
+                    IP: UserIP,
+                    status: "Login Sucessfull",
+
+                }
+
+                let MakeLogHIstory = await logHistory.create(logData);
+                let update = await agentModel.findOneAndUpdate({ email: checkemail.email }, { WrongPassword: 0 })
+                return res.status(200).send({ status: true, msg: "Login Sucessfull", token: token, ID: agentID, orgID: orgID })
+
+
+
+            }
         }
+
+        if (!checkemail) {
+            return res.status(200).send({ status: false, msg: "Please enter valid email or phone" })
+        }
+
+        // console.log("check", checkemail)
+        // if (!checkemail) {
+        //     return res.status(200).send({ status: false, msg: "Please enter valid email or phone" })
+        // }
 
         const decryptedPassword = await bcrypt.compare(password, checkemail.password)
 
@@ -298,9 +399,9 @@ const agentLogin = async (req, res) => {
             }
 
             let admindata = await adminModel.findOne();
-            let currStatus = await agentModel.findOne({ email: email })
+            let currStatus = await agentModel.findOne({ email: checkemail.email })
             let wrongCount = currStatus.WrongPassword + 1;
-            let update = await agentModel.findOneAndUpdate({ email: email }, { WrongPassword: wrongCount })
+            let update = await agentModel.findOneAndUpdate({ email: checkemail.email }, { WrongPassword: wrongCount })
             let remainingchance = admindata.agentpasswordlimit - update.WrongPassword
 
             if (update.WrongPassword >= admindata.agentpasswordlimit) {
@@ -309,7 +410,7 @@ const agentLogin = async (req, res) => {
                     IP: UserIP
                 }
                 let blockIP = await BlockIP.create(data)
-                let update = await agentModel.findOneAndUpdate({ email: email }, { WrongPassword: 0 })
+                let update = await agentModel.findOneAndUpdate({ email: checkemail.email }, { WrongPassword: 0 })
 
                 setTimeout(async () => {
                     let UserIP = ip.address()
@@ -335,16 +436,16 @@ const agentLogin = async (req, res) => {
         let name = checkemail.name
         let orgID = checkemail.organisationID
 
-        let token = jwt.sign({ name, agentID, orgID, email, }, 'Agent')
+        let token = jwt.sign({ name, agentID, orgID, username, }, 'Agent')
 
-        let setTooken = await agentModel.findOneAndUpdate({ email: email }, { token: token })
+        let setTooken = await agentModel.findOneAndUpdate({ email: checkemail.email }, { token: token })
         let UserIP = ip.address()
         let AgentID = checkemail._id;
 
         let findLoginTime = Date.now();
 
         let logData = {
-            email: email,
+            email: checkemail.email,
             UserID: checkemail._id,
             loginTime: findLoginTime,
             IP: UserIP,
@@ -353,7 +454,7 @@ const agentLogin = async (req, res) => {
         }
 
         let MakeLogHIstory = await logHistory.create(logData);
-        let update = await agentModel.findOneAndUpdate({ email: email }, { WrongPassword: 0 })
+        let update = await agentModel.findOneAndUpdate({ email: checkemail.email }, { WrongPassword: 0 })
         return res.status(200).send({ status: true, msg: "Login Sucessfull", token: token, ID: agentID, orgID: orgID })
 
 
@@ -901,9 +1002,9 @@ const agentCustomerList = async (req, res) => {
         let ID1 = req.body.ID
 
         if (Object.keys(req.body).length <= 2) {
-            let countpages1 = await cutomerModel.find({ createdBY: adminID, isDeleted: 0 }).sort({ createdAt: 1 })
+            let countpages1 = await cutomerModel.find({ createdBY: adminID, isDeleted: 0, status: "verified" }).sort({ createdAt: 1 })
             let totalRaow1 = countpages1.length;
-            let filter = await cutomerModel.find({ createdBY: adminID, isDeleted: 0 }).sort({ createdAt: -1 })
+            let filter = await cutomerModel.find({ createdBY: adminID, isDeleted: 0, status: "verified" }).sort({ createdAt: -1 })
                 .limit(limit * 1)
                 .skip((page - 1) * limit)
                 .exec();
@@ -915,9 +1016,9 @@ const agentCustomerList = async (req, res) => {
         } else if (req.body.nationality) {
             let option = [{ nationality: req.body.nationality }]
 
-            let countpages2 = await cutomerModel.find({ $or: option, createdBY: adminID, isDeleted: 0 })
+            let countpages2 = await cutomerModel.find({ $or: option, createdBY: adminID, isDeleted: 0, status: "verified" })
             let contRow = countpages2.length
-            let filter = await cutomerModel.find({ $or: option, createdBY: adminID, isDeleted: 0 }).sort({ createdAt: -1 })
+            let filter = await cutomerModel.find({ $or: option, createdBY: adminID, isDeleted: 0, status: "verified" }).sort({ createdAt: -1 })
                 .limit(limit * 1)
                 .skip((page - 1) * limit)
                 .exec();
@@ -938,9 +1039,9 @@ const agentCustomerList = async (req, res) => {
                 }
             }]
 
-            let countpages2 = await cutomerModel.find({ $or: option, createdBY: adminID, isDeleted: 0 })
+            let countpages2 = await cutomerModel.find({ $or: option, createdBY: adminID, isDeleted: 0, status: "verified" })
             let contRow = countpages2.length
-            let filter = await cutomerModel.find({ $or: option, createdBY: adminID, isDeleted: 0 }).sort({ createdAt: -1 })
+            let filter = await cutomerModel.find({ $or: option, createdBY: adminID, isDeleted: 0, status: "verified" }).sort({ createdAt: -1 })
                 .limit(limit * 1)
                 .skip((page - 1) * limit)
                 .exec();
@@ -980,9 +1081,9 @@ const agentCustomerList = async (req, res) => {
         else if (req.body.ID && req.body.ID > 0) {
             let option = [{ _id: req.body.ID }, { phone: req.body.phone }, { status: req.body.status }, { nationality: req.body.nationality }]
 
-            let countpages2 = await cutomerModel.find({ $or: option, createdBY: adminID, isDeleted: 0 })
+            let countpages2 = await cutomerModel.find({ $or: option, createdBY: adminID, isDeleted: 0, status: "verified" })
             let contRow = countpages2.length
-            let filter = await cutomerModel.find({ $or: option, createdBY: adminID, isDeleted: 0 }).sort({ createdAt: -1 })
+            let filter = await cutomerModel.find({ $or: option, createdBY: adminID, isDeleted: 0, status: "verified" }).sort({ createdAt: -1 })
                 .limit(limit * 1)
                 .skip((page - 1) * limit)
                 .exec();
@@ -1000,9 +1101,9 @@ const agentCustomerList = async (req, res) => {
 
             let option = [{ _id: req.body.ID }, { phone: req.body.phone }, { status: req.body.status }, { nationality: req.body.nationality }]
 
-            let countpages2 = await cutomerModel.find({ $or: option, createdBY: adminID, isDeleted: 0 })
+            let countpages2 = await cutomerModel.find({ $or: option, createdBY: adminID, isDeleted: 0, status: "verified" })
             let contRow = countpages2.length
-            let filter = await cutomerModel.find({ $or: option, createdBY: adminID, isDeleted: 0 }).sort({ createdAt: -1 })
+            let filter = await cutomerModel.find({ $or: option, createdBY: adminID, isDeleted: 0, status: "verified" }).sort({ createdAt: -1 })
                 .limit(limit * 1)
                 .skip((page - 1) * limit)
                 .exec();
@@ -1021,10 +1122,10 @@ const agentCustomerList = async (req, res) => {
 
 
             let option = [{ phone: req.body.phone }, { status: req.body.status }, { nationality: req.body.nationality }]
-            let countpages3 = await cutomerModel.find({ $or: option, createdBY: adminID, })
+            let countpages3 = await cutomerModel.find({ $or: option, createdBY: adminID, status: "verified", isDeleted: 0, })
             let contRow3 = countpages3.length
 
-            let filter = await cutomerModel.find({ $or: option, createdBY: adminID, isDeleted: 0 }).sort({ createdAt: -1 })
+            let filter = await cutomerModel.find({ $or: option, createdBY: adminID, isDeleted: 0, status: "verified" }).sort({ createdAt: -1 })
                 .limit(limit * 1)
                 .skip((page - 1) * limit)
                 .exec();
@@ -1034,8 +1135,6 @@ const agentCustomerList = async (req, res) => {
             let totlaRow = filter.length;
 
             return res.status(200).send({ status: true, totlaRow: contRow3, currenPage: parseInt(pageNO), filter })
-
-
 
         }
 
@@ -1621,12 +1720,8 @@ const agenttransectionfillter = async (req, res) => {
                     result.push(ele)
                 }
             }
-
             return res.status(200).send({ status: true, totlaRow: contRow, currenPage: parseInt(pageNO), result })
-
         }
-
-
 
         else if (req.body.senderName && req.body.beneficiaryName && req.body.fromAmount && req.body.toAmount) {
 
@@ -2355,9 +2450,6 @@ const createCustomerByOrg1 = async (req, res, next) => {
         let orgID = req.params.orgID;
 
 
-
-
-
         let findsubAdminID = await subAdmin.findOne({ _id: ID })
 
         if (files.length == 0) {
@@ -2388,10 +2480,8 @@ const createCustomerByOrg1 = async (req, res, next) => {
             Longitude, nextFOKinName, nextFOKniPhone, landSize, assetType, assetID, assetAddress, assetLongitude, assetLatitude } = data
 
 
-        console.log("phone", phone)
         //------------------------------------Manage-Linked-service----------------------------------------------------------------------
 
-        console.log("Phone120", phone)
         const cheack_cus = await temp_Cust.findOne({ phone: phone })
 
         if (cheack_cus) {
@@ -2455,10 +2545,12 @@ const createCustomerByOrg1 = async (req, res, next) => {
 
         }
 
-        const profilePicture = await uploadFile(files[0])
+        const profilePicture = await uploadFile(files[3])
         const residace = await uploadFile(recidence[1])
-        const local = await uploadFile(localDoc[2])
-        const land = await uploadFile(ladregistration[3])
+        const local = await uploadFile(localDoc[0])
+        const land = await uploadFile(ladregistration[2])
+
+
 
 
 
@@ -2477,7 +2569,6 @@ const createCustomerByOrg1 = async (req, res, next) => {
 
             }
 
-            console.log("payload", payload)
 
             let res = await axios.post('http://13.127.64.68:7008/api/mainnet/getUserData', payload);
             let data1 = res.data;
@@ -4643,7 +4734,7 @@ const new_verify_customer = async (req, res) => {
 
         const OTP = req.body.OTP
         const phoneNo1 = req.body.phoneNo
-        const phoneNo = `${phoneNo1}`
+        const phoneNo = `+${phoneNo1}`
         if (!phoneNo1) {
             return res.status(200).send({ Status: false, msg: "Please enter Phone No." })
         }
@@ -4677,7 +4768,7 @@ const new_verify_customer = async (req, res) => {
                     digitalID: findCust.digitalID, nextFOKniPhone: findCust.nextFOKniPhone, nextFOKinName: findCust.nextFOKinName,
                     assetType: findCust.assetType, assetID: findCust.assetID,
                     assetAddress: findCust.assetAddress, assetLongitude: findCust.assetLongitude,
-                    assetLatitude: findCust.assetLatitude, password: cust_password
+                    assetLatitude: findCust.assetLatitude, password: cust_password, facialIdentification: 1
                 }
                 let create = await cutomerModel.create(newCust)
 
@@ -4768,7 +4859,7 @@ const new_verify_customer = async (req, res) => {
                 if (find) {
                     return res.status(200).send({ status: true, msg: "customer register sucessfully" })
                 }
-               // console.log(error)
+                // console.log(error)
                 return res.status(200).send({ status: false, msg: "Please try again" })
             })
 
@@ -4785,17 +4876,74 @@ const new_verify_customer = async (req, res) => {
 const get_agent_cut_month = async (req, res) => {
     try {
 
-        let agentID = req.userId;
+        // let agentID = req.userId;
 
-        let find_cust = await cutomerModel.find({ createdBY: agnetID })
+        //let find_cust = await cutomerModel.find({ createdBY: agentID })
 
-        return res.status(200).send({ status: true, msg: find_cust })
+
+
+        let TODAY = "2022-12-03T00:00:00"
+        let YEAR_BEFORE = "2021-12-01T00:00:00"
+        let req = { params: { productId: 1 } }
+        const monthsArray = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+
+        const find123 = await cutomerModel.aggregate([
+            {
+                $match: {
+                    createdBY: "638455c05f12c279fe18e346",
+                    createdAt: { $gte: YEAR_BEFORE, $lte: TODAY }
+                }
+            },
+            {
+                $group: {
+                    _id: { "year_month": { $substrCP: ["$createdAt", 0, 7] } },
+                    count: { $sum: 1 }
+                }
+            },
+            {
+                $sort: { "_id.year_month": 1 }
+            },
+            {
+                $project: {
+                    _id: 0,
+                    count: 1,
+                    month_year: {
+                        $concat: [
+                            { $arrayElemAt: [monthsArray, { $subtract: [{ $toInt: { $substrCP: ["$_id.year_month", 5, 2] } }, 1] }] },
+                            "-",
+                            { $substrCP: ["$_id.year_month", 0, 4] }
+                        ]
+                    }
+                }
+            },
+            {
+                $group: {
+                    _id: null,
+                    data: { $push: { k: "$month_year", v: "$count" } }
+                }
+            },
+            {
+                $project: {
+                    data: { $arrayToObject: "$data" },
+                    _id: 0
+                }
+            }
+        ])
+
+
+
+        // for (let i of find_cust) {
+
+        // }
+        return res.status(200).send({ status: true, find123 })
 
     } catch (error) {
         console.log(error)
         return res.status(200).send({ status: false, msg: error.message })
     }
 }
+
+
 
 
 
