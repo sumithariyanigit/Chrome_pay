@@ -4237,14 +4237,15 @@ const emailRequestsByOrg = async (req, res) => {
 
         const { page = pageNO, limit = 10 } = req.query;
 
-        let findrequests1 = await admin_Email_request.find({ By: 'Organisation' })
-        let findrequests = await admin_Email_request.find({ By: 'Organisation' }).limit(limit * 1)
-            .skip((page - 1) * limit)
-            .exec()
+        //let findrequests1 = await admin_Email_request.find({ By: 'Organisation', status: "pending" })
+        let findrequests = await admin_Email_request.find({ By: 'Organisation', status: "pending" })
+        // .limit(limit * 1)
+        //     .skip((page - 1) * limit)
+        //     .exec()
 
-        let contRow = findrequests1.length
+        //let contRow = findrequests1.length
 
-        return res.status(200).send({ status: true, totlaRow: contRow, currenPage: parseInt(pageNO), findrequests })
+        return res.status(200).send({ status: true, findrequests })
 
 
 
@@ -4788,6 +4789,25 @@ const Unblock_sub_admin = async (req, res) => {
     }
 }
 
+//-------------------------------------------admin_read_notification-------------------------------------------------------------------------
+
+const admin_read_notification = async (req, res) => {
+    try {
+
+        const notification_ID = req.params.ID;
+
+        let find_notification = await admin_Email_request.findOneAndUpdate({ _id: notification_ID }, { status: "Read" })
+
+        if (find_notification) {
+            return res.status(200).send({ status: true })
+        }
+
+    } catch (error) {
+        console.log(error)
+        return res.status(200).send({ status: false, msg: error.message })
+    }
+}
+
 module.exports.createAdmin = createAdmin;
 module.exports.AdminLogin = AdminLogin;
 module.exports.getHistory = getHistory;
@@ -4873,3 +4893,4 @@ module.exports.getlast10sec = getlast10sec
 module.exports.get_all_loans = get_all_loans
 module.exports.Block_sub_admin = Block_sub_admin
 module.exports.Unblock_sub_admin = Unblock_sub_admin
+module.exports.admin_read_notification = admin_read_notification

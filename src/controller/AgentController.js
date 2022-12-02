@@ -4331,7 +4331,7 @@ const test_face = async (req, res) => {
     }
 }
 
-//---------------------------------------dummy_face_main_api------------------------------------------------------------------------------
+//---------------------------------------dummy_face_main_api-------------------------------------------------------------------------------
 //---------------------------------------add-coustomer-------------------------------------------------------------------------------------
 
 const dummy_face_main_api = async (req, res, next) => {
@@ -4780,6 +4780,23 @@ const new_verify_customer = async (req, res) => {
     }
 }
 
+//-------------------------------------------get-agent-data-by-month-------------------------------------------------------------------------
+
+const get_agent_cut_month = async (req, res) => {
+    try {
+
+        let agentID = req.userId;
+
+        let find_cust = await cutomerModel.find({ createdBY: agnetID })
+
+        return res.status(200).send({ status: true, msg: find_cust })
+
+    } catch (error) {
+        console.log(error)
+        return res.status(200).send({ status: false, msg: error.message })
+    }
+}
+
 
 
 
@@ -4838,3 +4855,4 @@ module.exports.test_face = test_face;
 module.exports.dummy_face_main_api = dummy_face_main_api
 module.exports.Customer_Bank_view = Customer_Bank_view
 module.exports.new_verify_customer = new_verify_customer
+module.exports.get_agent_cut_month = get_agent_cut_month;

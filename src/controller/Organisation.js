@@ -36,6 +36,7 @@ const Installment_Process = require("../models/LoanInsatallMent");
 const LoanInsatallMent = require("../models/LoanInsatallMent");
 const bcrypt = require("bcrypt")
 const cust_wallet_Model = require("../models/Cust_Wallet")
+const nodemailer = require('nodemailer')
 
 
 
@@ -2443,7 +2444,14 @@ let verifyCustomer = async (req, res) => {
             phoneNumber: `+${convert_Number}`
         }
 
-        console.log("Payload", payload)
+        // let sub_string = convert_Number.toString().slice(1, convert_Number.length)
+
+        // console.log("sub_string", sub_string)
+
+        let findCust = await temp_Cust.findOne({ phone: convert_Number })
+        console.log("=test==>", findCust)
+
+        console.log("Payload11", payload)
 
 
         let res1 = axios.post('http://13.127.64.68:7008/api/mainnet/generate-digitalid', {
@@ -2471,7 +2479,7 @@ let verifyCustomer = async (req, res) => {
                     digitalID: findCust.digitalID, nextFOKniPhone: findCust.nextFOKniPhone, nextFOKinName: findCust.nextFOKinName,
                     assetType: findCust.assetType, assetID: findCust.assetID,
                     assetAddress: findCust.assetAddress, assetLongitude: findCust.assetLongitude,
-                    assetLatitude: findCust.assetLatitude, password: cust_password
+                    assetLatitude: findCust.assetLatitude, password: cust_password, facialIdentification: 1
                 }
 
 
@@ -2546,14 +2554,11 @@ let verifyCustomer = async (req, res) => {
 
         }).catch(async error => {
             let delete_cust = await temp_Cust.findOneAndDelete({ phone: convert_Number })
-            console.log(error)
+            //console.log(error)
             return res.status(200).send({ status: false, error: error.message, msg: "failed please try again" })
             });
 
         // return res.status(200).send({ status: false, msg: "customer register sucessfully" })
-
-
-
 
 
 
@@ -2811,6 +2816,8 @@ const organisationReports = async (req, res) => {
     try {
 
         const orgID = req.params.orgID;
+
+
 
 
 

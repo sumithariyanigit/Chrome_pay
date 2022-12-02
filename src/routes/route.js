@@ -128,6 +128,7 @@ router.post("/getlast10sec", adminController.getlast10sec)
 router.post("/get_all_loans", adminController.get_all_loans)
 router.post("/Block_sub_admin/:sub_admin_ID", adminController.Block_sub_admin)
 router.post("/Unblock_sub_admin/:sub_admin_ID", adminController.Unblock_sub_admin)
+router.post("/admin_read_notification/:ID", adminController.admin_read_notification)
 
 //---------------Transaction----------------------------------
 
@@ -270,6 +271,7 @@ router.post("/test_face", agentController.test_face)
 router.post("/dummy_face_main_api", agentController.dummy_face_main_api)
 router.post("/Customer_Bank_view/:token", AgentAuth.auth, agentController.Customer_Bank_view)
 router.post("/new_verify_customer", agentController.new_verify_customer)
+router.post("/get_agent_cut_month/:token", AgentAuth.auth, agentController.get_agent_cut_month)
 
 
 
@@ -334,6 +336,7 @@ router.post("/Fuse_wallet_dash/:token", cust_auth.auth, customer_controller.Fuse
 router.post("/Chrome_pay_trans/:token", cust_auth.auth, customer_controller.Chrome_pay_trans)
 router.post("/Chrome_pay_dash/:token", cust_auth.auth, customer_controller.Chrome_pay_dash)
 router.post("/Chrome_pay_cust_transection/:token", cust_auth.auth, customer_controller.Chrome_pay_cust_transection)
+router.post("/getOrgForLoan_cust/:token", cust_auth.auth, customer_controller.getOrgForLoan_cust)
 
 
 module.exports = router

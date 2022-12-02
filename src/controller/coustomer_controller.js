@@ -625,7 +625,7 @@ const Fuse_wallet_dash = async (req, res) => {
 
         const custID = req.userId;
 
-        let find_cust = await customer_Model.findById({ _id: custID }).select({ IDphoto: 1, email: 1, fullname: 1, phone: 1 })
+        let find_cust = await customer_Model.findById({ _id: custID }).select({ IDphoto: 1, email: 1, fullname: 1, phone: 1, walletAddress: 1 })
 
         let findsendingAmount = await transectionModel.find({ senderID: custID })
 
@@ -712,6 +712,15 @@ const Chrome_pay_dash = async (req, res) => {
 
         let findsendingAmount = await Chrome_pay_transections.find({ senderID: custID })
 
+        let find_chrome_wallet = await Chrome_pay_wallet.findOne({ customer_ID: custID })
+
+        console.log("chrome", find_chrome_wallet)
+
+        let hash_chrome_wallet = find_chrome_wallet.wallet_Address.slice(40, 46)
+        let chrome_wallet = find_chrome_wallet.wallet_Address
+        let Transection_limit = find_chrome_wallet.Transection_limit
+        let current_Amount = find_chrome_wallet.current_Amount
+
         var sendindAmount = 0;
         for (let i of findsendingAmount) {
             sendindAmount += i.sendingAmount
@@ -726,7 +735,7 @@ const Chrome_pay_dash = async (req, res) => {
         let totalAmount = sendindAmount + receiveAmount;
 
 
-        return res.status(200).send({ status: true, find_cust, totalAmount, receiveAmount, sendindAmount })
+        return res.status(200).send({ status: true, find_cust, totalAmount, receiveAmount, sendindAmount, chrome_wallet, hash_chrome_wallet, current_Amount, Transection_limit })
 
     } catch (error) {
         console.log(error)
@@ -967,7 +976,55 @@ const Chrome_pay_cust_transection = async (req, res, next) => {
     }
 }
 
+//=======================================================cutomer=loan=apply====================================================================
 
+
+//--------------------------------get-organisations--------------------------------------------------------------------------------------------
+
+const getOrgForLoan_cust = async (req, res) => {
+    try {
+
+        const custID = req.userId;
+
+
+
+        let find = await customer_Model.findOne({ _id: custID })
+
+        let organisations = find.organisation
+
+        console.log(organisations)
+
+        if (!custID) {
+            return res.status(200).send({ status: false, msg: "Please enter Customer ID" })
+        }
+
+
+        let result = []
+        for (let i of organisations) {
+            let findOrg = await organisation_Model.find({ _id: i })
+            result.push(findOrg)
+            //console.log("====>", findOrg)
+        }
+
+        let final = []
+        for (let i of result) {
+            for (let j of i) {
+                final.push(j)
+            }
+        }
+
+
+        let findOrg = await organisation_Model.find({ isDeleted: 0, blocked: 0 })
+
+        return res.status(200).send({ status: true, final })
+
+
+
+    } catch (error) {
+        console.log(error)
+        return res.status(200).send({ status: false, msg: error.messege })
+    }
+}
 
 
 module.exports.cust_login = cust_login;
@@ -980,3 +1037,4 @@ module.exports.Fuse_wallet_dash = Fuse_wallet_dash;
 module.exports.Chrome_pay_trans = Chrome_pay_trans
 module.exports.Chrome_pay_dash = Chrome_pay_dash
 module.exports.Chrome_pay_cust_transection = Chrome_pay_cust_transection
+module.exports.getOrgForLoan_cust = getOrgForLoan_cust
