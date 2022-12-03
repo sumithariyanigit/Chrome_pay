@@ -4890,27 +4890,27 @@ const get_agent_cut_month = async (req, res) => {
 
             if (i.createdAt.getMonth() + 1 == 1) {
                 January++
-            } else if (i.createdAt.getMonth() + 1 == 1) {
-                February++
             } else if (i.createdAt.getMonth() + 1 == 2) {
-                March++
+                February++
             } else if (i.createdAt.getMonth() + 1 == 3) {
-                April++
+                March++
             } else if (i.createdAt.getMonth() + 1 == 4) {
-                May++
+                April++
             } else if (i.createdAt.getMonth() + 1 == 5) {
-                June++
+                May++
             } else if (i.createdAt.getMonth() + 1 == 6) {
-                July++
+                June++
             } else if (i.createdAt.getMonth() + 1 == 7) {
-                August++
+                July++
             } else if (i.createdAt.getMonth() + 1 == 8) {
-                September++
+                August++
             } else if (i.createdAt.getMonth() + 1 == 9) {
-                October++
+                September++
             } else if (i.createdAt.getMonth() + 1 == 10) {
-                November++
+                October++
             } else if (i.createdAt.getMonth() + 1 == 11) {
+                November++
+            } else if (i.createdAt.getMonth() + 1 == 12) {
                 December++
             }
         }
@@ -4985,7 +4985,7 @@ const Resend_otp = async (req, res) => {
 
             let res = await axios.post('http://13.127.64.68:7008/api/mainnet/getUserData', payload);
             let data1 = res.data;
-            // console.log(data1);
+
         }
 
         await doPostRequest();
