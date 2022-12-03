@@ -4186,13 +4186,13 @@ const Cust_Linked_Srevice_send_OTP = async (req, res) => {
         const cust_phone = req.body.Phone;
 
         if (!cust_phone) {
-            return res.status(200).send({ statsu: false, msg: "Please enter user phone number" })
+            return res.status(200).send({ status: false, msg: "Please enter user phone number" })
         }
 
         let check_cust = await cutomerModel.findOne({ phone: cust_phone })
 
         if (!check_cust) {
-            return res.status(200).send({ statsu: false, msg: "customer not regiater please register first" })
+            return res.status(200).send({ status: false, msg: "customer not regiater please register first" })
         }
 
         let OTP = 100000 + Math.floor(Math.random() * 900000);
