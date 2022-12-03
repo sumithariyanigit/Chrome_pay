@@ -2441,6 +2441,7 @@ const recentAgentTransection = async (req, res) => {
 const createCustomerByOrg1 = async (req, res, next) => {
     try {
         url = "http://localhost:3000/customer";
+        console.log("456")
         let data = req.body;
         let files = req.files
         let recidence = req.files
@@ -4756,6 +4757,8 @@ const new_verify_customer = async (req, res) => {
 
                 let findCust = await temp_Cust.findOne({ phone: phoneNo1 })
 
+                console.log("findCust", findCust)
+
                 let newCust = {
                     IDphoto: findCust.IDphoto, fullname: findCust.fullname,
                     dateOfBirth: findCust.dateOfBirth, phone: findCust.phone, city: findCust.city, age: findCust.age,
@@ -4855,12 +4858,19 @@ const new_verify_customer = async (req, res) => {
             }).catch(async (error) => {
                 const phoneNo1 = req.body.phoneNo
                 console.log("jkl", phoneNo1)
+
                 let find = await cutomerModel.findOne({ phone: phoneNo1 })
+                console.log("find", find)
                 if (find) {
                     return res.status(200).send({ status: true, msg: "customer register sucessfully" })
                 }
-                // console.log(error)
-                return res.status(200).send({ status: false, msg: "Please try again" })
+
+                if (!find) {
+                    return res.status(200).send({ status: false, msg: "Please try again" })
+                }
+
+                let delete_cust = await temp_Cust.findOneAndDelete({ phone: phoneNo1 })
+
             })
 
 
@@ -4877,12 +4887,18 @@ const get_agent_cut_month = async (req, res) => {
     try {
 
         let agentID = req.userId;
+        let date = new Date()
+        let date1 = new Date
+
+        // date.setMonth(date.getMonth() – 12);
+
+
 
         let find_cust = await cutomerModel.find({ createdBY: agentID })
 
         January = 0, February = 0, March = 0, April = 0, May = 0, June = 0, July = 0, August = 0, September = 0, October = 0, November = 0, December = 0
 
-        let date = new Date()
+
 
         for (let i of find_cust) {
 
@@ -4992,20 +5008,11 @@ const Resend_otp = async (req, res) => {
 
         return res.status(200).send({ status: true, msg: "OTP send sucessfully" })
 
-
-
-
-
     } catch (error) {
         console.log(error)
         return res.status(200).send({ status: false, msg: error.message })
     }
-
 }
-
-
-
-
 
 module.exports.createAgent = createAgent;
 module.exports.agentLogin = agentLogin;
@@ -5050,17 +5057,17 @@ module.exports.calculate_Amount = calculate_Amount;
 module.exports.Cust_Loan_apply_agent = Cust_Loan_apply_agent;
 module.exports.Cust_apply_Agent_Loans = Cust_apply_Agent_Loans;
 module.exports.get_Agent_pass_Loans = get_Agent_pass_Loans;
-module.exports.pay_cust_emi = pay_cust_emi
+module.exports.pay_cust_emi = pay_cust_emi;
 module.exports.Calculate_credit_Score = Calculate_credit_Score;
 module.exports.get_Insatallment_Loans = get_Insatallment_Loans;
 module.exports.send_Loan_Otp = send_Loan_Otp;
 module.exports.Cust_Linked_Srevice_send_OTP = Cust_Linked_Srevice_send_OTP;
 module.exports.Cust_Linked_Srevice = Cust_Linked_Srevice;
-module.exports.get_next_month_emi = get_next_month_emi
-module.exports.get_agent_LogHistory = get_agent_LogHistory
+module.exports.get_next_month_emi = get_next_month_emi;
+module.exports.get_agent_LogHistory = get_agent_LogHistory;
 module.exports.test_face = test_face;
-module.exports.dummy_face_main_api = dummy_face_main_api
-module.exports.Customer_Bank_view = Customer_Bank_view
-module.exports.new_verify_customer = new_verify_customer
+module.exports.dummy_face_main_api = dummy_face_main_api;
+module.exports.Customer_Bank_view = Customer_Bank_view;
+module.exports.new_verify_customer = new_verify_customer;
 module.exports.get_agent_cut_month = get_agent_cut_month;
-module.exports.Resend_otp = Resend_otp
+module.exports.Resend_otp = Resend_otp;
