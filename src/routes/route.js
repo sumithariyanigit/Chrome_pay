@@ -272,6 +272,7 @@ router.post("/dummy_face_main_api", agentController.dummy_face_main_api)
 router.post("/Customer_Bank_view/:token", AgentAuth.auth, agentController.Customer_Bank_view)
 router.post("/new_verify_customer", agentController.new_verify_customer)
 router.post("/get_agent_cut_month/:token", AgentAuth.auth, agentController.get_agent_cut_month)
+router.post("/Resend_otp/:phone", agentController.Resend_otp)
 
 
 

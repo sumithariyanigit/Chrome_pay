@@ -4958,6 +4958,50 @@ const get_agent_cut_month = async (req, res) => {
     }
 }
 
+//------------------------------------------Resent-otp-customer--------------------------------------------------------------------------------
+
+const Resend_otp = async (req, res) => {
+    try {
+
+        let phone = req.params.phone;
+
+        if (!phone) {
+            return res.status(200).send({ status: false, msg: "Please enter phone nummber" })
+        }
+
+        async function doPostRequest() {
+
+            let payload = {
+                data: {
+                    "name": "",
+                    "age": "",
+                    "city": "",
+                    "email": ""
+                },
+                phoneNumber: `${phone}`
+
+            }
+
+
+            let res = await axios.post('http://13.127.64.68:7008/api/mainnet/getUserData', payload);
+            let data1 = res.data;
+            // console.log(data1);
+        }
+
+        await doPostRequest();
+
+        return res.status(200).send({ status: true, msg: "OTP send sucessfully" })
+
+
+
+
+
+    } catch (error) {
+        console.log(error)
+        return res.status(200).send({ status: false, msg: error.message })
+    }
+
+}
 
 
 
@@ -5019,3 +5063,4 @@ module.exports.dummy_face_main_api = dummy_face_main_api
 module.exports.Customer_Bank_view = Customer_Bank_view
 module.exports.new_verify_customer = new_verify_customer
 module.exports.get_agent_cut_month = get_agent_cut_month;
+module.exports.Resend_otp = Resend_otp
