@@ -3586,7 +3586,7 @@ const send_Loan_Otp = async (req, res) => {
 const calculate_Amount = async (req, res) => {
     try {
 
-        let agentID = req.userId
+        let = req.userId
 
         const Interest1 = req.body.Interest;
         const Amount1 = req.body.Amount

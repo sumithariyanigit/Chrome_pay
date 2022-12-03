@@ -17,6 +17,7 @@ const auth = async (req, res, next) => {
 
         req.userId = decoded.custID
         req.email = decoded.email
+        req.agentID = decoded.agentID
 
         console.log("middleware==>cust", req.userId)
 

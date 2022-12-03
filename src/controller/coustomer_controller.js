@@ -5,6 +5,7 @@ const cust_Bank = require("../models/customerBank")
 const Chrome_pay_wallet = require("../models/Cust_Wallet")
 const cust_bank = require('../models/customerBank')
 const Chrome_pay_transections = require("../models/Chrome_pay_Transections")
+const Loan_applay_customer = require("../models/Loan_apllied_by")
 const axios = require('axios')
 const jwt = require('jsonwebtoken')
 var moment = require('moment');
@@ -54,6 +55,7 @@ var yyyy = today.getFullYear();
 
 today = mm + '/' + dd + '/' + yyyy;
 
+//---------------------------------------------------customer-login----------------------------------------------------------------------------
 
 const cust_login = async (req, res) => {
     try {
@@ -140,6 +142,11 @@ const cust_opt_verify = async (req, res) => {
 
         let custID = find_cust._id
         let email = find_cust.email
+        let agentID1 = find_cust.createdBY
+        let agentID = agentID1[0]
+
+       // console.log(orgID[0])
+
 
 
         if (find_cust.login_otp !== otp) {
@@ -149,7 +156,7 @@ const cust_opt_verify = async (req, res) => {
 
         let FakeOTP = 100000 + Math.floor(Math.random() * 900000);
 
-        let token = jwt.sign({ custID, email }, 'Customer')
+        let token = jwt.sign({ custID, email, agentID }, 'Customer')
 
         if (find_cust.login_otp == otp) {
             console.log("find")
@@ -1026,6 +1033,121 @@ const getOrgForLoan_cust = async (req, res) => {
     }
 }
 
+const calculate_Amount_cust = async (req, res) => {
+    try {
+
+        let custID = req.userId
+        let agentID = req.agentID
+
+        const Interest1 = req.body.Interest;
+        const Amount1 = req.body.Amount
+        const Emi_Months1 = req.body.Emi_Months
+        const orgID = req.body.orgID
+        //const custID = req.body.custID
+        const Loan_type = req.body.Loan_type
+        const recidence = req.body.recidence
+        const LocalGov = req.body.LocalGov
+        const LandRegistration = req.body.LandRegistration
+        const OTP = req.body.otp
+
+
+
+
+        let Amount = parseInt(Amount1)
+        let Emi_Months = parseInt(Emi_Months1)
+        let Interest = parseInt(Interest1)
+
+        let find_OTP = await customer_Model.findOne({ _id: custID })
+        console.log("Loan", find_OTP.Loan_OTP)
+        console.log("front OTp", OTP)
+
+        if (find_OTP.Loan_OTP != OTP) {
+            return res.status(200).send({ status: false, msg: "Please enter Valid OTP" })
+        }
+
+
+        if (!Interest) {
+            return res.status(200).send({ status: false, msg: "Please enter Interest" })
+        }
+
+        if (!Amount) {
+            return res.status(200).send({ status: false, msg: "Please enter Amount" })
+        }
+
+        if (!Emi_Months) {
+            return res.status(200).send({ staus: false, msg: "Please enter Emi Length" })
+        }
+
+        if (!orgID) {
+            return res.status(200).send({ status: false, msg: "Please enter org ID" })
+        }
+
+        if (!custID) {
+            return res.status(200).send({ status: false, msg: "Please enter cust ID" })
+        }
+
+        if (!Loan_type) {
+            return res.status(200).send({ staus: false, msg: "Please enter Emi Loan_type" })
+        }
+
+        // if (!recidence) {
+        //     return res.status(200).send({ staus: false, msg: "Please enter Emi recidence " })
+        // }
+        // if (!LocalGov) {
+        //     return res.status(200).send({ staus: false, msg: "Please enter Emi Local Gov certificate " })
+        // }
+        // if (!LandRegistration) {
+        //     return res.status(200).send({ staus: false, msg: "Please enter Emi Land Registration " })
+        // }
+
+
+
+
+        let Calculate = Interest / 100 * Amount
+        let year = Emi_Months / 12
+        let totalAmount = Calculate * year
+        let Finalamount = Amount + Calculate
+        let EmiPerMonth = (Finalamount / Emi_Months).toFixed(2);
+        let Num_Emi = Number(EmiPerMonth)
+
+
+
+        let obj = {
+
+            OrganisationID: orgID,
+            CustomerID: custID,
+            agentID: agentID,
+            Loan_type: Loan_type,
+            recidence: recidence,
+            LocalGov: LocalGov,
+            LandRegistration: LandRegistration,
+            Interest_Rate: Interest,
+            EMI: Num_Emi,
+            Total_Amount: Finalamount,
+            Duration_Month: Emi_Months,
+            Duration_Year: year,
+            Interest_percentege: Interest,
+            Intrest_Amount_per_Year: Calculate,
+            Total_Interest_Amount: totalAmount,
+
+        }
+
+
+        let create = await Loan_applay_customer.create(obj)
+
+
+        return res.status(200).send({
+            status: true, msg: "Loan apply successfully", obj, EMI: Num_Emi, Total_Amount: Finalamount, Duration_Month: Emi_Months, Duration_Year: year,
+            Interest_percentege: Interest, Intrest_Amount_per_Year: Calculate, Total_Interest_Amount: totalAmount
+        })
+
+
+    } catch (error) {
+        console.log(error)
+        return res.status(200).send({ status: false, msg: error.messege })
+    }
+}
+
 
 module.exports.cust_login = cust_login;
 module.exports.cust_opt_verify = cust_opt_verify;
@@ -1038,3 +1160,4 @@ module.exports.Chrome_pay_trans = Chrome_pay_trans
 module.exports.Chrome_pay_dash = Chrome_pay_dash
 module.exports.Chrome_pay_cust_transection = Chrome_pay_cust_transection
 module.exports.getOrgForLoan_cust = getOrgForLoan_cust
+module.exports.calculate_Amount_cust = calculate_Amount_cust

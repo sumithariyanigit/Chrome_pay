@@ -337,6 +337,7 @@ router.post("/Chrome_pay_trans/:token", cust_auth.auth, customer_controller.Chro
 router.post("/Chrome_pay_dash/:token", cust_auth.auth, customer_controller.Chrome_pay_dash)
 router.post("/Chrome_pay_cust_transection/:token", cust_auth.auth, customer_controller.Chrome_pay_cust_transection)
 router.post("/getOrgForLoan_cust/:token", cust_auth.auth, customer_controller.getOrgForLoan_cust)
+router.post("/calculate_Amount_cust/:token", cust_auth.auth, customer_controller.calculate_Amount_cust)
 
 
 module.exports = router
