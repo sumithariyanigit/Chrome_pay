@@ -4876,66 +4876,81 @@ const new_verify_customer = async (req, res) => {
 const get_agent_cut_month = async (req, res) => {
     try {
 
-        // let agentID = req.userId;
+        let agentID = req.userId;
 
-        //let find_cust = await cutomerModel.find({ createdBY: agentID })
+        let find_cust = await cutomerModel.find({ createdBY: agentID })
 
+        January = 0, February = 0, March = 0, April = 0, May = 0, June = 0, July = 0, August = 0, September = 0, October = 0, November = 0, December = 0
 
+        let date = new Date()
 
-        let TODAY = "2022-12-03T00:00:00"
-        let YEAR_BEFORE = "2021-12-01T00:00:00"
-        let req = { params: { productId: 1 } }
-        const monthsArray = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+        for (let i of find_cust) {
 
-        const find123 = await cutomerModel.aggregate([
-            {
-                $match: {
-                    createdBY: "638455c05f12c279fe18e346",
-                    createdAt: { $gte: YEAR_BEFORE, $lte: TODAY }
-                }
-            },
-            {
-                $group: {
-                    _id: { "year_month": { $substrCP: ["$createdAt", 0, 7] } },
-                    count: { $sum: 1 }
-                }
-            },
-            {
-                $sort: { "_id.year_month": 1 }
-            },
-            {
-                $project: {
-                    _id: 0,
-                    count: 1,
-                    month_year: {
-                        $concat: [
-                            { $arrayElemAt: [monthsArray, { $subtract: [{ $toInt: { $substrCP: ["$_id.year_month", 5, 2] } }, 1] }] },
-                            "-",
-                            { $substrCP: ["$_id.year_month", 0, 4] }
-                        ]
-                    }
-                }
-            },
-            {
-                $group: {
-                    _id: null,
-                    data: { $push: { k: "$month_year", v: "$count" } }
-                }
-            },
-            {
-                $project: {
-                    data: { $arrayToObject: "$data" },
-                    _id: 0
-                }
+            //console.log(i.createdAt.getMonth() + 1)
+
+            if (i.createdAt.getMonth() + 1 == 1) {
+                January++
+            } else if (i.createdAt.getMonth() + 1 == 1) {
+                February++
+            } else if (i.createdAt.getMonth() + 1 == 2) {
+                March++
+            } else if (i.createdAt.getMonth() + 1 == 3) {
+                April++
+            } else if (i.createdAt.getMonth() + 1 == 4) {
+                May++
+            } else if (i.createdAt.getMonth() + 1 == 5) {
+                June++
+            } else if (i.createdAt.getMonth() + 1 == 6) {
+                July++
+            } else if (i.createdAt.getMonth() + 1 == 7) {
+                August++
+            } else if (i.createdAt.getMonth() + 1 == 8) {
+                September++
+            } else if (i.createdAt.getMonth() + 1 == 9) {
+                October++
+            } else if (i.createdAt.getMonth() + 1 == 10) {
+                November++
+            } else if (i.createdAt.getMonth() + 1 == 11) {
+                December++
             }
-        ])
-
+        }
 
 
         // for (let i of find_cust) {
 
+        //     i.createdAt.getMonth() + 1 == 1 ? January++ : i.createdAt.getMonth() + 1 == 2 ? February++
+        //             : i.createdAt.getMonth() + 1 == 3 ? March++
+        //                 : i.createdAt.getMonth() + 1 == 4 ? April++
+        //                     : i.createdAt.getMonth() + 1 == 5 ? May++
+        //                         : i.createdAt.getMonth() + 1 == 6 ? June++
+        //                             : i.createdAt.getMonth() + 1 == 7 ? July++
+        //                                 : i.createdAt.getMonth() + 1 == 8 ? August++
+        //                                     : i.createdAt.getMonth() + 1 == 9 ? September++
+        //                                         : i.createdAt.getMonth() + 1 == 10 ? October++
+        //                                             : i.createdAt.getMonth() + 1 == 11 ? November++
+        //                                                 : i.createdAt.getMonth() + 1 == 12 ? December++ 
+
         // }
-        return res.status(200).send({ status: true, find123 })
+
+
+
+
+        let obj = {
+            January: January,
+            February: February,
+            March: March,
+            April: April,
+            May: May,
+            June: June,
+            July: July,
+            August: August,
+            September: September,
+            October: October,
+            November: November,
+            December: December
+        }
+
+        return res.status(200).send({ status: true, obj })
 
     } catch (error) {
         console.log(error)
