@@ -2482,7 +2482,7 @@ const createCustomerByOrg1 = async (req, res, next) => {
 
         //------------------------------------Manage-Linked-service----------------------------------------------------------------------
 
-        const cheack_cus = await temp_Cust.findOne({ phone: phone })
+        const cheack_cus = await cutomerModel.findOne({ phone: phone })
 
         if (cheack_cus) {
             return res.status(200).send({ status: false, service: "Linked", msg: "Customer already register, you want to linked service" })
