@@ -2066,6 +2066,7 @@ const custdetail = async (req, res) => {
     try {
 
         const custID = req.params.custID
+        console.log("fghjk")
 
         if (!custID) {
             return res.status(200).send({ status: false, msg: "Please enter custID" })
@@ -2100,14 +2101,6 @@ const custdetail = async (req, res) => {
 
         var totalTransection = findtotalTransection.length + findtotlaTrans.length
 
-        console.log("totalTransection ==", totalTransection)
-
-        console.log("sendindAmount===", sendindAmount)
-
-        console.log("receiveAmount ===", receiveAmount)
-
-        console.log("totalAmount ===", totalAmount)
-
 
 
         let findProfilePercentage = await customerModel.findOne({ _id: custID })
@@ -2135,21 +2128,6 @@ const custdetail = async (req, res) => {
         } else {
             var location = 0    
         }
-
-        //  console.log(location)
-
-
-
-        // let find11 = await customerModel.find()
-
-        // let data = [
-
-        //     name11 = "styam"
-
-        // ]
-
-        // let result = data.includes(name11)
-        // console.log("inckude ===",result)
 
 
 

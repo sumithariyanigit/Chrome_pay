@@ -2330,7 +2330,7 @@ const createCustomerByOrg = async (req, res, next) => {
         //     return res.status(200).send({ status: false, msg: "Please enter valid phone number, number should be in between 8 to 12" })
         // } 
 
-        let checkPhone = await temp_Cust.findOne({ phone: convert_Number })
+        let checkPhone = await customerModel.findOne({ phone: convert_Number })
 
 
         if (checkPhone) {
@@ -2342,7 +2342,7 @@ const createCustomerByOrg = async (req, res, next) => {
             return res.status(200).send({ status: false, msg: "Please enter valid email" })
         }
 
-        let checkEmail = await temp_Cust.findOne({ email: data.email })
+        let checkEmail = await customerModel.findOne({ email: data.email })
 
         if (checkEmail) {
             return res.status(200).send({ status: false, msg: "Email is already register" })

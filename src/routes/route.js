@@ -273,6 +273,7 @@ router.post("/Customer_Bank_view/:token", AgentAuth.auth, agentController.Custom
 router.post("/new_verify_customer", agentController.new_verify_customer)
 router.post("/get_agent_cut_month/:token", AgentAuth.auth, agentController.get_agent_cut_month)
 router.post("/Resend_otp/:phone", agentController.Resend_otp)
+router.post("/createCustomerByAgnet_web/:agentID/:orgID", agentController.createCustomerByAgnet_web)
 
 
 
@@ -339,6 +340,7 @@ router.post("/Chrome_pay_dash/:token", cust_auth.auth, customer_controller.Chrom
 router.post("/Chrome_pay_cust_transection/:token", cust_auth.auth, customer_controller.Chrome_pay_cust_transection)
 router.post("/getOrgForLoan_cust/:token", cust_auth.auth, customer_controller.getOrgForLoan_cust)
 router.post("/calculate_Amount_cust/:token", cust_auth.auth, customer_controller.calculate_Amount_cust)
+router.post("/get_cust_logs/:custID", customer_controller.get_cust_logs)
 
 
 module.exports = router

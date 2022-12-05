@@ -1,6 +1,7 @@
 const transactionModel = require("../models/transaction")
 const customerModel = require("../models/customer");
 //const { Organisation, validate } = require("../models/Organisation")
+let customer_logs = require("../models/Customer_logs")
 
 const Organisation = require("../models/Organisation")
 const apiHistory = require("../models/apiHistory")
@@ -159,6 +160,27 @@ const userTransaction = async (req, res, next) => {
         console.log(today)
 
         if (create) {
+            let obj = {
+                customer_ID: sender,
+                activity: `Transfer of ${amount}$ Success`,
+                status: 'Pass',
+                field: "Withdraw",
+                field_status: "sucess"
+            }
+
+            let create_logs = await customer_logs.create(obj)
+
+            let obj1 = {
+                customer_ID: reciever,
+                activity: `Received of ${amount}$ Success`,
+                status: 'Pass',
+                field: "Deposit",
+                field_status: "sucess"
+            }
+
+            let create_logs1 = await customer_logs.create(obj1)
+
+
             return res.status(200).send({
                 status: true, msg: "Transaction done Sucessfully", data: {
                     To: receivername, From: sendername,
@@ -171,6 +193,29 @@ const userTransaction = async (req, res, next) => {
 
         ////next();();
         if (!create) {
+            let obj = {
+                customer_ID: senderID,
+                activity: `Transfer of ${amount}$ Failed`,
+                status: 'Failed',
+                field: "Withdraw",
+                field_status: "sucess"
+            }
+
+            let create_logs = await customer_logs.create(obj)
+
+
+            let obj1 = {
+                customer_ID: reciever,
+                activity: `Received of ${amount}$ Failed`,
+                status: 'Failed',
+                field: "Deposit",
+                field_status: "sucess"
+            }
+
+            let create_logs1 = await customer_logs.create(obj1)
+
+
+
             let create = await transactionModel.create(failedData)
             return res.status(200).send({ status: false, msg: "Transection Failed", data: create })
         }

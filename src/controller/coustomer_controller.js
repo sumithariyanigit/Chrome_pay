@@ -6,6 +6,7 @@ const Chrome_pay_wallet = require("../models/Cust_Wallet")
 const cust_bank = require('../models/customerBank')
 const Chrome_pay_transections = require("../models/Chrome_pay_Transections")
 const Loan_applay_customer = require("../models/Loan_apllied_by")
+const customer_logs = require("../models/Customer_logs")
 const axios = require('axios')
 const jwt = require('jsonwebtoken')
 var moment = require('moment');
@@ -145,7 +146,7 @@ const cust_opt_verify = async (req, res) => {
         let agentID1 = find_cust.createdBY
         let agentID = agentID1[0]
 
-       // console.log(orgID[0])
+        // console.log(orgID[0])
 
 
 
@@ -162,6 +163,17 @@ const cust_opt_verify = async (req, res) => {
             console.log("find")
             let update_otp = await customer_Model.findOneAndUpdate({ phone: phone }, { login_otp: FakeOTP })
         }
+
+
+        let obj1 = {
+            customer_ID: custID,
+            activity: `Chromepay login`,
+            status: 'Failed',
+            field: 'Login',
+            field_status: "sucess"
+        }
+
+        let create_logs1 = await customer_logs.create(obj1)
 
         return res.status(200).send({ status: true, msg: "login sucessfully", token })
 
@@ -1036,6 +1048,8 @@ const getOrgForLoan_cust = async (req, res) => {
 const calculate_Amount_cust = async (req, res) => {
     try {
 
+        console.log("calculate_amount")
+
         let custID = req.userId
         let agentID = req.agentID
 
@@ -1110,10 +1124,7 @@ const calculate_Amount_cust = async (req, res) => {
         let EmiPerMonth = (Finalamount / Emi_Months).toFixed(2);
         let Num_Emi = Number(EmiPerMonth)
 
-
-
         let obj = {
-
             OrganisationID: orgID,
             CustomerID: custID,
             agentID: agentID,
@@ -1148,6 +1159,55 @@ const calculate_Amount_cust = async (req, res) => {
     }
 }
 
+//-------------------------------get-customer-logs---------------------------------------------------------------------------------------------
+
+const get_cust_logs = async (req, res) => {
+    try {
+
+        const custID = req.params.custID;
+
+        if (!custID) {
+            return res.status(200).send({ status: false, msg: "Not getting customer ID" })
+        }
+
+        if (custID.length != 24) {
+            return res.status(200).send({ status: false, msg: "Not getting valid customer ID" })
+        }
+
+        const { page = 1, limit = 5 } = req.query;
+
+        if (Object.keys(req.body).length == 0) {
+            let filter = await customer_logs.find({ customer_ID: custID }).sort({ createdAt: -1 })
+                .limit(limit * 1)
+                .skip((1 - 1) * limit)
+                .exec();
+
+            return res.status(200).send({ statussss: true, filter })
+        }
+        let options = [{ field: req.body.field }, { status: req.body.status }]
+
+        console.log(req.body.field)
+
+        let filter = await customer_logs.find({ $or: options, customer_ID: custID })
+            .sort({ createdAt: -1 })
+            .limit(limit * 1)
+            .skip((1 - 1) * limit)
+            .exec();
+
+
+        let arr1 = [3, 'a', 'a', 'a', 2, 3, 'a', 3, 'a', 2, 4, 9, 3]
+
+
+        console.log("grpby", groups)
+
+        return res.status(200).send({ statussss: true, filter })
+
+    } catch (error) {
+        console.log(error)
+        return res.status(200).send({ status: false, msg: error.message })
+    }
+}
+
 
 module.exports.cust_login = cust_login;
 module.exports.cust_opt_verify = cust_opt_verify;
@@ -1161,3 +1221,4 @@ module.exports.Chrome_pay_dash = Chrome_pay_dash
 module.exports.Chrome_pay_cust_transection = Chrome_pay_cust_transection
 module.exports.getOrgForLoan_cust = getOrgForLoan_cust
 module.exports.calculate_Amount_cust = calculate_Amount_cust
+module.exports.get_cust_logs = get_cust_logs

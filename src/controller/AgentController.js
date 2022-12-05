@@ -35,6 +35,7 @@ const { promisify } = require("util");
 const cust_wallet = require("../models/Cust_Wallet")
 const Agent_logs = require("../models/AgentLogHis")
 const cust_wallet_Model = require("../models/Cust_Wallet")
+const customer_logs = require("../models/Customer_logs")
 const nodemailer = require('nodemailer')
 
 
@@ -1388,11 +1389,6 @@ const AgentCustomerTest = async (req, res) => {
         }
 
 
-
-
-
-
-
         else if (req.body.ID.length <= 0 && req.body.phone.length <= 0 && req.body.phone.length <= 0 && req.body.status.length <= 0 && req.body.nationality.length <= 0 && req.body.fromDate.length <= 0 && req.body.toDate.length <= 0) {
             let countpages2 = await cutomerModel.find({ createdBY: agentID, isDeleted: 0 })
             let contRow = countpages2.length
@@ -2450,6 +2446,8 @@ const createCustomerByOrg1 = async (req, res, next) => {
         let ID = req.params.agentID;
         let orgID = req.params.orgID;
 
+        console.log(files)
+
 
         let findsubAdminID = await subAdmin.findOne({ _id: ID })
 
@@ -2471,7 +2469,6 @@ const createCustomerByOrg1 = async (req, res, next) => {
             }
         }
 
-
         if (Object.values(ID).length < 2) {
             return res.status(200).send({ status: false, msg: "Please enter Adding ID" })
         }
@@ -2480,7 +2477,7 @@ const createCustomerByOrg1 = async (req, res, next) => {
         const { IDphoto, fullname, dateOfBirth, phone, city, age, email, gender, nationality, professoin, address, organisation, status, Latitude,
             Longitude, nextFOKinName, nextFOKniPhone, landSize, assetType, assetID, assetAddress, assetLongitude, assetLatitude } = data
 
-
+        console.log("type_of", typeof phone)
         //------------------------------------Manage-Linked-service----------------------------------------------------------------------
 
         const cheack_cus = await cutomerModel.findOne({ phone: phone })
@@ -2530,7 +2527,7 @@ const createCustomerByOrg1 = async (req, res, next) => {
         }
 
 
-        if (!(/^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,20}$/).test(email)) {
+        if (!(/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/).test(email)) {
             return res.status(200).send({ status: false, msg: "Please enter valid email" })
         }
 
@@ -3587,6 +3584,8 @@ const send_Loan_Otp = async (req, res) => {
 const calculate_Amount = async (req, res) => {
     try {
 
+        console.log("calculate_amount")
+
         let = req.userId
 
         const Interest1 = req.body.Interest;
@@ -4257,8 +4256,8 @@ const Cust_Linked_Srevice = async (req, res) => {
         }
 
         let verify_OTP = await cutomerModel.findOne({ phone: cust_phone })
-
         let all_organisations = verify_OTP.organisation
+        let cust_ID = verify_OTP._id
 
         if (all_organisations.includes(orgID)) {
             return res.status(200).send({ statsu: false, msg: `This customer already linked with ${org_name} organisation` })
@@ -4271,6 +4270,17 @@ const Cust_Linked_Srevice = async (req, res) => {
         let update_OTP = await cutomerModel.findOneAndUpdate({ phone: cust_phone }, { $push: { "organisation": orgID } }, { new: true })
 
         let update_OTP_Again = await cutomerModel.findOneAndUpdate({ phone: cust_phone }, { Linekd_Service_OTP: "000@$#&*" })
+
+        let obj = {
+            customer_ID: cust_ID,
+            activity: `Linked to ${org_name}`,
+            status: 'Pass',
+            field: "Linked_service",
+            field_status: "Pass"
+        }
+
+        let create_logs = await customer_logs.create(obj)
+
 
         return res.status(200).send({ status: true, msg: `Congratulation now you are also part of ${org_name}`, update_OTP })
 
@@ -4748,7 +4758,7 @@ const new_verify_customer = async (req, res) => {
         }
         console.log("123", payload)
 
-        let res1 = await axios.post('http://13.127.64.68:7008/api/mainnet/generate-digitalid', payload)
+        let res1 = axios.post('http://13.127.64.68:7008/api/mainnet/generate-digitalid', payload)
 
             .then(async (respons) => {
 
@@ -4757,7 +4767,7 @@ const new_verify_customer = async (req, res) => {
 
                 let findCust = await temp_Cust.findOne({ phone: phoneNo1 })
 
-                console.log("findCust", findCust)
+              //  console.log("findCust", findCust)
 
                 let newCust = {
                     IDphoto: findCust.IDphoto, fullname: findCust.fullname,
@@ -4773,12 +4783,13 @@ const new_verify_customer = async (req, res) => {
                     assetAddress: findCust.assetAddress, assetLongitude: findCust.assetLongitude,
                     assetLatitude: findCust.assetLatitude, password: cust_password, facialIdentification: 1
                 }
+                console.log("1")
                 let create = await cutomerModel.create(newCust)
-
+                console.log("2")
                 let OrganisationList = await org_Licenses.findOne({ OrganisationID: findCust.organisation })
-
+                console.log("3")
                 let totalLicenses = OrganisationList.totalLicenses
-
+                console.log("4")
                 let findreaminig = await cutomerModel.find({ organisation: findCust.organisation })
 
                 let calculateRemainig = totalLicenses - findreaminig.length;
@@ -4786,7 +4797,7 @@ const new_verify_customer = async (req, res) => {
                 let Remainig = calculateRemainig
 
                 let updateLicenses = await org_Licenses.findOneAndUpdate({ OrganisationID: findCust.organisation }, { RemainingLicenses: Remainig }, { new: true })
-
+                console.log("5")
 
                 let cust_wallet = `00x${generateString1(43)}`
                 let obj = {
@@ -4794,7 +4805,7 @@ const new_verify_customer = async (req, res) => {
                     phone: create.phone,
                     wallet_Address: cust_wallet
                 }
-
+                console.log("6")
 
                 let create_Wallet = await cust_wallet_Model.create(obj)
 
@@ -4802,7 +4813,7 @@ const new_verify_customer = async (req, res) => {
 
 
 
-
+                console.log("7")
 
                 //----------------------------------------------------------------------------------------
 
@@ -4847,29 +4858,26 @@ const new_verify_customer = async (req, res) => {
 
                 //---------------------------------------------------------------------------------------------------------------
 
-
+                console.log("8")
                 let update_pass = await cutomerModel.findOneAndUpdate({ phone: phoneNo1 }, { password: cust_password })
 
-                if (delete_cust) {
-                    console.log("123")
+                console.log("9")
                     return res.status(200).send({ status: true, msg: "customer register sucessfully" })
-                }
+
 
             }).catch(async (error) => {
                 const phoneNo1 = req.body.phoneNo
                 console.log("jkl", phoneNo1)
-
-                let find = await cutomerModel.findOne({ phone: phoneNo1 })
+                let num = parseInt(phoneNo1)
+                console.log("==.", num)
+                console.log("10")
+                let find = await cutomerModel.findOne({ phone: num })
                 console.log("find", find)
                 if (find) {
                     return res.status(200).send({ status: true, msg: "customer register sucessfully" })
                 }
 
-                if (!find) {
-                    return res.status(200).send({ status: false, msg: "Please try again" })
-                }
-
-                let delete_cust = await temp_Cust.findOneAndDelete({ phone: phoneNo1 })
+                return res.status(200).send({ status: true, msg: "customer register sucessfully" })
 
             })
 
@@ -4892,9 +4900,9 @@ const get_agent_cut_month = async (req, res) => {
 
         // date.setMonth(date.getMonth() – 12);
 
+        var fromDate = new Date(Date.now() - 334 * 24 * 60 * 60 * 1000);
 
-
-        let find_cust = await cutomerModel.find({ createdBY: agentID })
+        let find_cust = await cutomerModel.find({ createdBY: agentID, $or: [{ "createdAt": { $gt: fromDate } }, { "createdAt": { $eq: '' } }] })
 
         January = 0, February = 0, March = 0, April = 0, May = 0, June = 0, July = 0, August = 0, September = 0, October = 0, November = 0, December = 0
 
@@ -4932,25 +4940,6 @@ const get_agent_cut_month = async (req, res) => {
         }
 
 
-        // for (let i of find_cust) {
-
-        //     i.createdAt.getMonth() + 1 == 1 ? January++ : i.createdAt.getMonth() + 1 == 2 ? February++
-        //             : i.createdAt.getMonth() + 1 == 3 ? March++
-        //                 : i.createdAt.getMonth() + 1 == 4 ? April++
-        //                     : i.createdAt.getMonth() + 1 == 5 ? May++
-        //                         : i.createdAt.getMonth() + 1 == 6 ? June++
-        //                             : i.createdAt.getMonth() + 1 == 7 ? July++
-        //                                 : i.createdAt.getMonth() + 1 == 8 ? August++
-        //                                     : i.createdAt.getMonth() + 1 == 9 ? September++
-        //                                         : i.createdAt.getMonth() + 1 == 10 ? October++
-        //                                             : i.createdAt.getMonth() + 1 == 11 ? November++
-        //                                                 : i.createdAt.getMonth() + 1 == 12 ? December++ 
-
-        // }
-
-
-
-
         let obj = {
             January: January,
             February: February,
@@ -4981,6 +4970,7 @@ const Resend_otp = async (req, res) => {
 
         let phone = req.params.phone;
 
+
         if (!phone) {
             return res.status(200).send({ status: false, msg: "Please enter phone nummber" })
         }
@@ -4994,25 +4984,247 @@ const Resend_otp = async (req, res) => {
                     "city": "",
                     "email": ""
                 },
-                phoneNumber: `${phone}`
+                phoneNumber: `+${phone}`
+            }
+
+            console.log("pay", payload)
+            let res = await axios.post('http://13.127.64.68:7008/api/mainnet/getUserData', payload);
+            let data1 = res.data;
+        }
+        await doPostRequest();
+        return res.status(200).send({ status: true, msg: "OTP send sucessfully" })
+
+    } catch (error) {
+        // console.log(error)
+        return res.status(200).send({ status: false, msg: error.message })
+    }
+}
+
+const createCustomerByAgnet_web = async (req, res, next) => {
+    try {
+        url = "http://localhost:3000/customer";
+        console.log("456")
+        let data = req.body;
+        let files = req.files
+        let recidence = req.files
+        let localDoc = req.files
+        let ladregistration = req.files
+        let ID = req.params.agentID;
+        let orgID = req.params.orgID;
+
+        console.log(files)
+
+
+        let findsubAdminID = await subAdmin.findOne({ _id: ID })
+
+        if (files.length == 0) {
+            return res.status(200).send({ status: false, msg: "Please enter ID photo" })
+
+        }
+
+        if (findsubAdminID) {
+            let findRole = await sub_admin_role.findOne({ adminID: ID })
+
+            if (findRole) {
+
+                let customerRole = findRole.customer.addCustomer
+
+                if (customerRole == 0) {
+                    return res.status(200).send({ status: false, msg: "You are not allow to add customer, Contact admin to access add customer" })
+                }
+            }
+        }
+
+        if (Object.values(ID).length < 2) {
+            return res.status(200).send({ status: false, msg: "Please enter Adding ID" })
+        }
+
+
+        const { IDphoto, fullname, dateOfBirth, phone, city, age, email, gender, nationality, professoin, address, organisation, status, Latitude,
+            Longitude, nextFOKinName, nextFOKniPhone, landSize, assetType, assetID, assetAddress, assetLongitude, assetLatitude } = data
+
+        console.log("type_of", typeof phone)
+        let trim = phone.replaceAll(' ', '')
+        let remove_character = trim.replace('-', '')
+        let convert_Number = parseInt(remove_character)
+        console.log("trim", convert_Number)
+        //------------------------------------Manage-Linked-service----------------------------------------------------------------------
+
+        const cheack_cus = await cutomerModel.findOne({ phone: convert_Number })
+
+        if (cheack_cus) {
+            return res.status(200).send({ status: false, service: "Linked", msg: "Customer already register, you want to linked service" })
+        }
+
+        //---------------------------------------------------------------------------------------------------------------------------------
+
+        //const cheack_cus = await temp_Cust.findOne({ phone: convert_Number })
+
+        let findcust = await cutomerModel.find({ createdBY: orgID })
+        let findOrg = await Organisation.findOne({ _id: orgID })
+
+
+        if (findOrg.totlaLicense <= findcust.length) {
+            return res.status(200).send({ status: false, msg: "You have not enough licenses to add DID, Please contact admin to update yout licenses" })
+
+        }
+
+        if (!data)
+            return res.status(200).send({ status: false, msg: "please enter data" })
+        //next();
+
+        if (!fullname) {
+            return res.status(200).send({ status: false, msg: "Please enter Full Name" })
+        }
+
+        if (!dateOfBirth) {
+            return res.status(200).send({ status: false, msg: "Please enter Date Of Birth" })
+        }
+
+        if (!phone) {
+            return res.status(200).send({ status: false, msg: "Please enter phone" })
+        }
+
+        // if (!(/^\d{8,12}$/).test(phone)) {
+        //     return res.status(200).send({ status: false, msg: "Please enter valid phone number, number should be in between 8 to 12" })
+        // }
+
+        let checkPhone = await cutomerModel.findOne({ phone: convert_Number })
+
+
+        if (checkPhone) {
+            return res.status(200).send({ status: false, msg: "Number already register" })
+            //next();
+        }
+
+
+        if (!(/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/).test(email)) {
+            return res.status(200).send({ status: false, msg: "Please enter valid email" })
+        }
+
+        let checkEmail = await cutomerModel.findOne({ email: data.email })
+
+        if (checkEmail) {
+            return res.status(200).send({ status: false, msg: "Email is already register" })
+        }
+
+
+        if (!gender) {
+            return res.status(200).send({ status: false, msg: "Please enter gender" })
+
+        }
+
+        const profilePicture = await uploadFile(files[0])
+        const residace = await uploadFile(recidence[1])
+        const local = await uploadFile(localDoc[2])
+        const land = await uploadFile(ladregistration[3])
+
+
+
+
+
+
+
+        async function doPostRequest() {
+
+            let payload = {
+                data: {
+                    "name": fullname,
+                    "age": age,
+                    "city": city,
+                    "email": email
+                },
+                phoneNumber: `+${convert_Number}`
 
             }
 
 
             let res = await axios.post('http://13.127.64.68:7008/api/mainnet/getUserData', payload);
             let data1 = res.data;
-
+            // console.log(data1);
         }
 
         await doPostRequest();
 
-        return res.status(200).send({ status: true, msg: "OTP send sucessfully" })
+
+        var seq = (Math.floor(Math.random() * 1000000000) + 1000000000).toString().substring()
+
+        let collection = {
+            IDphoto: profilePicture, fullname: fullname,
+            dateOfBirth: dateOfBirth, phone: convert_Number, city: city, age: age,
+            email: email, gender: gender, nationality: nationality,
+            professoin: professoin, address: address, Latitude: Latitude,
+            Longitude: Longitude, organisation: orgID,
+            status: status, createdBY: ID, createdBY: ID,
+            nextFOKinName: nextFOKinName,
+            nextFOKniPhone: nextFOKniPhone,
+            landSize: landSize,
+            residance: residace,
+            locaDocument: local,
+            landRegistration: land,
+            digitalrefID: seq,
+            assetType: assetType, assetID: assetID,
+            assetAddress: assetAddress, assetLongitude: assetLongitude,
+            assetLatitude: assetLatitude
+        }
+
+        let latestCommission = await agent_Commission.find({ agentID: ID })
+        //.populate('agentID')
+        let agent_Cmisn = latestCommission.slice(-1)[0]
+        //return res.status(200).send({ status: true, agent_Cmisn })
+        let create = await temp_Cust.create(collection)
+
+        if (!agent_Cmisn) {
+            return res.status(200).send({ status: false, msg: "Agent commisiion is missing" })
+        }
+
+        if (agent_Cmisn.type == 'Percentage') {
+
+            let amount = agent_Cmisn.Amount
+
+            let perAmount = (amount / 100 * 5000)
+
+            let obj = {
+                custPhoto: create.IDphoto,
+                agentName: agent_Cmisn.agentID.name,
+                agentID: agent_Cmisn.agentID,
+                custID: create._id,
+                custName: create.fullname,
+                commissionID: agent_Cmisn._id,
+                commission: perAmount
+
+            }
+
+            let createcomsn = await agent_Commission_His.create(obj)
+        } else if (agent_Cmisn.type == 'Flat Money') {
+
+            let amount = agent_Cmisn.Amount
+
+            //let perAmount = (amount/100*5000)
+
+            let obj = {
+                custPhoto: create.IDphoto,
+                agentName: agent_Cmisn.agentID.name,
+                agentID: agent_Cmisn.agentID,
+                custID: create._id,
+                custName: create.fullname,
+                commission: amount
+            }
+
+            let createcomsn = await agent_Commission_His.create(obj)
+
+        }
+
+        return res.status(201).send({ status: true, msg: "otp send sucessfully", data: create, })
 
     } catch (error) {
         console.log(error)
-        return res.status(200).send({ status: false, msg: error.message })
+        return res.status(500).send({ status: false, message: error })
     }
 }
+
+
+
 
 module.exports.createAgent = createAgent;
 module.exports.agentLogin = agentLogin;
@@ -5071,3 +5283,4 @@ module.exports.Customer_Bank_view = Customer_Bank_view;
 module.exports.new_verify_customer = new_verify_customer;
 module.exports.get_agent_cut_month = get_agent_cut_month;
 module.exports.Resend_otp = Resend_otp;
+module.exports.createCustomerByAgnet_web = createCustomerByAgnet_web
