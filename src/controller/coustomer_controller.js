@@ -1195,10 +1195,7 @@ const get_cust_logs = async (req, res) => {
             .exec();
 
 
-        let arr1 = [3, 'a', 'a', 'a', 2, 3, 'a', 3, 'a', 2, 4, 9, 3]
 
-
-        console.log("grpby", groups)
 
         return res.status(200).send({ statussss: true, filter })
 
