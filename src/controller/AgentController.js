@@ -2446,30 +2446,14 @@ const createCustomerByOrg1 = async (req, res, next) => {
         let ID = req.params.agentID;
         let orgID = req.params.orgID;
 
-        console.log(files)
-
-
-        let findsubAdminID = await subAdmin.findOne({ _id: ID })
-
         if (files.length == 0) {
             return res.status(200).send({ status: false, msg: "Please enter ID photo" })
 
         }
 
-        if (findsubAdminID) {
-            let findRole = await sub_admin_role.findOne({ adminID: ID })
 
-            if (findRole) {
 
-                let customerRole = findRole.customer.addCustomer
-
-                if (customerRole == 0) {
-                    return res.status(200).send({ status: false, msg: "You are not allow to add customer, Contact admin to access add customer" })
-                }
-            }
-        }
-
-        if (Object.values(ID).length < 2) {
+        if (ID.length !== 24) {
             return res.status(200).send({ status: false, msg: "Please enter Adding ID" })
         }
 
@@ -2477,7 +2461,7 @@ const createCustomerByOrg1 = async (req, res, next) => {
         const { IDphoto, fullname, dateOfBirth, phone, city, age, email, gender, nationality, professoin, address, organisation, status, Latitude,
             Longitude, nextFOKinName, nextFOKniPhone, landSize, assetType, assetID, assetAddress, assetLongitude, assetLatitude } = data
 
-        console.log("type_of", typeof phone)
+
         //------------------------------------Manage-Linked-service----------------------------------------------------------------------
 
         const cheack_cus = await cutomerModel.findOne({ phone: phone })
@@ -2494,13 +2478,10 @@ const createCustomerByOrg1 = async (req, res, next) => {
 
 
         if (findOrg.totlaLicense <= findcust.length) {
-            return res.status(200).send({ status: false, msg: "You have not enough licenses to add DID, Please contact admin to update yout licenses" })
+            return res.status(200).send({ status: false, msg: "You organization not have enough licenses to add DID, Please contact admin to update yout licenses" })
 
         }
 
-        if (!data)
-            return res.status(200).send({ status: false, msg: "please enter data" })
-        //next();
 
         if (!fullname) {
             return res.status(200).send({ status: false, msg: "Please enter Full Name" })
@@ -2514,9 +2495,6 @@ const createCustomerByOrg1 = async (req, res, next) => {
             return res.status(200).send({ status: false, msg: "Please enter phone" })
         }
 
-        // if (!(/^\d{8,12}$/).test(phone)) {
-        //     return res.status(200).send({ status: false, msg: "Please enter valid phone number, number should be in between 8 to 12" })
-        // }
 
         let checkPhone = await cutomerModel.findOne({ phone: data.phone })
 
@@ -2531,7 +2509,7 @@ const createCustomerByOrg1 = async (req, res, next) => {
             return res.status(200).send({ status: false, msg: "Please enter valid email" })
         }
 
-        let checkEmail = await cutomerModel.findOne({ email: data.email })
+        let checkEmail = await cutomerModel.findOne({ email: email })
 
         if (checkEmail) {
             return res.status(200).send({ status: false, msg: "Email is already register" })
@@ -2547,11 +2525,6 @@ const createCustomerByOrg1 = async (req, res, next) => {
         const residace = await uploadFile(recidence[1])
         const local = await uploadFile(localDoc[0])
         const land = await uploadFile(ladregistration[2])
-
-
-
-
-
 
 
         async function doPostRequest() {
@@ -2570,11 +2543,10 @@ const createCustomerByOrg1 = async (req, res, next) => {
 
             let res = await axios.post('http://13.127.64.68:7008/api/mainnet/getUserData', payload);
             let data1 = res.data;
-            // console.log(data1);
+
         }
 
         await doPostRequest();
-
 
         var seq = (Math.floor(Math.random() * 1000000000) + 1000000000).toString().substring()
 
@@ -2605,37 +2577,12 @@ const createCustomerByOrg1 = async (req, res, next) => {
         //return res.status(200).send({ status: true, agent_Cmisn })
         let create = await temp_Cust.create(collection)
 
-        //latestCommission
-        //-------------------------------------------------store-face-regnization------------------------------------------------------------------
 
-
-        // async function LoadModels() {
-        //     await faceapi.nets.faceRecognitionNet.loadFromDisk(__dirname + "/modelsface");
-        //     await faceapi.nets.faceLandmark68Net.loadFromDisk(__dirname + "/modelsface");
-        //     await faceapi.nets.ssdMobilenetv1.loadFromDisk(__dirname + "/modelsface");
-        // }
-        // LoadModels();
-
-        // console.log("error", create);
-        // const descriptions = []
-        // let imagess = create.IDphoto
-        // console.log("inagess", imagess)
-
-        // const img = await canvas.loadImage(imagess);
-        // const detections = await faceapi.detectSingleFace(img).withFaceLandmarks().withFaceDescriptor();
-        // descriptions.push(detections.descriptor);
-        // //}
-        // const obj = {
-        //     userID: "123123",
-        //     label: fullname,
-        //     descriptions: descriptions,
-        // }
-        // let createFce = await FcaeModel.create(obj)
-        //-------------------------------------------------------------------------------------------------------------------------------------------
 
         if (!agent_Cmisn) {
             return res.status(200).send({ status: false, msg: "Agent commisiion is missing" })
         }
+
 
         if (agent_Cmisn.type == 'Percentage') {
 
@@ -5220,6 +5167,20 @@ const createCustomerByAgnet_web = async (req, res, next) => {
     } catch (error) {
         console.log(error)
         return res.status(500).send({ status: false, message: error })
+    }
+}
+
+
+//-----------------------------------create-customer-new------------------------------------------------------------------------------------------
+
+const create_agent_cust_new = async (req, res) => {
+    try {
+
+
+
+    } catch (error) {
+        console.log(error)
+        return res.status(200).send({ status: false, msg: error.message })
     }
 }
 
