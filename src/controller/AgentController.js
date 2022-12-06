@@ -4697,6 +4697,10 @@ const new_verify_customer = async (req, res) => {
             return res.status(200).send({ Status: false, msg: "Please enter Phone No." })
         }
 
+        var findCust = await temp_Cust.findOne({ phone: phoneNo1 })
+
+        console.log("findCust", findCust)
+
 
 
         let payload = {
@@ -4705,129 +4709,122 @@ const new_verify_customer = async (req, res) => {
         }
         console.log("123", payload)
 
-        let res1 = axios.post('http://13.127.64.68:7008/api/mainnet/generate-digitalid', payload)
+        const response = await axios.post('http://13.127.64.68:7008/api/mainnet/generate-digitalid', payload)
 
-            .then(async (respons) => {
+        let data1 = response.data
+        console.log(data1)
+        let cust_password = generateString1(5)
 
-                let data1 = respons.data
-                let cust_password = generateString1(10)
+        let newCust = {
+            IDphoto: findCust.IDphoto, fullname: findCust.fullname,
+            dateOfBirth: findCust.dateOfBirth, phone: findCust.phone,
+            email: findCust.email, gender: findCust.gender, nationality: findCust.nationality, hash: data1.hash,
+            owner: data1.response.owner, privateKey: data1.response.privateKey, walletAddress: data1.response.walletAddress,
+            professoin: findCust.professoin, address: findCust.address, organisation: findCust.organisation,
+            createdBY: findCust.createdBY, Latitude: findCust.Latitude,
+            Longitude: findCust.Longitude, digitalrefID: findCust.digitalrefID, residance: findCust.residance,
+            locaDocument: findCust.locaDocument, landRegistration: findCust.landRegistration, landSize: findCust.landSize,
+            digitalID: findCust.digitalID, nextFOKniPhone: findCust.nextFOKniPhone, nextFOKinName: findCust.nextFOKinName,
+            password: cust_password, facialIdentification: 1
+        }
+        console.log("1", findCust.assetType)
+        console.log("newCust", newCust)
+        let create = await cutomerModel.create(newCust)
+        console.log("2")
+        let OrganisationList = await org_Licenses.findOne({ OrganisationID: findCust.organisation })
+        console.log("3")
+        let totalLicenses = OrganisationList.totalLicenses
+        console.log("4")
+        let findreaminig = await cutomerModel.find({ organisation: findCust.organisation })
 
-                let findCust = await temp_Cust.findOne({ phone: phoneNo1 })
+        let calculateRemainig = totalLicenses - findreaminig.length;
+
+        let Remainig = calculateRemainig
+
+        let updateLicenses = await org_Licenses.findOneAndUpdate({ OrganisationID: findCust.organisation }, { RemainingLicenses: Remainig }, { new: true })
+        console.log("5")
+
+        let cust_wallet = `00x${generateString1(43)}`
+        let obj = {
+            customer_ID: create._id,
+            phone: create.phone,
+            wallet_Address: cust_wallet
+        }
+        console.log("6")
+
+        let create_Wallet = await cust_wallet_Model.create(obj)
+
+        let delete_cust = await temp_Cust.findOneAndDelete({ phone: phoneNo1 })
 
 
 
-                let newCust = {
-                    IDphoto: findCust.IDphoto, fullname: findCust.fullname,
-                    dateOfBirth: findCust.dateOfBirth, phone: findCust.phone, 
-                    email: findCust.email, gender: findCust.gender, nationality: findCust.nationality, hash: data1.hash,
-                    owner: data1.response.owner, privateKey: data1.response.privateKey, walletAddress: data1.response.walletAddress,
-                    professoin: findCust.professoin, address: findCust.address, organisation: findCust.organisation,
-                    createdBY: findCust.createdBY, imageDescriptions: findCust.imageDescriptions, Latitude: findCust.Latitude,
-                    Longitude: findCust.Longitude, digitalrefID: findCust.digitalrefID, residance: findCust.residance,
-                    locaDocument: findCust.locaDocument, landRegistration: findCust.landRegistration, landSize: findCust.landSize,
-                    digitalID: findCust.digitalID, nextFOKniPhone: findCust.nextFOKniPhone, nextFOKinName: findCust.nextFOKinName,
-                    assetType: findCust.assetType, assetID: findCust.assetID,
-                    assetAddress: findCust.assetAddress, assetLongitude: findCust.assetLongitude,
-                    assetLatitude: findCust.assetLatitude, password: cust_password, facialIdentification: 1
+        console.log("7")
+
+        //----------------------------------------------------------------------------------------
+
+        const sentEmail = async (req, res) => {
+
+
+            var transporter = nodemailer.createTransport({
+                host: 'smtp.gmail.com',
+                port: 465,
+                secure: true,
+                auth: {
+                    user: 'chrmepay123@gmail.com',
+                    pass: 'jgiplcgrbddvktkl',
                 }
-                console.log("1")
-                let create = await cutomerModel.create(newCust)
-                console.log("2")
-                let OrganisationList = await org_Licenses.findOne({ OrganisationID: findCust.organisation })
-                console.log("3")
-                let totalLicenses = OrganisationList.totalLicenses
-                console.log("4")
-                let findreaminig = await cutomerModel.find({ organisation: findCust.organisation })
+            });
 
-                let calculateRemainig = totalLicenses - findreaminig.length;
 
-                let Remainig = calculateRemainig
+            var mailOptions = {
+                from: 'chrmepay123@gmail.com',
+                to: 'sumit.hariyani2@gmail.com',
+                subject: 'Sending Email using Node.js',
+                text: `Hello! welcome to chrome pay your login password is ${cust_password}`
 
-                let updateLicenses = await org_Licenses.findOneAndUpdate({ OrganisationID: findCust.organisation }, { RemainingLicenses: Remainig }, { new: true })
-                console.log("5")
+            };
 
-                let cust_wallet = `00x${generateString1(43)}`
-                let obj = {
-                    customer_ID: create._id,
-                    phone: create.phone,
-                    wallet_Address: cust_wallet
+            transporter.sendMail(mailOptions, function (error, info) {
+                if (error) {
+                    console.log('email error line 34 ===  ', error);
+                    return false;
+                } else {
+                    console.log('Email sent: ' + info.messageId);
+                    return info.messageId;
                 }
-                console.log("6")
+            });
+        }
+        await sentEmail();
 
-                let create_Wallet = await cust_wallet_Model.create(obj)
+        //---------------------------------------------------------------------------------------------------------------
 
-                let delete_cust = await temp_Cust.findOneAndDelete({ phone: phoneNo1 })
+        console.log("8")
+        //let update_pass = await cutomerModel.findOneAndUpdate({ phone: phoneNo1 }, { password: cust_password })
 
-
-
-                console.log("7")
-
-                //----------------------------------------------------------------------------------------
-
-                const sentEmail = async (req, res) => {
-
-
-                    var transporter = nodemailer.createTransport({
-                        host: 'smtp.gmail.com',
-                        port: 465,
-                        secure: true,
-                        auth: {
-                            user: 'chrmepay123@gmail.com',
-                            pass: 'jgiplcgrbddvktkl',
-                        }
-                    });
-
-
-                    var mailOptions = {
-                        from: 'chrmepay123@gmail.com',
-                        to: 'sumit.hariyani2@gmail.com',
-                        subject: 'Sending Email using Node.js',
-                        text: `Hello! welcome to chrome pay your login password is ${cust_password}`
-
-                    };
-
-                    transporter.sendMail(mailOptions, function (error, info) {
-                        if (error) {
-                            console.log('email error line 34 ===  ', error);
-                            return false;
-                        } else {
-                            console.log('Email sent: ' + info.messageId);
-                            return info.messageId;
-                        }
-                    });
-                }
-                sentEmail();
-
-                //---------------------------------------------------------------------------------------------------------------
-
-                console.log("8")
-                let update_pass = await cutomerModel.findOneAndUpdate({ phone: phoneNo1 }, { password: cust_password })
-
-                console.log("9")
-                    return res.status(200).send({ status: true, msg: "customer register sucessfully" })
-
-
-            }).catch(async (error) => {
-                const phoneNo1 = req.body.phoneNo
-                console.log("jkl", phoneNo1)
-                let num = parseInt(phoneNo1)
-                console.log("==.", num)
-                console.log("10")
-                let find = await cutomerModel.findOne({ phone: num })
-                console.log("find", find)
-                if (find) {
-                    return res.status(200).send({ status: true, msg: "customer register sucessfully" })
-                }
-
-                return res.status(200).send({ status: true, msg: "customer register sucessfully" })
-
-            })
-
+        console.log("9")
+        if (create) {
+            return res.status(200).send({ status: true, msg: "customer register sucessfullyy" })
+        }
 
     } catch (error) {
 
-        console.log(error)
-        return res.status(200).send({ status: false, msg: "Failed Please try again" })
+        setTimeout(async function () {
+            const phoneNo1 = req.body.phoneNo
+            console.log("jkl", phoneNo1)
+            let num = parseInt(phoneNo1)
+            console.log("==.", num)
+            console.log("10")
+            let find = await cutomerModel.findOne({ phone: num })
+            console.log("find", find)
+            if (find) {
+                return res.status(200).send({ status: true, msg: "customer register sucessfully" })
+            } else {
+                //let delete_cust = await temp_Cust.findOneAndDelete({ phone: phoneNo1 })
+                return res.status(200).send({ status: false, msg: "Please try again" })
+            }
+        }, 3000);
+        //console.log(error)
+       // return res.status(200).send({ status: false, msg: "Failed Please try again" })
     }
 }
 
