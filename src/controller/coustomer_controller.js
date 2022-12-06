@@ -1142,11 +1142,7 @@ const calculate_Amount_cust = async (req, res) => {
             Total_Interest_Amount: totalAmount,
 
         }
-
-
         let create = await Loan_applay_customer.create(obj)
-
-
         return res.status(200).send({
             status: true, msg: "Loan apply successfully", obj, EMI: Num_Emi, Total_Amount: Finalamount, Duration_Month: Emi_Months, Duration_Year: year,
             Interest_percentege: Interest, Intrest_Amount_per_Year: Calculate, Total_Interest_Amount: totalAmount
@@ -1193,9 +1189,6 @@ const get_cust_logs = async (req, res) => {
             .limit(limit * 1)
             .skip((1 - 1) * limit)
             .exec();
-
-
-
 
         return res.status(200).send({ statussss: true, filter })
 

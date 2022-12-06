@@ -178,6 +178,7 @@ const AdminLogin = async (req, res) => {
 
         //---------Login_History-------------//
         let adminID = checkEmail._id
+        let admminID = checkEmail._id
 
         let findLoginTime = Date.now();
 
@@ -199,9 +200,9 @@ const AdminLogin = async (req, res) => {
         }
 
         let MakeLogHIstory = await logHistory.create(logData);
-
+        let token = jwt.sign({ admminID, email }, 'Admin')
         let update = await adminModel.findOneAndUpdate({ email: email }, { wrongpassword: 0 })
-        res.status(200).send({ status: true, 'ID': adminID, msg: "OTP send sucessfully" })
+        return res.status(200).send({ status: true, token: token, ID: checkEmail._id, msg: "Login Sucessfully" })
         //-------------------generate-Otp---------------------------------------------------------------//
         let otp = 100000 + Math.floor(Math.random() * 900000);
 
@@ -299,7 +300,6 @@ const verifyOTP = async (req, res) => {
         if (!findOTP) {
             return res.status(200).send({ status: false, msg: "User Not Found" })
         }
-
 
         if (findOTP.otp != OTP) {
 
@@ -4620,10 +4620,6 @@ const chrome_pay_logs = async (req, res) => {
 
 const Force_IP_Block = async (req, res) => {
     try {
-
-
-
-
 
     } catch (error) {
         console.log(error)

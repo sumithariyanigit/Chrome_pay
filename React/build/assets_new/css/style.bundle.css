@@ -42023,7 +42023,7 @@ code:not([class*=language-]) {
 .timeline-label:before {
   content: "";
   position: absolute;
-  left: 51px;
+  left: 100px;
   width: 3px;
   top: 0;
   bottom: 0;
@@ -46435,7 +46435,7 @@ iframe
 }
 
 .timeline-label .timeline-label {
-  width: 50px;
+  width: 99px;
   font-size: 15px !important;
 }
 
