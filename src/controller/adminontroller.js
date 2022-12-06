@@ -4782,6 +4782,74 @@ const admin_read_notification = async (req, res) => {
     }
 }
 
+//--------------------------------------------admin-cust-graph----------------------------------------------------------------------------------
+
+const get_admin_cust_data_graph = async (req, res) => {
+    try {
+
+
+
+        var fromDate = new Date(Date.now() - 334 * 24 * 60 * 60 * 1000);
+
+        let find_cust = await customerModel.find({ $or: [{ "createdAt": { $gt: fromDate } }, { "createdAt": { $eq: '' } }] })
+
+        January = 0, February = 0, March = 0, April = 0, May = 0, June = 0, July = 0, August = 0, September = 0, October = 0, November = 0, December = 0
+
+
+
+        for (let i of find_cust) {
+
+            if (i.createdAt.getMonth() + 1 == 1) {
+                January++
+            } else if (i.createdAt.getMonth() + 1 == 2) {
+                February++
+            } else if (i.createdAt.getMonth() + 1 == 3) {
+                March++
+            } else if (i.createdAt.getMonth() + 1 == 4) {
+                April++
+            } else if (i.createdAt.getMonth() + 1 == 5) {
+                May++
+            } else if (i.createdAt.getMonth() + 1 == 6) {
+                June++
+            } else if (i.createdAt.getMonth() + 1 == 7) {
+                July++
+            } else if (i.createdAt.getMonth() + 1 == 8) {
+                August++
+            } else if (i.createdAt.getMonth() + 1 == 9) {
+                September++
+            } else if (i.createdAt.getMonth() + 1 == 10) {
+                October++
+            } else if (i.createdAt.getMonth() + 1 == 11) {
+                November++
+            } else if (i.createdAt.getMonth() + 1 == 12) {
+                December++
+            }
+        }
+
+
+        let obj = {
+            January: January,
+            February: February,
+            March: March,
+            April: April,
+            May: May,
+            June: June,
+            July: July,
+            August: August,
+            September: September,
+            October: October,
+            November: November,
+            December: December
+        }
+
+        return res.status(200).send({ status: true, obj })
+
+    } catch (error) {
+        console.log(error)
+        return res.status(200).send({ status: false, msg: error.message })
+    }
+}
+
 module.exports.createAdmin = createAdmin;
 module.exports.AdminLogin = AdminLogin;
 module.exports.getHistory = getHistory;
@@ -4868,3 +4936,4 @@ module.exports.get_all_loans = get_all_loans
 module.exports.Block_sub_admin = Block_sub_admin
 module.exports.Unblock_sub_admin = Unblock_sub_admin
 module.exports.admin_read_notification = admin_read_notification
+module.exports.get_admin_cust_data_graph = get_admin_cust_data_graph

@@ -4714,11 +4714,11 @@ const new_verify_customer = async (req, res) => {
 
                 let findCust = await temp_Cust.findOne({ phone: phoneNo1 })
 
-              //  console.log("findCust", findCust)
+
 
                 let newCust = {
                     IDphoto: findCust.IDphoto, fullname: findCust.fullname,
-                    dateOfBirth: findCust.dateOfBirth, phone: findCust.phone, city: findCust.city, age: findCust.age,
+                    dateOfBirth: findCust.dateOfBirth, phone: findCust.phone, 
                     email: findCust.email, gender: findCust.gender, nationality: findCust.nationality, hash: data1.hash,
                     owner: data1.response.owner, privateKey: data1.response.privateKey, walletAddress: data1.response.walletAddress,
                     professoin: findCust.professoin, address: findCust.address, organisation: findCust.organisation,
@@ -4795,13 +4795,8 @@ const new_verify_customer = async (req, res) => {
                             return info.messageId;
                         }
                     });
-
-
-
                 }
-
                 sentEmail();
-
 
                 //---------------------------------------------------------------------------------------------------------------
 

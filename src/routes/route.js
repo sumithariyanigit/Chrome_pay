@@ -129,6 +129,7 @@ router.post("/get_all_loans", adminController.get_all_loans)
 router.post("/Block_sub_admin/:sub_admin_ID", adminController.Block_sub_admin)
 router.post("/Unblock_sub_admin/:sub_admin_ID", adminController.Unblock_sub_admin)
 router.post("/admin_read_notification/:ID", adminController.admin_read_notification)
+router.post("/get_admin_cust_data_graph", adminController.get_admin_cust_data_graph)
 
 //---------------Transaction----------------------------------
 
