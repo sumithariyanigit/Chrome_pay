@@ -1978,9 +1978,9 @@ const orgchangePasswordotp = async (req, res) => {
             return res.status(200).send({ status: false, msg: "Please enter new Password" })
         }
 
-        if (!newPassword.match(/^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{6,10}$/)) {
-            return res.status(200).send({ status: false, msg: "Please enter valid password in between 6 to 10 character, password at least one number and one special caharacter" })
-        }
+        // if (!newPassword.match(/^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{6,10}$/)) {
+        //     return res.status(200).send({ status: false, msg: "Please enter valid password in between 6 to 10 character, password at least one number and one special caharacter" })
+        // }
 
         if (!confirmPassword) {
             return res.status(200).send({ status: false, msg: "Please enter confirm password" })
