@@ -596,9 +596,9 @@ const AdminCustomerList = async (req, res) => {
         let ID1 = req.body.ID
 
         if (Object.keys(req.body).length <= 1) {
-            let countpages1 = await customerModel.find({ isDeleted: 0, blocked: 0, }).sort({ createdAt: 1 })
+            let countpages1 = await customerModel.find({ isDeleted: 0, blocked: 0, status: "verified" }).sort({ createdAt: 1 })
             let totalRaow1 = countpages1.length;
-            let filter = await customerModel.find({ isDeleted: 0, blocked: 0, }).sort({ createdAt: -1 })
+            let filter = await customerModel.find({ isDeleted: 0, blocked: 0, status: "verified" }).sort({ createdAt: -1 })
                 .limit(limit * 1)
                 .skip((page - 1) * limit)
                 .exec();
@@ -610,9 +610,9 @@ const AdminCustomerList = async (req, res) => {
         } else if (req.body.nationality || req.body.status) {
             let option = [{ nationality: req.body.nationality }, { status: req.body.status }]
 
-            let countpages2 = await customerModel.find({ $or: option, isDeleted: 0, blocked: 0, })
+            let countpages2 = await customerModel.find({ $or: option, isDeleted: 0, blocked: 0, status: "verified" })
             let contRow = countpages2.length
-            let filter = await customerModel.find({ $or: option, isDeleted: 0, blocked: 0, }).sort({ createdAt: -1 })
+            let filter = await customerModel.find({ $or: option, isDeleted: 0, blocked: 0, status: "verified" }).sort({ createdAt: -1 })
                 .limit(limit * 1)
                 .skip((page - 1) * limit)
                 .exec();
@@ -633,9 +633,9 @@ const AdminCustomerList = async (req, res) => {
                 }
             }]
 
-            let countpages2 = await customerModel.find({ $or: option, isDeleted: 0, blocked: 0, })
+            let countpages2 = await customerModel.find({ $or: option, isDeleted: 0, blocked: 0, status: "verified" })
             let contRow = countpages2.length
-            let filter = await customerModel.find({ $or: option, isDeleted: 0, blocked: 0, }).sort({ createdAt: -1 })
+            let filter = await customerModel.find({ $or: option, isDeleted: 0, blocked: 0, status: "verified" }).sort({ createdAt: -1 })
                 .limit(limit * 1)
                 .skip((page - 1) * limit)
                 .exec();
@@ -651,9 +651,9 @@ const AdminCustomerList = async (req, res) => {
         }
 
         else if (req.body.ID.length <= 0 && req.body.phone.length <= 0 && req.body.phone.length <= 0 && req.body.status.length <= 0 && req.body.nationality.length <= 0 && req.body.fromDate.length <= 0 && req.body.toDate.length <= 0) {
-            let countpages2 = await customerModel.find({ isDeleted: 0, blocked: 0, })
+            let countpages2 = await customerModel.find({ isDeleted: 0, blocked: 0, status: "verified" })
             let contRow = countpages2.length
-            let filter = await customerModel.find({ isDeleted: 0, blocked: 0, }).sort({ createdAt: -1 })
+            let filter = await customerModel.find({ isDeleted: 0, blocked: 0, status: "verified" }).sort({ createdAt: -1 })
                 .limit(limit * 1)
                 .skip((page - 1) * limit)
                 .exec();
@@ -667,11 +667,11 @@ const AdminCustomerList = async (req, res) => {
         // let ID = req.body.ID
         //console.log(ID.length)
         else if (req.body.ID && req.body.ID > 0) {
-            let option = [{ _id: req.body.ID }, { phone: req.body.phone }, { status: req.body.status }, { nationality: req.body.nationality }]
+            let option = [{ digitalrefID: req.body.ID }, { phone: req.body.phone }, { status: req.body.status }, { nationality: req.body.nationality }]
 
-            let countpages2 = await customerModel.find({ $or: option, isDeleted: 0, blocked: 0, })
+            let countpages2 = await customerModel.find({ $or: option, isDeleted: 0, blocked: 0, status: "verified" })
             let contRow = countpages2.length
-            let filter = await customerModel.find({ $or: option, isDeleted: 0, blocked: 0, }).sort({ createdAt: -1 })
+            let filter = await customerModel.find({ $or: option, isDeleted: 0, blocked: 0, status: "verified" }).sort({ createdAt: -1 })
                 .limit(limit * 1)
                 .skip((page - 1) * limit)
                 .exec();
@@ -687,11 +687,11 @@ const AdminCustomerList = async (req, res) => {
         } else if (req.body.ID.length > 2) {
 
 
-            let option = [{ _id: req.body.ID }, { phone: req.body.phone }, { status: req.body.status }, { nationality: req.body.nationality }]
+            let option = [{ digitalrefID: req.body.ID }, { phone: req.body.phone }, { status: req.body.status }, { nationality: req.body.nationality }]
 
-            let countpages2 = await customerModel.find({ $or: option, isDeleted: 0, blocked: 0, })
+            let countpages2 = await customerModel.find({ $or: option, isDeleted: 0, blocked: 0, status: "verified" })
             let contRow = countpages2.length
-            let filter = await customerModel.find({ $or: option, isDeleted: 0, blocked: 0, }).sort({ createdAt: -1 })
+            let filter = await customerModel.find({ $or: option, isDeleted: 0, blocked: 0, status: "verified" }).sort({ createdAt: -1 })
                 .limit(limit * 1)
                 .skip((page - 1) * limit)
                 .exec();
@@ -710,10 +710,10 @@ const AdminCustomerList = async (req, res) => {
 
 
             let option = [{ phone: req.body.phone }, { status: req.body.status }, { nationality: req.body.nationality }]
-            let countpages3 = await customerModel.find({ $or: option, blocked: 0, })
+            let countpages3 = await customerModel.find({ $or: option, blocked: 0, status: "verified" })
             let contRow3 = countpages3.length
 
-            let filter = await customerModel.find({ $or: option, isDeleted: 0, blocked: 0, }).sort({ createdAt: -1 })
+            let filter = await customerModel.find({ $or: option, isDeleted: 0, blocked: 0, status: "verified" }).sort({ createdAt: -1 })
                 .limit(limit * 1)
                 .skip((page - 1) * limit)
                 .exec();
@@ -2126,7 +2126,7 @@ const custdetail = async (req, res) => {
             proPercentage += 33
             var location = 1
         } else {
-            var location = 0    
+            var location = 0
         }
 
 
@@ -2453,7 +2453,7 @@ const adminAgent = async (req, res) => {
 
         if (!(/^\d{8,12}$/).test(phone)) {
             return res.status(200).send({ status: false, msg: "Please enter valid phone number, number should be in between 8 to 12" })
-        } 
+        }
 
         let checkEmail = await admin_agent.findOne({ email: email })
 
@@ -2821,7 +2821,7 @@ const addSubAdmin = async (req, res) => {
 
         if (!(/^\d{8,12}$/).test(phone)) {
             return res.status(200).send({ status: false, msg: "Please enter valid phone number, number should be in between 8 to 12" })
-        } 
+        }
 
         let checkphone = await adminModel.findOne({ phone: phone })
 
@@ -3554,18 +3554,31 @@ const pendingCust = async (req, res) => {
     try {
 
 
-        const custID = req.params.custID;
-        console.log('====', custID)
+        console.log("nm")
         let pageNO = req.body.page;
+        console.log("==>", pageNO)
         if (pageNO == 0) {
             pageNO = 1
         }
         const { page = pageNO, limit = 10 } = req.query;
 
 
-        let findcust1 = await customerModel.find({ status: "pending" }).sort({ createdAt: -1 })
+        let findcust1 = await customerModel.find({ status: "pending", isDeleted: 0, blocked: 0 }).sort({ createdAt: -1 })
         let totalRow = findcust1.length
-        let findcust = await customerModel.find({ status: "pending", isDeleted: 0, blocked: 0 }).select({ fullname: 1, dateOfBirth: 1, phone: 1, email: 1, status: 1, walletAddress: 1, digitalID: 1 }).sort({ createdAt: -1 }).limit(limit * 1)
+        if (Object.keys(req.body).length <= 1) {
+
+            console.log("vbnmn")
+            let findcust = await customerModel.find({ status: "pending", isDeleted: 0, blocked: 0 }).select({ fullname: 1, dateOfBirth: 1, phone: 1, email: 1, status: 1, walletAddress: 1, digitalID: 1, digitalrefID: 1 }).sort({ createdAt: -1 }).limit(limit * 1)
+                .skip((page - 1) * limit)
+                .exec()
+
+            return res.status(200).send({ status: true, totlaRow: totalRow, currenPage: parseInt(pageNO), findcust })
+
+        }
+
+
+        let option = [{ digitalrefID: req.body.digitalrefID }]
+        let findcust = await customerModel.find({ $or: option, status: "pending", isDeleted: 0, blocked: 0 }).select({ fullname: 1, dateOfBirth: 1, phone: 1, email: 1, status: 1, walletAddress: 1, digitalID: 1, digitalrefID: 1 }).sort({ createdAt: -1 }).limit(limit * 1)
             .skip((page - 1) * limit)
             .exec()
 
@@ -4077,6 +4090,7 @@ const find_Org_RemainingLicenses = async (req, res) => {
         }
 
         let findCust = await customerModel.find({ organisation: orgID })
+        let total_DIDs = findCust.length
 
         let totalCust = findCust.length;
 
@@ -4133,12 +4147,10 @@ const find_Org_RemainingLicenses = async (req, res) => {
         }
 
         if (remaning_Licenses < 10) {
-            return res.status(200).send({ status: false, remaning_Licenses, msg: "Your Remaning License is below 10 Please update your licenses for continue customer service" })
+            return res.status(200).send({ status: false, remaning_Licenses, total_DIDs, msg: "Your Remaning License is below 10 Please update your licenses for continue customer service" })
         }
 
-        return res.status(200).send({ status: true, remaning_Licenses })
-
-
+        return res.status(200).send({ status: true, remaning_Licenses, total_DIDs })
 
     } catch (error) {
         console.log(error)

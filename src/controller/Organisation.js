@@ -1185,8 +1185,8 @@ const OrganisationCustomerTest = async (req, res) => {
         // let ID = req.body.ID
         //console.log(ID.length)
         else if (req.body.ID && req.body.ID > 0) {
-            let option = [{ _id: req.body.ID }, { phone: req.body.phone }, { status: req.body.status }, { nationality: req.body.nationality }]
-
+            let option = [{ digitalrefID: req.body.ID }, { phone: req.body.phone }, { status: req.body.status }, { nationality: req.body.nationality }]
+            console.log("1")
             let countpages2 = await cutomerModel.find({ $or: option, organisation: OrganisationID, isDeleted: 0 })
             let contRow = countpages2.length
             let filter = await cutomerModel.find({ $or: option, organisation: OrganisationID, isDeleted: 0 }).sort({ createdAt: -1 })
@@ -1205,8 +1205,8 @@ const OrganisationCustomerTest = async (req, res) => {
         } else if (req.body.ID.length > 2) {
 
 
-            let option = [{ _id: req.body.ID }, { phone: req.body.phone }, { status: req.body.status }, { nationality: req.body.nationality }]
-
+            let option = [{ digitalrefID: req.body.ID }, { phone: req.body.phone }, { status: req.body.status }, { nationality: req.body.nationality }]
+            console.log("2")
             let countpages2 = await cutomerModel.find({ $or: option, organisation: OrganisationID, isDeleted: 0 })
             let contRow = countpages2.length
             let filter = await cutomerModel.find({ $or: option, organisation: OrganisationID, isDeleted: 0 }).sort({ createdAt: -1 })
@@ -1246,8 +1246,6 @@ const OrganisationCustomerTest = async (req, res) => {
 
         }
 
-
-
     } catch (error) {
         console.log(error)
         return res.status(500).send({ status: false, msg: error })
@@ -1255,7 +1253,6 @@ const OrganisationCustomerTest = async (req, res) => {
 }
 
 //----------------------------------------------Delete-Customer---------------------------------------------------------------------------------
-
 
 const DeleteCustomer = async (req, res) => {
     try {
@@ -3444,6 +3441,76 @@ const Cust_Linked_Srevice_Org = async (req, res) => {
     }
 }
 
+const get_org_cust_data_graph = async (req, res) => {
+    try {
+
+
+        let orgID = req.orgID
+
+        console.log("orgID", orgID)
+
+
+        var fromDate = new Date(Date.now() - 334 * 24 * 60 * 60 * 1000);
+
+        let find_cust = await customerModel.find({ organisation: orgID, $or: [{ "createdAt": { $gt: fromDate } }, { "createdAt": { $eq: '' } }] })
+
+        January = 0, February = 0, March = 0, April = 0, May = 0, June = 0, July = 0, August = 0, September = 0, October = 0, November = 0, December = 0
+
+
+
+        for (let i of find_cust) {
+
+            if (i.createdAt.getMonth() + 1 == 1) {
+                January++
+            } else if (i.createdAt.getMonth() + 1 == 2) {
+                February++
+            } else if (i.createdAt.getMonth() + 1 == 3) {
+                March++
+            } else if (i.createdAt.getMonth() + 1 == 4) {
+                April++
+            } else if (i.createdAt.getMonth() + 1 == 5) {
+                May++
+            } else if (i.createdAt.getMonth() + 1 == 6) {
+                June++
+            } else if (i.createdAt.getMonth() + 1 == 7) {
+                July++
+            } else if (i.createdAt.getMonth() + 1 == 8) {
+                August++
+            } else if (i.createdAt.getMonth() + 1 == 9) {
+                September++
+            } else if (i.createdAt.getMonth() + 1 == 10) {
+                October++
+            } else if (i.createdAt.getMonth() + 1 == 11) {
+                November++
+            } else if (i.createdAt.getMonth() + 1 == 12) {
+                December++
+            }
+        }
+
+
+        let obj = {
+            January: January,
+            February: February,
+            March: March,
+            April: April,
+            May: May,
+            June: June,
+            July: July,
+            August: August,
+            September: September,
+            October: October,
+            November: November,
+            December: December
+        }
+
+        return res.status(200).send({ status: true, obj })
+
+    } catch (error) {
+        console.log(error)
+        return res.status(200).send({ status: false, msg: error.message })
+    }
+}
+
 
 
 
@@ -3502,3 +3569,4 @@ module.exports.org_loan_accept = org_loan_accept
 module.exports.get_pass_Loans = get_pass_Loans
 module.exports.get_Loan_installment = get_Loan_installment
 module.exports.Cust_Linked_Srevice_Org = Cust_Linked_Srevice_Org
+module.exports.get_org_cust_data_graph = get_org_cust_data_graph

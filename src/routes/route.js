@@ -195,6 +195,7 @@ router.post("/org_loan_accept/:LoanID", Organisation.org_loan_accept)
 router.post("/get_pass_Loans/:token", OrgAuth.auth, Organisation.get_pass_Loans)
 router.post("/get_Loan_installment/:LoanID", Organisation.get_Loan_installment)
 router.post("/Cust_Linked_Srevice_Org/:token", OrgAuth.auth, Organisation.Cust_Linked_Srevice_Org)
+router.post("/get_org_cust_data_graph/:token", OrgAuth.auth, Organisation.get_org_cust_data_graph)
 
 
 
@@ -275,6 +276,8 @@ router.post("/new_verify_customer", agentController.new_verify_customer)
 router.post("/get_agent_cut_month/:token", AgentAuth.auth, agentController.get_agent_cut_month)
 router.post("/Resend_otp/:phone", agentController.Resend_otp)
 router.post("/createCustomerByAgnet_web/:agentID/:orgID", agentController.createCustomerByAgnet_web)
+router.post("/createCustomerByOrg2", agentController.createCustomerByOrg2)
+
 
 
 

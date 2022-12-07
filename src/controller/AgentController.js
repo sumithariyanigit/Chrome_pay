@@ -1009,14 +1009,11 @@ const agentCustomerList = async (req, res) => {
                 .limit(limit * 1)
                 .skip((page - 1) * limit)
                 .exec();
-            // let totlaRow = filter.length;s
-            // if (filter.length == 0) {
-            //     return res.status(200).send({ status: false, msg: "No Customer Found" })
-            // }
+
             return res.status(200).send({ statussss: true, totlaRow: totalRaow1, currenPage: parseInt(pageNO), filter })
         } else if (req.body.nationality) {
             let option = [{ nationality: req.body.nationality }]
-
+            console.log("verif", req.body.nationality)
             let countpages2 = await cutomerModel.find({ $or: option, createdBY: adminID, isDeleted: 0, status: "verified" })
             let contRow = countpages2.length
             let filter = await cutomerModel.find({ $or: option, createdBY: adminID, isDeleted: 0, status: "verified" }).sort({ createdAt: -1 })
@@ -1031,16 +1028,19 @@ const agentCustomerList = async (req, res) => {
 
         } else if (req.body.fromDate) {
 
+            console.log("fghj", req.body.fromDate)
 
-
-            let option = [{ phone: req.body.phone }, { status: req.body.status }, { nationality: req.body.nationality }, {
+            let option = [{
                 createdAt: {
                     $gte: new Date(req.body.fromDate).toISOString(),
                     $lte: new Date(req.body.toDate).toISOString()
                 }
             }]
 
+
+
             let countpages2 = await cutomerModel.find({ $or: option, createdBY: adminID, isDeleted: 0, status: "verified" })
+            console.log("countpages2", adminID)
             let contRow = countpages2.length
             let filter = await cutomerModel.find({ $or: option, createdBY: adminID, isDeleted: 0, status: "verified" }).sort({ createdAt: -1 })
                 .limit(limit * 1)
@@ -1057,31 +1057,10 @@ const agentCustomerList = async (req, res) => {
 
         }
 
-
-
-
-
-
-
-        // else if (req.body.ID.length <= 0 && req.body.phone.length <= 0 && req.body.status.length <= 0 && req.body.nationality.length <= 0 && req.body.fromDate.length <= 0 && req.body.toDate.length <= 0) {
-        //     let countpages2 = await cutomerModel.find({ createdBY: adminID, isDeleted: 0 })
-        //     let contRow = countpages2.length
-        //     let filter = await cutomerModel.find({ createdBY: adminID, isDeleted: 0 }).sort({ createdAt: -1 })
-        //         .limit(limit * 1)
-        //         .skip((page - 1) * limit)
-        //         .exec();
-        //     let totlaRow = filter.length;
-        //     // if (filter.length == 0) {
-        //     //     return res.status(200).send({ status: false, msg: "No Customer Found" })
-        //     // }
-        //     return res.status(200).send({ status: true, totlaRow: contRow, currenPage: parseInt(pageNO), filter })
-        // }
-
-        // let ID = req.body.ID
-        //console.log(ID.length)
         else if (req.body.ID && req.body.ID > 0) {
-            let option = [{ _id: req.body.ID }, { phone: req.body.phone }, { status: req.body.status }, { nationality: req.body.nationality }]
-
+            let option = [{ digitalrefID: req.body.ID }, { phone: req.body.phone }, { status: req.body.status }, { nationality: req.body.nationality }]
+            console.log(req.body.nationality)
+            console.log("verif", req.body.nationality)
             let countpages2 = await cutomerModel.find({ $or: option, createdBY: adminID, isDeleted: 0, status: "verified" })
             let contRow = countpages2.length
             let filter = await cutomerModel.find({ $or: option, createdBY: adminID, isDeleted: 0, status: "verified" }).sort({ createdAt: -1 })
@@ -1089,18 +1068,13 @@ const agentCustomerList = async (req, res) => {
                 .skip((page - 1) * limit)
                 .exec();
             let totlaRow = filter.length;
-            // if (filter.length == 0) {
-            //     return res.status(200).send({ status: false, msg: "No Customer Found" })
-            // }
+
             return res.status(200).send({ status: true, totlaRow: contRow, currenPage: parseInt(pageNO), filter })
-
-
-
 
         } else if (req.body.ID.length > 2) {
 
 
-            let option = [{ _id: req.body.ID }, { phone: req.body.phone }, { status: req.body.status }, { nationality: req.body.nationality }]
+            let option = [{ digitalrefID: req.body.ID }, { phone: req.body.phone }, { status: req.body.status }, { nationality: req.body.nationality }]
 
             let countpages2 = await cutomerModel.find({ $or: option, createdBY: adminID, isDeleted: 0, status: "verified" })
             let contRow = countpages2.length
@@ -1109,9 +1083,7 @@ const agentCustomerList = async (req, res) => {
                 .skip((page - 1) * limit)
                 .exec();
             let totlaRow = filter.length;
-            // if (filter.length == 0) {
-            //     return res.status(200).send({ status: false, msg: "No Customer Found" })
-            // }
+
             return res.status(200).send({ status: true, totlaRow: contRow, currenPage: parseInt(pageNO), filter })
 
         }
@@ -1126,13 +1098,13 @@ const agentCustomerList = async (req, res) => {
             let countpages3 = await cutomerModel.find({ $or: option, createdBY: adminID, status: "verified", isDeleted: 0, })
             let contRow3 = countpages3.length
 
+            console.log("verif", req.body.nationality)
+
             let filter = await cutomerModel.find({ $or: option, createdBY: adminID, isDeleted: 0, status: "verified" }).sort({ createdAt: -1 })
                 .limit(limit * 1)
                 .skip((page - 1) * limit)
                 .exec();
-            // if (filter.length == 0) {
-            //     return res.status(200).send({ status: false, msg: "No Customer Found1" })
-            // }
+
             let totlaRow = filter.length;
 
             return res.status(200).send({ status: true, totlaRow: contRow3, currenPage: parseInt(pageNO), filter })
@@ -2452,16 +2424,15 @@ const createCustomerByOrg1 = async (req, res, next) => {
         }
 
 
-
         if (ID.length !== 24) {
             return res.status(200).send({ status: false, msg: "Please enter Adding ID" })
         }
 
 
         const { IDphoto, fullname, dateOfBirth, phone, city, age, email, gender, nationality, professoin, address, organisation, status, Latitude,
-            Longitude, nextFOKinName, nextFOKniPhone, landSize, assetType, assetID, assetAddress, assetLongitude, assetLatitude } = data
+            Longitude, nextFOKinName, nextFOKniPhone } = data
 
-
+        //landSize , , assetType, assetID,
         //------------------------------------Manage-Linked-service----------------------------------------------------------------------
 
         const cheack_cus = await cutomerModel.findOne({ phone: phone })
@@ -2521,32 +2492,29 @@ const createCustomerByOrg1 = async (req, res, next) => {
 
         }
 
-        const profilePicture = await uploadFile(files[3])
-        const residace = await uploadFile(recidence[1])
-        const local = await uploadFile(localDoc[0])
-        const land = await uploadFile(ladregistration[2])
+        const profilePicture = await uploadFile(files[0])
 
 
-        async function doPostRequest() {
 
-            let payload = {
-                data: {
-                    "name": fullname,
-                    "age": age,
-                    "city": city,
-                    "email": email
-                },
-                phoneNumber: `${phone}`
+        // async function doPostRequest() {
 
-            }
+        //     let payload = {
+        //         data: {
+        //             "name": fullname,
+        //             "age": age,
+        //             "city": city,
+        //             "email": email
+        //         },
+        //         phoneNumber: `${phone}`
 
+        //     }
 
-            let res = await axios.post('http://13.127.64.68:7008/api/mainnet/getUserData', payload);
-            let data1 = res.data;
+        //     let res = await axios.post('http://13.127.64.68:7008/api/mainnet/getUserData', payload);
+        //     let data1 = res.data;
 
-        }
+        // }
 
-        await doPostRequest();
+        // await doPostRequest();
 
         var seq = (Math.floor(Math.random() * 1000000000) + 1000000000).toString().substring()
 
@@ -2559,14 +2527,8 @@ const createCustomerByOrg1 = async (req, res, next) => {
             status: status, createdBY: ID, createdBY: ID,
             nextFOKinName: nextFOKinName,
             nextFOKniPhone: nextFOKniPhone,
-            landSize: landSize,
-            residance: residace,
-            locaDocument: local,
-            landRegistration: land,
             digitalrefID: seq,
-            assetType: assetType, assetID: assetID,
-            assetAddress: assetAddress, assetLongitude: assetLongitude,
-            assetLatitude: assetLatitude
+
         }
 
 
@@ -4824,7 +4786,7 @@ const new_verify_customer = async (req, res) => {
             }
         }, 3000);
         //console.log(error)
-       // return res.status(200).send({ status: false, msg: "Failed Please try again" })
+        // return res.status(200).send({ status: false, msg: "Failed Please try again" })
     }
 }
 
@@ -5165,16 +5127,75 @@ const createCustomerByAgnet_web = async (req, res, next) => {
 
 //-----------------------------------create-customer-new------------------------------------------------------------------------------------------
 
-const create_agent_cust_new = async (req, res) => {
+const createCustomerByOrg2 = async (req, res) => {
     try {
 
+        let data = req.body;
+        let phone_number = req.body.phone
+        let email = req.body.email
+        let age = req.body.age
+        let name = req.body.name
+        let city = req.body.city
+        let recidence = req.files
+        let localDoc = req.files
+        let ladregistration = req.files
 
+
+        const { landSize, assetType, assetID, } = data
+
+        console.log("data", data)
+
+
+        const residace = await uploadFile(recidence[0])
+        const local = await uploadFile(localDoc[1])
+        const land = await uploadFile(ladregistration[2])
+
+
+        const find_and_update = await temp_Cust.findOneAndUpdate({ phone: phone_number }, {
+            assetID: assetID, assetType: assetType,
+            landSize: landSize, residance: residace, locaDocument: local, landRegistration: land
+        }, { new: true })
+
+        if (find_and_update) {
+
+            async function doPostRequest() {
+
+                let payload = {
+                    data: {
+                        "name": name,
+                        "age": age,
+                        "city": city,
+                        "email": email
+                    },
+                    phoneNumber: `${phone_number}`
+
+                }
+
+                let res = await axios.post('http://13.127.64.68:7008/api/mainnet/getUserData', payload);
+                let data1 = res.data;
+
+            }
+
+            await doPostRequest();
+
+
+
+
+
+
+
+
+            return res.status(200).send({ status: true, msg: "Otp send sucessfully" })
+        }
 
     } catch (error) {
         console.log(error)
         return res.status(200).send({ status: false, msg: error.message })
     }
 }
+
+
+
 
 
 
@@ -5237,3 +5258,4 @@ module.exports.new_verify_customer = new_verify_customer;
 module.exports.get_agent_cut_month = get_agent_cut_month;
 module.exports.Resend_otp = Resend_otp;
 module.exports.createCustomerByAgnet_web = createCustomerByAgnet_web
+module.exports.createCustomerByOrg2 = createCustomerByOrg2

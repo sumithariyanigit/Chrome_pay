@@ -137,10 +137,13 @@ const customerSchema = new mongoose.Schema({
         default : null
     },
     assetType:{
-        type:String
+        type: String,
+        default: ""
+
     },
     assetID:{
-        type:String
+        type: String,
+        default: ""
     },
     assetAddress:{
         type:String
