@@ -198,6 +198,8 @@ const pre_cust_Face_ditect = async (req, res) => {
     }
 }
 
+
+
 module.exports.pre_cust_Face_ditect = pre_cust_Face_ditect
 module.exports.cust_Face_ditect = cust_Face_ditect
 // module.exports.get_items = get_items

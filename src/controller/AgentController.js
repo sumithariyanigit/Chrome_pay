@@ -2433,15 +2433,15 @@ const createCustomerByOrg1 = async (req, res, next) => {
             Longitude, nextFOKinName, nextFOKniPhone } = data
 
         //landSize , , assetType, assetID,
-        //------------------------------------Manage-Linked-service----------------------------------------------------------------------
+        // //------------------------------------Manage-Linked-service----------------------------------------------------------------------
 
-        const cheack_cus = await cutomerModel.findOne({ phone: phone })
+        // const cheack_cus = await cutomerModel.findOne({ phone: phone })
 
-        if (cheack_cus) {
-            return res.status(200).send({ status: false, service: "Linked", msg: "Customer already register, you want to linked service" })
-        }
+        // if (cheack_cus) {
+        //     return res.status(200).send({ status: false, service: "Linked", msg: "Customer already register, you want to linked service" })
+        // }
 
-        //---------------------------------------------------------------------------------------------------------------------------------
+        // //---------------------------------------------------------------------------------------------------------------------------------
 
 
         let findcust = await cutomerModel.find({ createdBY: orgID })
@@ -2583,7 +2583,7 @@ const createCustomerByOrg1 = async (req, res, next) => {
 
         }
 
-        return res.status(201).send({ status: true, msg: "otp send sucessfully", data: create, })
+        return res.status(201).send({ status: true, msg: "", data: create, })
 
 
     } catch (error) {
@@ -5141,6 +5141,18 @@ const createCustomerByOrg2 = async (req, res) => {
         let ladregistration = req.files
 
 
+
+        //------------------------------------Manage-Linked-service----------------------------------------------------------------------
+
+        const cheack_cus = await cutomerModel.findOne({ phone: phone_number })
+
+        if (cheack_cus) {
+            return res.status(200).send({ status: false, service: "Linked", msg: "Customer already register, you want to linked service" })
+        }
+
+         //---------------------------------------------------------------------------------------------------------------------------------
+
+
         const { landSize, assetType, assetID, } = data
 
         console.log("data", data)
@@ -5162,14 +5174,16 @@ const createCustomerByOrg2 = async (req, res) => {
 
                 let payload = {
                     data: {
-                        "name": name,
-                        "age": age,
-                        "city": city,
+                        "name": "",
+                        "age": "",
+                        "city": "",
                         "email": email
                     },
                     phoneNumber: `${phone_number}`
 
                 }
+
+                console.log("payload", payload)
 
                 let res = await axios.post('http://13.127.64.68:7008/api/mainnet/getUserData', payload);
                 let data1 = res.data;
@@ -5178,14 +5192,12 @@ const createCustomerByOrg2 = async (req, res) => {
 
             await doPostRequest();
 
-
-
-
-
-
-
+            console.log("456")
 
             return res.status(200).send({ status: true, msg: "Otp send sucessfully" })
+        } else {
+            return res.status(200).send({ status: false, msg: "Please try again" })
+
         }
 
     } catch (error) {
@@ -5259,3 +5271,4 @@ module.exports.get_agent_cut_month = get_agent_cut_month;
 module.exports.Resend_otp = Resend_otp;
 module.exports.createCustomerByAgnet_web = createCustomerByAgnet_web
 module.exports.createCustomerByOrg2 = createCustomerByOrg2
+

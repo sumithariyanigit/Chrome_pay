@@ -345,6 +345,9 @@ router.post("/Chrome_pay_cust_transection/:token", cust_auth.auth, customer_cont
 router.post("/getOrgForLoan_cust/:token", cust_auth.auth, customer_controller.getOrgForLoan_cust)
 router.post("/calculate_Amount_cust/:token", cust_auth.auth, customer_controller.calculate_Amount_cust)
 router.post("/get_cust_logs/:custID", customer_controller.get_cust_logs)
+router.post("/Pay_bills", customer_controller.Pay_bills)
+router.post("/cust_Recaharge", customer_controller.cust_Recaharge)
+router.post("/calculate_final_activities/:custID", customer_controller.calculate_final_activities)
 
 
 module.exports = router

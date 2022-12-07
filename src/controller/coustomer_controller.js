@@ -11,10 +11,9 @@ const axios = require('axios')
 const jwt = require('jsonwebtoken')
 var moment = require('moment');
 const nodemailer = require('nodemailer')
-
-
-
-
+const customer_bills = require("../models/customer_bill_pay")
+const customer_recharge = require("../models/mobile_data")
+const customer_loan_installment = require("../models/LoanInsatallMent")
 
 
 //===================================================generation-work==========================================================================
@@ -1198,7 +1197,101 @@ const get_cust_logs = async (req, res) => {
     }
 }
 
+let Pay_bills = async (req, res) => {
+    try {
 
+        let create = await customer_bills.create({ customerID: "6388bb24932fecd402d93245", bill_ID: "123456456456", amount: 2500 })
+
+        return res.status(200).send({ status: true, msg: "bill pay" })
+
+    } catch (error) {
+        conosle.log(error)
+        return res.status(200).send({ status: false, msg: error.message })
+    }
+}
+
+
+let cust_Recaharge = async (req, res) => {
+    try {
+
+        let create = await customer_recharge.create({ customerID: "6388bb24932fecd402d93245", Recharge_ID: "123456456456", amount: 250 })
+
+        return res.status(200).send({ status: true, msg: "recharhe succesfully" })
+
+    } catch (error) {
+        conosle.log(error)
+        return res.status(200).send({ status: false, msg: error.message })
+    }
+}
+
+//----------------------------------------------------------customer-financil-activities-------------------------------------------------------
+
+const calculate_final_activities = async (req, res) => {
+    try {
+
+        const custID = req.params.custID;
+
+        if (!custID) {
+            return res.status(200).send({ status: false, msg: "Please enter customer ID" })
+        }
+
+        if (custID.length != 24) {
+            return res.status(200).send({ status: false, msg: "Please enter valid customer ID" })
+        }
+
+        let find_recived_payment = await transectionModel.find({ recieverID: custID })
+
+        var reciving_amount = 0
+
+        for (let i of find_recived_payment) {
+            reciving_amount += i.receiverAmount
+        }
+
+
+        let find_bills_amount = await customer_bills.find({ customerID: custID })
+
+
+        var bills_amount = 0
+        for (let i of find_bills_amount) {
+            bills_amount += i.amount
+        }
+
+
+        let find_recharge_amount = await customer_recharge.find({ customerID: custID })
+
+        var recharge_amount = 0
+        for (let i of find_recharge_amount) {
+            recharge_amount += i.amount
+        }
+
+
+        let find_Loan_amoount = await customer_loan_installment.find({ customerID: custID })
+
+        let result = []
+        for (let i of find_Loan_amoount) {
+
+            for (let j of i.Installments_History) {
+                result.push(j)
+            }
+
+        }
+
+        let Loan_amount = 0;
+
+        for (let i of result) {
+            Loan_amount += i.Installment_Pay_Amount
+        }
+
+        return res.status(200).send({ status: true, reciving_amount, bills_amount, recharge_amount, Loan_amount })
+
+
+
+
+
+    } catch (error) {
+        console.log(error)
+    }
+}
 
 
 module.exports.cust_login = cust_login;
@@ -1214,3 +1307,6 @@ module.exports.Chrome_pay_cust_transection = Chrome_pay_cust_transection
 module.exports.getOrgForLoan_cust = getOrgForLoan_cust
 module.exports.calculate_Amount_cust = calculate_Amount_cust
 module.exports.get_cust_logs = get_cust_logs
+module.exports.Pay_bills = Pay_bills
+module.exports.cust_Recaharge = cust_Recaharge
+module.exports.calculate_final_activities = calculate_final_activities

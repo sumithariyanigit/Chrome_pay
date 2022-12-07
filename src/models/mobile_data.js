@@ -3,12 +3,12 @@ const Schema = mongoose.Schema;
 
 
 
-const cust_bill_pay = new mongoose.Schema({
+const cust_recharge = new mongoose.Schema({
     customerID: {
         type: Schema.Types.ObjectId, ref: 'customer'
     },
 
-    bill_ID: {
+    Recharge_ID: {
         type: String
     },
 
@@ -19,5 +19,4 @@ const cust_bill_pay = new mongoose.Schema({
 }, { timestamps: true })
 
 
-module.exports = mongoose.model('customer_Bills', cust_bill_pay)
-
+module.exports = mongoose.model('customer_Recharge', cust_recharge)
