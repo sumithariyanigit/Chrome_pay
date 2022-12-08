@@ -274,6 +274,14 @@ const agentLogin = async (req, res) => {
 
 
 
+
+
+
+
+
+
+
+
         let checkemail = await agentModel.findOne({ email: username })
 
         if (!checkemail) {
@@ -4674,7 +4682,7 @@ const new_verify_customer = async (req, res) => {
         const response = await axios.post('http://13.127.64.68:7008/api/mainnet/generate-digitalid', payload)
 
         let data1 = response.data
-      //  console.log(data1)
+        //  console.log(data1)
         let cust_password = generateString1(5)
 
         let newCust = {
@@ -4778,13 +4786,13 @@ const new_verify_customer = async (req, res) => {
 
     } catch (error) {
 
-            const phoneNo1 = req.body.phoneNo
-            let find = await cutomerModel.findOne({ phone: phoneNo1 })
-            if (find) {
-                return res.status(200).send({ status: true, msg: "customer register  succesfully" })
-            } else {
-                return res.status(200).send({ status: false, msg: "Failed Please try again" })
-            }
+        const phoneNo1 = req.body.phoneNo
+        let find = await cutomerModel.findOne({ phone: phoneNo1 })
+        if (find) {
+            return res.status(200).send({ status: true, msg: "customer register  succesfully" })
+        } else {
+            return res.status(200).send({ status: false, msg: "Failed Please try again" })
+        }
 
     }
 }
@@ -5149,7 +5157,7 @@ const createCustomerByOrg2 = async (req, res) => {
             return res.status(200).send({ status: false, service: "Linked", msg: "Customer already register, you want to linked service" })
         }
 
-         //---------------------------------------------------------------------------------------------------------------------------------
+        //---------------------------------------------------------------------------------------------------------------------------------
 
 
         const { landSize, assetType, assetID, } = data
@@ -5204,6 +5212,216 @@ const createCustomerByOrg2 = async (req, res) => {
         return res.status(200).send({ status: false, msg: error.message })
     }
 }
+
+
+//-------------------------------------------------------new-agent-login----------------------------------------------------------------------
+
+const agent_login_new = async (req, res) => {
+    try {
+
+        const data = req.body;
+        const { username, password } = data
+
+        if (!username) {
+            return res.status(200).send({ status: false, msg: "Please enter email or phone number11" })
+        }
+
+        if (!password) {
+            return res.status(200).send({ status: false, msg: "Please enter pasword" })
+        }
+
+        if ((/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/).test(username)) {
+
+            let find_agent = await agentModel.findOne({ email: username })
+
+            if (find_agent) {
+
+
+
+
+
+
+
+
+                const decryptedPassword = await bcrypt.compare(password, find_agent.password)
+
+
+
+
+                if (!decryptedPassword) {
+                    let UserIP = ip.address()
+                    let AgentID = checkemail._id
+
+                    let findLoginTime = Date.now();
+
+                    let logData = {
+                        email: email,
+                        UserID: find_agent._id,
+                        loginTime: findLoginTime,
+                        IP: UserIP,
+                        status: "Please enter valid password",
+
+                    }
+
+                    let admindata = await adminModel.findOne();
+                    let currStatus = await agentModel.findOne({ email: email })
+                    let wrongCount = currStatus.WrongPassword + 1;
+                    let update = await agentModel.findOneAndUpdate({ email: email }, { WrongPassword: wrongCount })
+                    let remainingchance = admindata.agentpasswordlimit - update.WrongPassword
+
+                    if (update.WrongPassword >= admindata.agentpasswordlimit) {
+                        let UserIP = ip.address()
+                        let data = {
+                            IP: UserIP
+                        }
+                        let blockIP = await BlockIP.create(data)
+                        let update = await agentModel.findOneAndUpdate({ email: find_agent.email }, { WrongPassword: 0 })
+
+                        setTimeout(async () => {
+                            let UserIP = ip.address()
+                            let findIP = await BlockIP.findOneAndDelete({ IP: UserIP })
+
+                        }, "10000")
+
+                        return res.status(200).send({ status: false, msg: "You are blocked due to access try Please try againn after 10 mintutes" })
+
+                    }
+
+
+
+
+
+
+                    let MakeLogHIstory = await logHistory.create(logData);
+
+                    return res.status(200).send({ status: false, msg: `Invalid password remaining chances ${remainingchance}` });
+                }
+
+                let agentID = find_agent._id;
+                let name = find_agent.name
+                let orgID = find_agent.organisationID
+
+                let token = jwt.sign({ name, agentID, orgID, username, }, 'Agent')
+
+                let setTooken = await agentModel.findOneAndUpdate({ email: find_agent.email }, { token: token })
+                let UserIP = ip.address()
+                let AgentID = find_agent._id;
+
+                let findLoginTime = Date.now();
+
+                let logData = {
+                    email: find_agent.email,
+                    UserID: find_agent._id,
+                    loginTime: findLoginTime,
+                    IP: UserIP,
+                    status: "Login Sucessfull",
+
+                }
+
+                let MakeLogHIstory = await logHistory.create(logData);
+                let update = await agentModel.findOneAndUpdate({ email: find_agent.email }, { WrongPassword: 0 })
+                return res.status(200).send({ status: true, msg: "Login Sucessfull", token: token, ID: agentID, orgID: orgID })
+
+            } else {
+
+
+
+
+                const decryptedPassword = await bcrypt.compare(password, find_agent.password)
+
+
+
+
+                if (!decryptedPassword) {
+                    let UserIP = ip.address()
+                    let AgentID = checkemail._id
+
+                    let findLoginTime = Date.now();
+
+                    let logData = {
+                        email: email,
+                        UserID: find_agent._id,
+                        loginTime: findLoginTime,
+                        IP: UserIP,
+                        status: "Please enter valid password",
+
+                    }
+
+                    let admindata = await adminModel.findOne();
+                    let currStatus = await cutomerModel.findOne({ email: email })
+                    let wrongCount = currStatus.WrongPassword + 1;
+                    let update = await agentModel.findOneAndUpdate({ email: email }, { WrongPassword: wrongCount })
+                    let remainingchance = admindata.agentpasswordlimit - update.WrongPassword
+
+                    if (update.WrongPassword >= admindata.agentpasswordlimit) {
+                        let UserIP = ip.address()
+                        let data = {
+                            IP: UserIP
+                        }
+                        let blockIP = await BlockIP.create(data)
+                        let update = await agentModel.findOneAndUpdate({ email: find_agent.email }, { WrongPassword: 0 })
+
+                        setTimeout(async () => {
+                            let UserIP = ip.address()
+                            let findIP = await BlockIP.findOneAndDelete({ IP: UserIP })
+
+                        }, "10000")
+
+                        return res.status(200).send({ status: false, msg: "You are blocked due to access try Please try againn after 10 mintutes" })
+
+                    }
+
+
+
+
+
+
+                    let MakeLogHIstory = await logHistory.create(logData);
+
+                    return res.status(200).send({ status: false, msg: `Invalid password remaining chances ${remainingchance}` });
+                }
+
+                let agentID = find_agent._id;
+                let name = find_agent.name
+                let orgID = find_agent.organisationID
+
+                let token = jwt.sign({ name, agentID, orgID, username, }, 'Agent')
+
+                let setTooken = await agentModel.findOneAndUpdate({ email: find_agent.email }, { token: token })
+                let UserIP = ip.address()
+                let AgentID = find_agent._id;
+
+                let findLoginTime = Date.now();
+
+                let logData = {
+                    email: find_agent.email,
+                    UserID: find_agent._id,
+                    loginTime: findLoginTime,
+                    IP: UserIP,
+                    status: "Login Sucessfull",
+
+                }
+
+                let MakeLogHIstory = await logHistory.create(logData);
+                let update = await agentModel.findOneAndUpdate({ email: find_agent.email }, { WrongPassword: 0 })
+                return res.status(200).send({ status: true, msg: "Login Sucessfull", token: token, ID: agentID, orgID: orgID })
+
+
+
+
+            }
+
+        }
+
+
+    } catch (error) {
+        console.log(error)
+        return res.status(200).send({ status: false, msg: error.message })
+    }
+}
+
+
+
 
 
 
@@ -5270,4 +5488,5 @@ module.exports.get_agent_cut_month = get_agent_cut_month;
 module.exports.Resend_otp = Resend_otp;
 module.exports.createCustomerByAgnet_web = createCustomerByAgnet_web
 module.exports.createCustomerByOrg2 = createCustomerByOrg2
+module.exports.agent_login_new = agent_login_new
 

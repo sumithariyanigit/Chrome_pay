@@ -277,7 +277,7 @@ router.post("/get_agent_cut_month/:token", AgentAuth.auth, agentController.get_a
 router.post("/Resend_otp/:phone", agentController.Resend_otp)
 router.post("/createCustomerByAgnet_web/:agentID/:orgID", agentController.createCustomerByAgnet_web)
 router.post("/createCustomerByOrg2", agentController.createCustomerByOrg2)
-
+router.post("/agent_login_new", agentController.agent_login_new)
 
 
 

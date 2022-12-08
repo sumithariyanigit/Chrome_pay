@@ -1282,6 +1282,11 @@ const calculate_final_activities = async (req, res) => {
             Loan_amount += i.Installment_Pay_Amount
         }
 
+        let final_amount = reciving_amount
+            + bills_amount
+            + recharge_amount
+            + Loan_amount
+
         let obj = {
             reciving_amount
             , bills_amount
@@ -1289,7 +1294,19 @@ const calculate_final_activities = async (req, res) => {
             , Loan_amount
         }
 
-        return res.status(200).send({ status: true, obj })
+        let reciving_amount_per = Number(((reciving_amount / final_amount) * 100).toFixed(1))
+        let bills_amount_per = Number(((bills_amount / final_amount) * 100).toFixed(1))
+        let recharge_amount_per = Number(((recharge_amount / final_amount) * 100).toFixed(1))
+        let Loan_amount_per = Number(((Loan_amount / final_amount) * 100).toFixed(1))
+
+        let obj1 = {
+            reciving_amount_per,
+            bills_amount_per,
+            recharge_amount_per,
+            Loan_amount_per
+        }
+
+        return res.status(200).send({ status: true, obj, obj1 })
 
     } catch (error) {
         console.log(error)
