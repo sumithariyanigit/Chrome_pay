@@ -1282,11 +1282,14 @@ const calculate_final_activities = async (req, res) => {
             Loan_amount += i.Installment_Pay_Amount
         }
 
-        return res.status(200).send({ status: true, reciving_amount, bills_amount, recharge_amount, Loan_amount })
+        let obj = {
+            reciving_amount
+            , bills_amount
+            , recharge_amount
+            , Loan_amount
+        }
 
-
-
-
+        return res.status(200).send({ status: true, obj })
 
     } catch (error) {
         console.log(error)
