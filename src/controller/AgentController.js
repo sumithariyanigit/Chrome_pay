@@ -4689,8 +4689,12 @@ const new_verify_customer = async (req, res) => {
             digitalID: findCust.digitalID, nextFOKniPhone: findCust.nextFOKniPhone, nextFOKinName: findCust.nextFOKinName,
             password: cust_password, facialIdentification: 1
         }
+        console.log("123")
+
 
         let create = await cutomerModel.create(newCust)
+
+        console.log("123")
 
         let OrganisationList = await org_Licenses.findOne({ OrganisationID: findCust.organisation })
 
@@ -4761,7 +4765,7 @@ const new_verify_customer = async (req, res) => {
 
 
 
-        if (create_Wallet) {
+        if (create) {
 
             return res.status(200).send({ status: true, msg: "customer register sucessfullyy" })
         }
