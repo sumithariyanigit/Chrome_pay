@@ -4788,7 +4788,7 @@ const new_verify_customer = async (req, res) => {
                 return res.status(200).send({ status: false, msg: "customer reg. sucessfullyy" })
             }
 
-        }, "4000")
+        }, "2000")
 
 
 
