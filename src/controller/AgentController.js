@@ -5182,7 +5182,7 @@ const createCustomerByOrg2 = async (req, res) => {
 
             return res.status(200).send({ status: true, msg: "Otp send sucessfully" })
         } else {
-            return res.status(200).send({ status: false, msg: "Please try again" })
+            return res.status(200).send({ status: true, msg: "Please try again" })
 
         }
 
