@@ -4773,12 +4773,12 @@ const new_verify_customer = async (req, res) => {
 
         if (create_cust) {
 
-            return res.status(200).send({ status: false, msg: "customer register sucessfullyy" })
+            return res.status(200).send({ status: true, msg: "customer register sucessfullyy" })
         }
 
     } catch (error) {
 
-        return res.status(200).send({ status: false, msg: "customer create sucessfullyy" })
+        return res.status(200).send({ status: true, msg: "customer create sucessfullyy" })
     }
 }
 
