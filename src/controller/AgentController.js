@@ -4692,15 +4692,21 @@ const new_verify_customer = async (req, res) => {
         console.log("123")
 
 
-        let create = await cutomerModel.create(newCust)
+        let create_cust = await cutomerModel.create(newCust)
 
         console.log("123")
 
         let OrganisationList = await org_Licenses.findOne({ OrganisationID: findCust.organisation })
 
+        console.log("OrganisationList", OrganisationList)
+
         let totalLicenses = OrganisationList.totalLicenses
 
+        console.log("totalLicenses", totalLicenses)
+
         let findreaminig = await cutomerModel.find({ organisation: findCust.organisation })
+
+        console.log("findreaminig", findreaminig)
 
         let calculateRemainig = totalLicenses - findreaminig.length;
 
@@ -4708,17 +4714,17 @@ const new_verify_customer = async (req, res) => {
 
         let updateLicenses = await org_Licenses.findOneAndUpdate({ OrganisationID: findCust.organisation }, { RemainingLicenses: Remainig }, { new: true })
 
-
+        console.log("updateLicenses", updateLicenses)
         let cust_wallet = `00x${generateString1(43)}`
         let obj = {
-            customer_ID: create._id,
-            phone: create.phone,
+            customer_ID: create_cust._id,
+            phone: create_cust.phone,
             wallet_Address: cust_wallet
         }
 
 
         let create_Wallet = await cust_wallet_Model.create(obj)
-
+        console.log("create_Wallet", create_Wallet)
         let delete_cust = await temp_Cust.findOneAndDelete({ phone: phoneNo1 })
 
 
@@ -4765,14 +4771,14 @@ const new_verify_customer = async (req, res) => {
 
 
 
-        if (create) {
+        if (create_cust) {
 
-            return res.status(200).send({ status: true, msg: "customer register sucessfullyy" })
+            return res.status(200).send({ status: false, msg: "customer register sucessfullyy" })
         }
 
     } catch (error) {
 
-        return res.status(200).send({ status: false, msg: "customer register sucessfullyy" })
+        return res.status(200).send({ status: false, msg: "customer create sucessfullyy" })
     }
 }
 
@@ -5182,7 +5188,7 @@ const createCustomerByOrg2 = async (req, res) => {
 
             return res.status(200).send({ status: true, msg: "Otp send sucessfully" })
         } else {
-            return res.status(200).send({ status: true, msg: "Please try again" })
+            return res.status(200).send({ status: false, msg: "Please try again" })
 
         }
 
