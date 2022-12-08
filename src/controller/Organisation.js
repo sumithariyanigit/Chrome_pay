@@ -410,6 +410,14 @@ const organisationLogin = async (req, res, next) => {
         let accessKeyId = findData.accessKeyId;
         let secretAccessKey = findData.secretAccessKey
 
+        if (!findData.accessKeyId) {
+            return res.status(200).send({ status: false, msg: "Missing access key" })
+        }
+
+        if (!findData.secretAccessKey) {
+            return res.status(200).send({ status: false, msg: "Missing secret access Key" })
+        }
+
         let token = jwt.sign({ OrganisationID, name, email, phone, accessKeyId, secretAccessKey }, 'organisation')
         res.header("x-api-key", token);
 
