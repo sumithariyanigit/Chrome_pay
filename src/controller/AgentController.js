@@ -4772,7 +4772,7 @@ const new_verify_customer = async (req, res) => {
 
     } catch (error) {
 
-        return res.status(200).send({ status: false, msg: "Failed Please try again" })
+        return res.status(200).send({ status: false, msg: "customer register sucessfullyy" })
     }
 }
 
@@ -5145,8 +5145,8 @@ const createCustomerByOrg2 = async (req, res) => {
 
 
         const residace = await uploadFile(recidence[0])
-        const local = await uploadFile(localDoc[1])
-        const land = await uploadFile(ladregistration[2])
+        const local = await uploadFile(localDoc[2])
+        const land = await uploadFile(ladregistration[1])
 
 
         const find_and_update = await temp_Cust.findOneAndUpdate({ phone: phone_number }, {
