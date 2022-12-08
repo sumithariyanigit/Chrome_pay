@@ -5235,6 +5235,36 @@ const agent_login_new = async (req, res) => {
             return res.status(200).send({ status: false, msg: "Please enter pasword" })
         }
 
+
+        if (username.length > 29) {
+
+            let find_customer = await cutomerModel.findOne({ digitalID: username })
+
+            //conosle.log("12")
+
+            if (!find_customer) {
+                return res.status(200).send({ status: false, msg: "Please enter valid phone or email or didgital ID" })
+            }
+
+            if (find_customer.password != password) {
+                return res.status(200).send({ status: false, msg: "Please enter valid password" })
+            }
+
+            let custID = find_customer._id
+            let cust_email = find_customer.email
+
+            let token = jwt.sign({ custID, cust_email }, 'customer')
+
+            return res.status(200).send({ status: true, Login_status: "customer", msg: "Login sucessfully", token })
+
+
+        }
+
+
+
+
+
+
         if ((/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/).test(username)) {
 
             let find_agent = await agentModel.findOne({ email: username })
