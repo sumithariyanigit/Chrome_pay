@@ -2470,10 +2470,10 @@ const createCustomerByOrg1 = async (req, res, next) => {
         let checkPhone = await cutomerModel.findOne({ phone: data.phone })
 
 
-        if (checkPhone) {
-            return res.status(200).send({ status: false, msg: "Number already register" })
-            //next();
-        }
+        // if (checkPhone) {
+        //     return res.status(200).send({ status: false, msg: "Number already register" })
+        //     //next();
+        // }
 
 
         if (!(/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/).test(email)) {
