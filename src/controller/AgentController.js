@@ -5148,6 +5148,11 @@ const createCustomerByOrg2 = async (req, res) => {
         let ladregistration = req.files
 
 
+        if (req.files.length < 3) {
+            return res.status(200).send({ status: false, msg: "Please fill all fields" })
+        }
+
+
 
         //------------------------------------Manage-Linked-service----------------------------------------------------------------------
 
