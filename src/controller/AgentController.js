@@ -4773,12 +4773,26 @@ const new_verify_customer = async (req, res) => {
 
         if (create_cust) {
 
-            return res.status(200).send({ status: true, msg: "customer register sucessfullyy" })
+            return res.status(200).send({ status: false, msg: "customer register sucessfullyy" })
         }
 
     } catch (error) {
 
-        return res.status(200).send({ status: true, msg: "customer create sucessfullyy" })
+
+        setTimeout(async () => {
+            const phoneNo1 = req.body.phoneNo
+            let find = await cutomerModel.findOne({ phone: phoneNo1 })
+            if (find) {
+                return res.status(200).send({ status: false, msg: "customer create  succesfully" })
+            } else {
+                return res.status(200).send({ status: false, msg: "customer reg. sucessfullyy" })
+            }
+
+        }, "4000")
+
+
+
+
     }
 }
 
