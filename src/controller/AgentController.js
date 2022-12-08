@@ -5250,12 +5250,12 @@ const agent_login_new = async (req, res) => {
 
                 if (!decryptedPassword) {
                     let UserIP = ip.address()
-                    let AgentID = checkemail._id
+                    let AgentID = find_agent._id
 
                     let findLoginTime = Date.now();
 
                     let logData = {
-                        email: email,
+                        email: find_agent.email,
                         UserID: find_agent._id,
                         loginTime: findLoginTime,
                         IP: UserIP,
@@ -5264,9 +5264,9 @@ const agent_login_new = async (req, res) => {
                     }
 
                     let admindata = await adminModel.findOne();
-                    let currStatus = await agentModel.findOne({ email: email })
+                    let currStatus = await agentModel.findOne({ email: username })
                     let wrongCount = currStatus.WrongPassword + 1;
-                    let update = await agentModel.findOneAndUpdate({ email: email }, { WrongPassword: wrongCount })
+                    let update = await agentModel.findOneAndUpdate({ email: username }, { WrongPassword: wrongCount })
                     let remainingchance = admindata.agentpasswordlimit - update.WrongPassword
 
                     if (update.WrongPassword >= admindata.agentpasswordlimit) {
@@ -5320,9 +5320,42 @@ const agent_login_new = async (req, res) => {
 
                 let MakeLogHIstory = await logHistory.create(logData);
                 let update = await agentModel.findOneAndUpdate({ email: find_agent.email }, { WrongPassword: 0 })
-                return res.status(200).send({ status: true, msg: "Login Sucessfull", token: token, ID: agentID, orgID: orgID })
+                return res.status(200).send({ status: true, Login_status: "agent", msg: "Login Sucessfull", token: token, ID: agentID, orgID: orgID })
 
             } else {
+
+
+
+
+                let find_customer = await cutomerModel.findOne({ email: username })
+
+                if (!find_customer) {
+                    return res.status(200).send({ status: false, msg: "Please enter valid phone or email" })
+                }
+
+                if (find_customer.password != password) {
+                    return res.status(200).send({ status: false, msg: "Please enter valid password" })
+                }
+
+                let custID = find_customer._id
+                let cust_email = find_customer.email
+
+                let token = jwt.sign({ custID, cust_email }, 'customer')
+
+                return res.status(200).send({ status: true, Login_status: "customer", msg: "Login sucessfully", token })
+
+
+
+
+            }
+
+        } else {
+
+
+            let find_agent = await agentModel.findOne({ phone: username })
+
+            if (find_agent) {
+
 
 
 
@@ -5334,12 +5367,12 @@ const agent_login_new = async (req, res) => {
 
                 if (!decryptedPassword) {
                     let UserIP = ip.address()
-                    let AgentID = checkemail._id
+                    let AgentID = find_agent._id
 
                     let findLoginTime = Date.now();
 
                     let logData = {
-                        email: email,
+                        email: find_agent.email,
                         UserID: find_agent._id,
                         loginTime: findLoginTime,
                         IP: UserIP,
@@ -5348,9 +5381,9 @@ const agent_login_new = async (req, res) => {
                     }
 
                     let admindata = await adminModel.findOne();
-                    let currStatus = await cutomerModel.findOne({ email: email })
+                    let currStatus = await agentModel.findOne({ email: find_agent.email })
                     let wrongCount = currStatus.WrongPassword + 1;
-                    let update = await agentModel.findOneAndUpdate({ email: email }, { WrongPassword: wrongCount })
+                    let update = await agentModel.findOneAndUpdate({ email: find_agent.email }, { WrongPassword: wrongCount })
                     let remainingchance = admindata.agentpasswordlimit - update.WrongPassword
 
                     if (update.WrongPassword >= admindata.agentpasswordlimit) {
@@ -5404,15 +5437,37 @@ const agent_login_new = async (req, res) => {
 
                 let MakeLogHIstory = await logHistory.create(logData);
                 let update = await agentModel.findOneAndUpdate({ email: find_agent.email }, { WrongPassword: 0 })
-                return res.status(200).send({ status: true, msg: "Login Sucessfull", token: token, ID: agentID, orgID: orgID })
+                return res.status(200).send({ status: true, Login_status: "agent", msg: "Login Sucessfull", token: token, ID: agentID, orgID: orgID })
+            } else {
+
+
+
+                let find_customer = await cutomerModel.findOne({ phone: username })
+
+                if (!find_customer) {
+                    return res.status(200).send({ status: false, msg: "Please enter valid phone or email" })
+                }
+
+                if (find_customer.password != password) {
+                    return res.status(200).send({ status: false, msg: "Please enter valid password" })
+                }
+
+                let custID = find_customer._id
+                let cust_email = find_customer.email
+
+                let token = jwt.sign({ custID, cust_email }, 'customer')
+
+                return res.status(200).send({ status: true, Login_status: "customer", msg: "Login sucessfully", token })
 
 
 
 
             }
 
-        }
 
+
+
+        }
 
     } catch (error) {
         console.log(error)
