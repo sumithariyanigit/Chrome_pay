@@ -6,10 +6,39 @@ const twitter = require("./routes/TwitterLogin")
 const mongoose = require('mongoose')
 const mysql = require("mysql")
 const bodyParser = require('body-parser')
-const app = express()
+const Swag_ger = require("./swagger")
+
 const cookieSession = require('cookie-session')
 const cors = require('cors')
+const swaggerJsDoc = require('swagger-jsdoc')
+const swaggerUI = require('swagger-ui-express')
+//const routes = require("../src/docapi")
 //app.options('*', cors())
+
+
+const options = {
+    definition: {
+        openapi: "3.0.0",
+        info: {
+            title: "Library API",
+            version: "1.0.0",
+            description: "A simple Express Library API",
+        },
+        servers: [
+            {
+                url: "http://localhost:3300",
+            },
+        ],
+    },
+    apis: ["src/routes/*.js"],
+};
+
+const specs = swaggerJsDoc(options);
+
+const app = express()
+app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(specs));
+
+
 
 var corsOptions = {
     origin: '*',

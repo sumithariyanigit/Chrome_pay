@@ -44,7 +44,9 @@
     "passport-twitter": "^0.1.5",
     "redis": "^4.5.0",
     "sendotp": "^1.2.9",
-    "sharp": "^0.31.2"
+    "sharp": "^0.31.2",
+    "swagger-jsdoc": "^6.2.5",
+    "swagger-ui-express": "^4.6.0"
   },
   "devDependencies": {
     "login-with-twitter": "^1.2.4",

@@ -5255,7 +5255,7 @@ const agent_login_new = async (req, res) => {
 
             let token = jwt.sign({ custID, cust_email }, 'customer')
 
-            return res.status(200).send({ status: true, Login_status: "customer", msg: "Login sucessfully", token })
+            return res.status(200).send({ status: true, Login_status: "customer", msg: "Login sucessfully", token, custID })
 
 
         }
@@ -5322,11 +5322,6 @@ const agent_login_new = async (req, res) => {
 
                     }
 
-
-
-
-
-
                     let MakeLogHIstory = await logHistory.create(logData);
 
                     return res.status(200).send({ status: false, msg: `Invalid password remaining chances ${remainingchance}` });
@@ -5359,28 +5354,19 @@ const agent_login_new = async (req, res) => {
 
             } else {
 
-
-
-
                 let find_customer = await cutomerModel.findOne({ email: username })
-
                 if (!find_customer) {
                     return res.status(200).send({ status: false, msg: "Please enter valid phone or email" })
                 }
-
                 if (find_customer.password != password) {
                     return res.status(200).send({ status: false, msg: "Please enter valid password" })
                 }
-
                 let custID = find_customer._id
                 let cust_email = find_customer.email
 
                 let token = jwt.sign({ custID, cust_email }, 'customer')
 
                 return res.status(200).send({ status: true, Login_status: "customer", msg: "Login sucessfully", token })
-
-
-
 
             }
 
@@ -5467,9 +5453,7 @@ const agent_login_new = async (req, res) => {
                     loginTime: findLoginTime,
                     IP: UserIP,
                     status: "Login Sucessfull",
-
                 }
-
                 let MakeLogHIstory = await logHistory.create(logData);
                 let update = await agentModel.findOneAndUpdate({ email: find_agent.email }, { WrongPassword: 0 })
                 return res.status(200).send({ status: true, Login_status: "agent", msg: "Login Sucessfull", token: token, ID: agentID, orgID: orgID })

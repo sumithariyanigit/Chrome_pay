@@ -2254,6 +2254,35 @@ const createCustomerByOrg = async (req, res, next) => {
         let ID = req.params.ID;
         console.log("ID", ID)
 
+
+        if (!ID) {
+            return res.status(200).send({ status: false, msg: "Please enter Adding ID" })
+
+        }
+
+        if (ID.length != 24) {
+            return res.status(200).send({ status: false, msg: "Please enter valid Adding ID" })
+
+        }
+
+        const { IDphoto, fullname, dateOfBirth, phone, city, age, email, gender, nationality, professoin, address, organisation, status, Latitude,
+            Longitude, nextFOKinName, nextFOKniPhone, landSize, assetType, assetID, assetAddress, assetLongitude, assetLatitude } = data
+
+
+        if (!data) {
+            return res.status(200).send({ status: false, msg: "Please fill all fields " })
+
+        }
+
+        if (!dateOfBirth) {
+            return res.status(200).send({ status: false, msg: "Please enter Date Of Birth" })
+        }
+
+        if (!phone) {
+            return res.status(200).send({ status: false, msg: "Please enter phone" })
+        }
+
+
         let findsubAdminID = await subAdmin.findOne({ _id: ID })
 
         if (findsubAdminID) {
@@ -2278,8 +2307,6 @@ const createCustomerByOrg = async (req, res, next) => {
         }
 
 
-        const { IDphoto, fullname, dateOfBirth, phone, city, age, email, gender, nationality, professoin, address, organisation, status, Latitude,
-            Longitude, nextFOKinName, nextFOKniPhone, landSize, assetType, assetID, assetAddress, assetLongitude, assetLatitude } = data
 
 
        // ------------------------------------Manage - Linked - service----------------------------------------------------------------------

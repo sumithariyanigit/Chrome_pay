@@ -30,6 +30,319 @@ const cust_auth = require("../middleware/customer_auth")
 
 
 //--------------------------------------------------------------------------------------------------------------------------------------------------
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     Organization:
+ *       type: object
+ *       required:
+ *         - title
+ *         - author
+ *       properties:
+ *         id:
+ *           type: string
+ *           description: The auto-generated id of the book
+ *         title:
+ *           type: string
+ *           description: The book title
+ *         author:
+ *           type: string
+ *           description: The book author
+*       example:
+*         id: d5fE_asz
+*         title: The New Turing Omnibus
+*         author: Alexander K. Dewdney
+*/
+
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     Customer:
+ *       type: object
+ *       required:
+ *         - IDphoto
+ *         - author
+ *         - fullname
+ *       properties:
+ *         id:
+ *           type: string
+ *           description: The auto-generated id of the book
+ *       IDphoto:
+ *           type: string
+ *           description: The book title
+ *       author:
+ *           type: string
+ *           description: The book author
+ *       fullname:
+ *           type: string
+ *       dateOfBirth:
+ *            type: string
+ *       phone:
+ *             type: Number
+ *       email:
+ *             type: string
+ *       gender:
+ *             type: string
+ *       nationality:
+ *             type: string
+ *       professoin:
+ *             type: string
+ *       address:
+ *             type: string
+ *       Latitude:
+ *             type: string
+ *       Longitude:
+ *              type: string
+ *       biometric:
+ *               type: Number
+ *       fingerPrint:
+ *        type: Number
+ *       city:
+ *          type: string
+ *       age:
+ *        type: Number
+ *       status:
+ *        type: string
+ *       hash:
+ *        type: string
+ *       owner:
+ *        type: string
+ *       privateKey:
+ *        type: string
+ *       walletAddress:
+ *        type: string
+ *       organisation:
+ *         type: string
+ *       blocked:
+ *         type: Number
+ *       isDeleted:
+ *         type: Number
+ *       createdBY:
+ *          type:string
+ *       DeletedBy:
+ *          type:string
+ *       suspendBy:
+ *          type:string
+ *       nextFOKinName:
+ *          type: string
+ *       nextFOKniPhone:
+ *          type: Number
+ *       landSize:
+ *          type: string
+ *       residance:
+ *          type: string
+ *       locaDocument:
+ *          type: string
+ *       landRegistration:
+ *          type: string
+ *       otp:
+ *           type: Number
+ *       facialIdentification:
+ *           type: Number
+ *       faceDiscription:
+ *           type: Array
+ *       digitalID:
+ *          type: string
+ *       digitalrefID:
+ *          type: string
+ *       Location:
+ *          type: Number
+ *       assetType:
+ *         type: string
+ *       assetID:
+ *          type: string
+ *       assetAddress:
+ *         type: string
+ *       assetLongitude:
+ *         type: string
+ *       assetLatitude:
+ *        type: string
+ *       Loan_OTP:
+ *         type: string
+ *       Linekd_Service_OTP:
+ *         type: string
+ *       password:
+ *         type: string
+ *       wrongOTP:
+ *         type: Number
+ *       wrong_pass:
+ *          type: Number
+ *       login_otp:
+ *         type: Number
+ *       example:
+ *           id: d5fE_asz
+ *           IDphoto: The New Turing Omnibus
+ *           author: Alexander K. Dewdney
+ *           fullname : sdsd ds
+*/
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+  * @swagger
+  * tags:
+  *   name: Organization
+  *   description: The Organization managing API
+  */
+
+
+
+//---------------------------------------------------------------organisation-swagger-------------------------------------------------------------------
+
+
+/**
+ * @swagger
+ * /Login:
+ *   post:
+ *     summary: Organization Login
+ *     tags: [ORG]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Customer'
+ *     responses:
+ *       200:
+ *         description: Login Sucessfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Customer'
+ *       500:
+ *         description: Some server error
+ */
+
+
+/**
+ * @swagger
+ * /createCustomerByOrg/{ID}:
+ *   post:
+ *     summary: Create a new customer
+ *     tags: [ORG]
+ *     parameters:
+ *       - in: path
+  *         name: ID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Customer'
+ *     responses:
+ *       200:
+ *         description: The OTP send sucessfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Customer'
+ *       500:
+ *         description: Some server error
+ */
+
+
+/**
+ * @swagger
+ * /verifyCustomer:
+ *   post:
+ *     summary: Create customer OTP verify
+ *     tags: [ORG]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Customer'
+ *     responses:
+ *       200:
+ *         description: The customer was successfully created
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Customer'
+ *       500:
+ *         description: Some server error
+ */
+
+
+
+/**
+ * @swagger
+ * /OrganisationCustomerTest/{ID}:
+ *   post:
+ *     summary: All Digital ID's
+ *     tags: [ORG]
+ *     parameters:
+ *       - in: path
+ *         name: ID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Customer'
+ *     responses:
+ *       200:
+ *         description: All Digital IDs
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Customer'
+ *       500:
+ *         description: Some server error
+ */
+
+
+/**
+ * @swagger
+ * /customerVerify/{customerID}/{OrganizationID}:
+ *   post:
+ *     summary: Veirfy Customer
+ *     tags: [ORG]
+ *     parameters:
+ *       - in: path
+ *         name: customerID
+ *       - in: path
+ *         name: OrganizationID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Customer'
+ *     responses:
+ *       200:
+ *         description: Customer verify Sucessfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Customer'
+ *       500:
+ *         description: Some server error
+ */
+
+
+
+
+
+
+
+
+
+
 router.post("/customer/:ID", MatchIPc.findBlockIPs, customerController.createCustomer, apihis.apiHistory);
 router.get("/getuser", MatchIPc.findBlockIPs, adminauth.auth, customerController.getCustomer, apihis.apiHistory);
 router.get("/getuser/:ID", MatchIPc.findBlockIPs, adminauth.auth, customerController.getallusers, apihis.apiHistory);
@@ -95,7 +408,7 @@ router.post("/updateSubAdminRoles/:subAdminID", adminController.updateSubAdminRo
 router.post("/customerVerify/:custID/:adminID", adminController.customerVerify)
 router.post("/orgVerify/:orgID/:adminID", adminController.orgVerify)
 router.post("/OrgCust/:custID", adminController.OrgCust)
-router.post("/addFeeSetup/:adminID",adminController.addFeeSetup)
+router.post("/addFeeSetup/:adminID", adminController.addFeeSetup)
 router.post("/createCustomerByAdmin/:ID", adminController.createCustomerByAdmin)
 router.post("/pendingCust", adminController.pendingCust)
 router.post("/AgentReport", adminController.AgentReport)
@@ -108,7 +421,7 @@ router.post("/findLicenses/:orgID", adminController.findLicenses)
 router.post("/add_Licenses/:orgID", adminController.add_Licenses)
 router.get("/viewFee/:orgID", adminController.viewFee)
 router.post("/updateFee/:orgID", adminController.updateFee)
-router.post("/addOrgDocument/:orgID",adminController.addOrgDocument)
+router.post("/addOrgDocument/:orgID", adminController.addOrgDocument)
 router.get("/find_Org_RemainingLicenses/:orgID", adminController.find_Org_RemainingLicenses)
 router.post("/viewDoc/:orgID", adminController.viewDoc)
 router.post("/findlowLicenseOrganisattions", adminController.findlowLicenseOrganisattions)
@@ -281,7 +594,7 @@ router.post("/agent_login_new", agentController.agent_login_new)
 
 
 
-router.get("/hello",(req,res)=>{
+router.get("/hello", (req, res) => {
     console.log("hello satyam")
     res.send("hello satyam")
 })

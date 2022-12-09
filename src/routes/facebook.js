@@ -4,6 +4,8 @@ const passport = require('passport');
 const Strategy = require('passport-facebook').Strategy;
 const session = require('express-session');
 // After you declare "app"
+
+
 router.use(session({
     secret: 'melody hensley is my spirit animal', resave: true,
     saveUninitialized: true
