@@ -2251,7 +2251,7 @@ const createCustomerByOrg = async (req, res, next) => {
         let recidence = req.files
         let localDoc = req.files
         let ladregistration = req.files
-        let ID = req.params.ID;
+        let ID = req.orgID;
         console.log("ID", ID)
 
 

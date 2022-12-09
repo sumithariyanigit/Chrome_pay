@@ -31,6 +31,12 @@ const cust_auth = require("../middleware/customer_auth")
 
 //--------------------------------------------------------------------------------------------------------------------------------------------------
 
+
+
+
+
+
+
 /**
  * @swagger
  * components:
@@ -229,13 +235,13 @@ const cust_auth = require("../middleware/customer_auth")
 
 /**
  * @swagger
- * /createCustomerByOrg/{ID}:
+ * /createCustomerByOrg/{token}:
  *   post:
  *     summary: Create a new customer
  *     tags: [ORG]
  *     parameters:
  *       - in: path
-  *         name: ID
+  *         name: token
  *     requestBody:
  *       required: true
  *       content:
@@ -326,6 +332,33 @@ const cust_auth = require("../middleware/customer_auth")
  *     responses:
  *       200:
  *         description: Customer verify Sucessfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Customer'
+ *       500:
+ *         description: Some server error
+ */
+
+
+/**
+ * @swagger
+ * /BlockCustomer/{customerID}:
+ *   put:
+ *     summary: Block Customer
+ *     tags: [ORG]
+ *     parameters:
+ *       - in: path
+ *         name: customerID
+ *     requestBody:
+ *       required: false
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Customer'
+ *     responses:
+ *       200:
+ *         description: Customer Block Sucessfully
  *         content:
  *           application/json:
  *             schema:
@@ -488,7 +521,10 @@ router.post("/orgchangePasswordotp", MatchIPc.findBlockIPs, Organisation.orgchan
 router.get("/vieworg/:orgID", MatchIPc.findBlockIPs, Organisation.vieworg);
 router.get("/agentView/:agentID", Organisation.agentView)
 router.post("/org_update/:orgID", Organisation.org_update)
-router.post("/createCustomerByOrg/:ID", Organisation.createCustomerByOrg);
+router.post("/createCustomerByOrg/:token", OrgAuth.auth, Organisation.createCustomerByOrg);
+
+
+
 router.post("/verifyCustomer", Organisation.verifyCustomer)
 router.get("/getOwnerDigitalID", Organisation.getOwnerDigitalID)
 router.get("/getallGigitalIDs", Organisation.getallGigitalIDs)

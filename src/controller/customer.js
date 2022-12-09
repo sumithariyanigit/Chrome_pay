@@ -452,6 +452,8 @@ const blockCustomer = async (req, res) => {
 
         const userID = req.params.ID;
 
+        console.log("userID", userID)
+
         if (!userID) {
             return res.status(200).send({ status: false, msg: "Please enter CustomerID" })
         }
