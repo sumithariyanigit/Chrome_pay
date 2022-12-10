@@ -1454,7 +1454,7 @@ const agentsuspend = async (req, res) => {
         const orgID = req.params.orgID;
 
         if (!agentID) {
-            return res.status(200).send({ status: false, msg: "Please enter CustomerID" })
+            return res.status(200).send({ status: false, msg: "Please enter Agent" })
         }
 
         if (!orgID) {
@@ -1480,13 +1480,13 @@ const agentsuspend = async (req, res) => {
 
 
         if (checkUser.blocked == 1) {
-            return res.status(200).send({ status: 1, msg: "Customer Already Bolcked" })
+            return res.status(200).send({ status: 1, msg: "Agent Already Bolcked" })
         }
 
         if (checkUser.organisationID == orgID) {
             let BlockUser = await agentModel.findOneAndUpdate({ _id: agentID }, { blocked: 1, blockedBY: agentID }, { new: true })
 
-            return res.status(200).send({ status: true, msg: "Customer Block Sucessfully" })
+            return res.status(200).send({ status: true, msg: "Agent Block Sucessfully" })
         }
 
     } catch (error) {
@@ -1504,7 +1504,7 @@ const unSuspendagent = async (req, res) => {
         const orgID = req.params.orgID;
 
         if (!agentID) {
-            return res.status(200).send({ status: false, msg: "Please enter CustomerID" })
+            return res.status(200).send({ status: false, msg: "Please enter AgentID" })
         }
 
         if (!orgID) {
@@ -1532,13 +1532,13 @@ const unSuspendagent = async (req, res) => {
 
 
         if (checkUser.blocked == 0) {
-            return res.status(200).send({ status: 1, msg: "Customer Already Unbolcked" })
+            return res.status(200).send({ status: 1, msg: "Agent Already Unbolcked" })
         }
 
         if (checkUser.organisationID == orgID) {
             let BlockUser = await agentModel.findOneAndUpdate({ _id: agentID }, { blocked: 0 }, { new: true })
 
-            return res.status(200).send({ status: true, msg: "Customer Un-block Sucessfully" })
+            return res.status(200).send({ status: true, msg: "Agent Un-block Sucessfully" })
         }
 
 
@@ -1561,7 +1561,7 @@ const deleteAgent = async (req, res) => {
         const orgID = req.params.orgID;
 
         if (!agentID) {
-            return res.status(200).send({ status: false, msg: "Please enter CustomerID" })
+            return res.status(200).send({ status: false, msg: "Please enter AgentID" })
         }
 
         if (!orgID) {
@@ -1590,7 +1590,7 @@ const deleteAgent = async (req, res) => {
 
 
         if (checkUser.isDeleted == 1) {
-            return res.status(200).send({ status: 1, msg: "Customer Already deleted" })
+            return res.status(200).send({ status: 1, msg: "Agent Already deleted" })
         }
 
         if (checkUser.organisationID == orgID) {

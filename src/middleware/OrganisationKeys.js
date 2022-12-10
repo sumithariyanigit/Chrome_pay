@@ -35,6 +35,14 @@ const AcessKeys = async (req, res, next) => {
 
         let find = await Organisation.findOne({ _id: req.orgID })
 
+        if (find.accessKeyId !== accessKeyId) {
+            return res.status(200).send({ status: false, msg: "Please enter valid access Key Id" })
+        }
+
+        if (find.secretAccessKey !== secretAccessKey) {
+            return res.status(200).send({ status: false, msg: "Please enter valid secret access Key" })
+        }
+
         console.log(find)
 
         next()

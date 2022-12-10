@@ -5478,14 +5478,7 @@ const agent_login_new = async (req, res) => {
 
                 return res.status(200).send({ status: true, Login_status: "customer", msg: "Login sucessfully", token, custID })
 
-
-
-
             }
-
-
-
-
         }
 
     } catch (error) {

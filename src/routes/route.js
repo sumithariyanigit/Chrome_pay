@@ -241,7 +241,7 @@ const cust_auth = require("../middleware/customer_auth")
  *     tags: [ORG]
  *     parameters:
  *       - in: path
-  *         name: token
+ *         name: token
  *     requestBody:
  *       required: true
  *       content:
@@ -368,8 +368,476 @@ const cust_auth = require("../middleware/customer_auth")
  */
 
 
+/**
+ * @swagger
+ * /Delete/{customerID}:
+ *   delete:
+ *     summary: Delete Customer
+ *     tags: [ORG]
+ *     parameters:
+ *       - in: path
+ *         name: customerID
+ *     requestBody:
+ *       required: false
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Customer'
+ *     responses:
+ *       200:
+ *         description: Customer Delete successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Customer'
+ *       500:
+ *         description: Some server error
+ */
+
+///custdetail/:custID
+
+/**
+ * @swagger
+ * /custdetail/{customerID}:
+ *   post:
+ *     summary: Customer Detaile
+ *     tags: [ORG]
+ *     parameters:
+ *       - in: path
+ *         name: customerID
+ *         required: true
+ *       - name: accessKeyId
+ *         in: header
+ *         description: an authorization header
+ *         required: true
+ *         type: string
+ *       - name: secretAccessKey
+ *         in: header
+ *         description: an authorization header
+ *         required: true
+ *         type: string
+ *     requestBody:
+ *       required: false
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Customer'
+ *     responses:
+ *       200:
+ *         description: Customer Detail
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Customer'
+ *       500:
+ *         description: Some server error
+ */
 
 
+/**
+ * @swagger
+ * /updateDigitalID/{customerID}/{OrganizationID}:
+ *   post:
+ *     summary: Generate customer Digital ID
+ *     tags: [ORG]
+ *     parameters:
+ *       - in: path
+ *         name: customerID
+ *         required: true
+ *       - in: path
+ *         name: OrganizationID
+ *         required: true
+ *     requestBody:
+ *       required: false
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Customer'
+ *     responses:
+ *       200:
+ *         description: Generate customer Digital ID
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Customer'
+ *       500:
+ *         description: Some server error
+ */
+
+
+///orgtransection/:OrganisationID
+
+
+/**
+ * @swagger
+ * /orgtransection/{OrganizationID}:
+ *   post:
+ *     summary: Customer Transection Lists
+ *     tags: [ORG]
+ *     parameters:
+ *       - in: path
+ *         name: OrganizationID
+ *         required: true
+ *     requestBody:
+ *       required: false
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Customer'
+ *     responses:
+ *       200:
+ *         description: Customer Transection Lists
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Customer'
+ *       500:
+ *         description: Some server error
+ */
+
+
+//agentregister/6311a0de778efce58f2336db
+
+/**
+ * @swagger
+ * /agentregister/{OrganizationID}:
+ *   post:
+ *     summary: Register Agent
+ *     tags: [ORG]
+ *     parameters:
+ *       - in: path
+ *         name: OrganizationID
+ *         required: true
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Customer'
+ *     responses:
+ *       200:
+ *         description: Register Agent
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Customer'
+ *             example:
+ *               application/json: "{name:Virendra Shilpkar,email:123@gmail.com,phone:8508123125,country:India,address:Indore sapna sangeeta,city:indore,transectionLimit:15000$,Addsubagent:0,performPayOut:0,cancelTarnsection:0,approveTransection:0,createdigitalID:0,cashierapprove:0}"
+ *       500:
+ *         description: Some server error
+ */
+
+
+////getagent/638451d25f12c279fe18e2d1
+
+
+/**
+ * @swagger
+ * /getagent/{OrganizationID}:
+ *   post:
+ *     summary: Get Organization Agents
+ *     tags: [ORG]
+ *     parameters:
+ *       - in: path
+ *         name: OrganizationID
+ *         required: true
+ *     requestBody:
+ *       required: false
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Customer'
+ *     responses:
+ *       200:
+ *         description: Get Organization Agents
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Customer'
+ *       500:
+ *         description: Some server error
+ */
+
+
+//agentSusupend/639424307c6ea0abfc0e0320/638451d25f12c279fe18e2d1
+
+
+/**
+ * @swagger
+ * /agentSusupend/{AgentID}/{OrganizationID}:
+ *   put:
+ *     summary: Suspend Agent
+ *     tags: [ORG]
+ *     parameters:
+ *       - in: path
+ *         name: AgentID
+ *         required: true
+ *       - in: path
+ *         name: OrganizationID
+ *         required: true
+ *     requestBody:
+ *       required: false
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Customer'
+ *     responses:
+ *       200:
+ *         description: Suspend Agent
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Customer'
+ *       500:
+ *         description: Some server error
+ */
+
+///unSuspendagent
+
+
+/**
+ * @swagger
+ * /unSuspendagent/{AgentID}/{OrganizationID}:
+ *   put:
+ *     summary: Un-suspend Agent
+ *     tags: [ORG]
+ *     parameters:
+ *       - in: path
+ *         name: AgentID
+ *         required: true
+ *       - in: path
+ *         name: OrganizationID
+ *         required: true
+ *     requestBody:
+ *       required: false
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Customer'
+ *     responses:
+ *       200:
+ *         description: Un-suspend Agent
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Customer'
+ *       500:
+ *         description: Some server error
+ */
+
+//agentPerformanceReport
+
+/**
+ * @swagger
+ * /deleteAgent/{AgentID}/{OrganizationID}:
+ *   delete:
+ *     summary: Delete Agnet
+ *     tags: [ORG]
+ *     parameters:
+ *       - in: path
+ *         name: AgentID
+ *         required: true
+ *       - in: path
+ *         name: OrganizationID
+ *         required: true
+ *     requestBody:
+ *       required: false
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Customer'
+ *     responses:
+ *       200:
+ *         description: Delete agnet
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Customer'
+ *       500:
+ *         description: Some server error
+ */
+
+
+//deleteAgent/638455c05f12c279fe18e346/638451d25f12c279fe18e2d1
+
+/**
+ * @swagger
+ * /agentPerformanceReport/{AgentID}:
+ *   post:
+ *     summary: Organization agnet performance report
+ *     tags: [ORG]
+ *     parameters:
+ *       - in: path
+ *         name: AgentID
+ *         required: true
+ *     requestBody:
+ *       required: false
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Customer'
+ *     responses:
+ *       200:
+ *         description: Organization agnet performance report
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Customer'
+ *       500:
+ *         description: Some server error
+ */
+
+
+///cust/:token
+
+
+
+/**
+ * @swagger
+ * /agentPerformanceReport/{AgentID}:
+ *   post:
+ *     summary: Organization agnet performance report
+ *     tags: [ORG]
+ *     parameters:
+ *       - in: path
+ *         name: AgentID
+ *         required: true
+ *     requestBody:
+ *       required: false
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Customer'
+ *     responses:
+ *       200:
+ *         description: Organization agnet performance report
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Customer'
+ *       500:
+ *         description: Some server error
+ */
+
+///Cust_Loan_apply/:token
+
+
+/**
+ * @swagger
+ * /Cust_Loan_apply/{token}:
+ *   post:
+ *     summary: Loan Applications
+ *     tags: [ORG]
+ *     parameters:
+ *       - in: path
+ *         name: token
+ *     requestBody:
+ *       required: false
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Customer'
+ *     responses:
+ *       200:
+ *         description: Loan Applications
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Customer'
+ *       500:
+ *         description: Some server error
+ */
+
+
+///org_loan_accept/:LoanID
+
+/**
+ * @swagger
+ * /org_loan_accept/{LoanID}:
+ *   post:
+ *     summary: Organization pass customer Loan
+ *     tags: [ORG]
+ *     parameters:
+ *       - in: path
+ *         name: LoanID
+ *         required: true
+ *     requestBody:
+ *       required: false
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Customer'
+ *     responses:
+ *       200:
+ *         description: Organization pass customer Loan Sucessfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Customer'
+ *       500:
+ *         description: Some server error
+ */
+
+
+///get_pass_Loans/:token
+
+
+/**
+ * @swagger
+ * /get_pass_Loans/{token}:
+ *   post:
+ *     summary: Pass Loan Applications
+ *     tags: [ORG]
+ *     parameters:
+ *       - in: path
+ *         name: token
+ *     requestBody:
+ *       required: false
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Customer'
+ *     responses:
+ *       200:
+ *         description: Pass Loan Applications
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Customer'
+ *       500:
+ *          description: Some server error
+ */
+
+
+  ///get_Loan_installment/:LoanID
+
+
+/**
+ * @swagger
+ * /get_Loan_installment/{LoanID}:
+ *   post:
+ *     summary: Organization pass customer Loan Installments
+ *     tags: [ORG]
+ *     parameters:
+ *       - in: path
+ *         name: LoanID
+ *         required: true
+ *     requestBody:
+ *       required: false
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Customer'
+ *     responses:
+ *       200:
+ *         description: Organization pass customer Loan Installments Sucessfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Customer'
+ *       500:
+ *         description: Some server error
+ */
 
 
 
@@ -420,7 +888,7 @@ router.get("/viewtransection/:ID", MatchIPc.findBlockIPs, adminController.viewtr
 router.post("/adminProfileUpdate/:adminID", adminController.adminProfileUpdate)
 router.post("/updateAgentTransection/:adminID", adminController.updateAgentTransection)
 router.get("/admindash", adminController.admindash)
-router.post("/custdetail/:custID", adminController.custdetail)
+router.post("/custdetail/:custID", AcessKeys.AcessKeys, adminController.custdetail)
 router.post("/verifyCustomer/:custID", adminController.verifyCustomer)
 router.post("/approvalDIDs", adminController.approvalDIDs)
 router.post("/blockedIDS", adminController.blockedIDS)
