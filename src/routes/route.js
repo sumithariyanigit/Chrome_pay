@@ -844,6 +844,11 @@ const cust_auth = require("../middleware/customer_auth")
 
 
 
+//-----------------------------------------------------Agent-Swegger----------------------------------------------------------------------------- 
+
+
+
+
 
 router.post("/customer/:ID", MatchIPc.findBlockIPs, customerController.createCustomer, apihis.apiHistory);
 router.get("/getuser", MatchIPc.findBlockIPs, adminauth.auth, customerController.getCustomer, apihis.apiHistory);
