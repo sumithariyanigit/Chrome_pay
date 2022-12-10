@@ -6,12 +6,14 @@ const jwt = require('jsonwebtoken')
 const AcessKeys = async (req, res, next) => {
     try {
 
-        const accessKeyId = req.header('accessKeyId')
-        const secretAccessKey = req.header('secretAccessKey')
-        const token = req.params.token
+        //const accessKeyId = req.header('accessKeyId')
+        //const secretAccessKey = req.header('secretAccessKey')
+        const token = req.header('token')
+        const token1 = req.body.token
 
 
-        console.log(accessKeyId)
+        // console.log("fghf", req.headers);
+        console.log("token", token)
 
         if (!accessKeyId) {
             return res.status(200).send({ status: false, msg: "Please enter accessKeyId " })

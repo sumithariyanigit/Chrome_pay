@@ -328,7 +328,7 @@ const organisationLogin = async (req, res, next) => {
         //next();
         const email = req.body.email;
         const password = req.body.password;
-
+        console.log("1213")
         if (!email) {
             return res.status(200).send({ status: false, msg: "email field required" })
         }
@@ -1092,7 +1092,7 @@ const organisationsTransectionList = async (req, res) => {
 const OrganisationCustomerTest = async (req, res) => {
 
     try {
-
+        console.log("api test")
         const OrganisationID = req.params.ID;
         const CustomerName = req.body.customerName;
         const status = req.body.Status

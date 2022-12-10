@@ -20,6 +20,10 @@ const ExportController = require("../controller/ExportsList")
 const wallet_controller = require("../controller/Wallet")
 const Face_ditection = require("../controller/cust_face_controller")
 const customer_controller = require("../controller/coustomer_controller")
+const swaggerJsDoc = require('swagger-jsdoc')
+const swaggerUI = require('swagger-ui-express')
+const Third_party_Organization = require("../controller/Orgnization_third_party")
+
 //4564
 
 //-----------------------------------------Auth-Middleware-Imports--------------------------------------------------------------------------------
@@ -1171,6 +1175,13 @@ router.post("/get_cust_logs/:custID", customer_controller.get_cust_logs)
 router.post("/Pay_bills", customer_controller.Pay_bills)
 router.post("/cust_Recaharge", customer_controller.cust_Recaharge)
 router.post("/calculate_final_activities/:custID", customer_controller.calculate_final_activities)
+
+
+
+//----------------------------------------org-third-party-api----------------------------------------------------------------------------
+
+//router.post("/createCustomerByOrganization")
+router.post("/Organization_Customers", AcessKeys.AcessKeys, Third_party_Organization.Organization_Customers)
 
 
 module.exports = router
