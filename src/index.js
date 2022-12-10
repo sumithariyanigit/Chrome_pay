@@ -7,12 +7,12 @@ const mongoose = require('mongoose')
 const mysql = require("mysql")
 const bodyParser = require('body-parser')
 const Swag_ger = require("./swagger")
-
+const app = express()
 const cookieSession = require('cookie-session')
 const cors = require('cors')
 const swaggerJsDoc = require('swagger-jsdoc')
 const swaggerUI = require('swagger-ui-express')
-//const routes = require("../src/docapi")
+const swag_routes = require("../src/routes/route")
 //app.options('*', cors())
 //dfghjk
 
@@ -36,7 +36,7 @@ const options = {
 
 const specs = swaggerJsDoc(options);
 
-const app = express()
+
 app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(specs));
 
 
