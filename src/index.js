@@ -27,7 +27,7 @@ const options = {
         },
         servers: [
             {
-                url: "http://ec2-13-233-63-235.ap-south-1.compute.amazonaws.com:3300",
+                url: "http://localhost:3300",
             },
         ],
     },

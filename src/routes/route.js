@@ -240,12 +240,12 @@ const cust_auth = require("../middleware/customer_auth")
 
 /**
  * @swagger
- * /createCustomerByOrg/{token}:
+ * /createCustomerByOrganization:
  *   post:
  *     summary: Create a new customer
  *     tags: [ORG]
  *     parameters:
- *       - in: path
+ *       - in: header
  *         name: token
  *     requestBody:
  *       required: true
@@ -267,10 +267,13 @@ const cust_auth = require("../middleware/customer_auth")
 
 /**
  * @swagger
- * /verifyCustomer:
+ * /OrgverifyCustomer:
  *   post:
  *     summary: Create customer OTP verify
  *     tags: [ORG]
+ *     parameters:
+ *       - in: header
+ *         name: token
  *     requestBody:
  *       required: true
  *       content:
@@ -292,13 +295,13 @@ const cust_auth = require("../middleware/customer_auth")
 
 /**
  * @swagger
- * /OrganisationCustomerTest/{ID}:
+ * /Organization_Customers:
  *   post:
  *     summary: All Digital ID's
  *     tags: [ORG]
  *     parameters:
- *       - in: path
- *         name: ID
+ *       - in: header
+ *         name: token
  *     requestBody:
  *       required: true
  *       content:
@@ -319,15 +322,15 @@ const cust_auth = require("../middleware/customer_auth")
 
 /**
  * @swagger
- * /customerVerify/{customerID}/{OrganizationID}:
+ * /OrgcustomerVerify/{customerID}:
  *   post:
  *     summary: Veirfy Customer
  *     tags: [ORG]
  *     parameters:
+ *       - in: header
+ *         name: token
  *       - in: path
  *         name: customerID
- *       - in: path
- *         name: OrganizationID
  *     requestBody:
  *       required: true
  *       content:
@@ -348,11 +351,13 @@ const cust_auth = require("../middleware/customer_auth")
 
 /**
  * @swagger
- * /BlockCustomer/{customerID}:
+ * /OrgblockCustomer/{customerID}:
  *   put:
  *     summary: Block Customer
  *     tags: [ORG]
  *     parameters:
+ *       - in: header
+ *         name: token
  *       - in: path
  *         name: customerID
  *     requestBody:
@@ -375,11 +380,13 @@ const cust_auth = require("../middleware/customer_auth")
 
 /**
  * @swagger
- * /Delete/{customerID}:
+ * /OrgDeleteCustomer/{customerID}:
  *   delete:
  *     summary: Delete Customer
  *     tags: [ORG]
  *     parameters:
+ *       - in: header
+ *         name: token
  *       - in: path
  *         name: customerID
  *     requestBody:
@@ -403,24 +410,16 @@ const cust_auth = require("../middleware/customer_auth")
 
 /**
  * @swagger
- * /custdetail/{customerID}:
- *   post:
+ * /Org_custdetail/{customerID}:
+ *   get:
  *     summary: Customer Detaile
  *     tags: [ORG]
  *     parameters:
+ *       - in: header
+ *         name: token
  *       - in: path
  *         name: customerID
  *         required: true
- *       - name: accessKeyId
- *         in: header
- *         description: an authorization header
- *         required: true
- *         type: string
- *       - name: secretAccessKey
- *         in: header
- *         description: an authorization header
- *         required: true
- *         type: string
  *     requestBody:
  *       required: false
  *       content:
@@ -438,6 +437,8 @@ const cust_auth = require("../middleware/customer_auth")
  *         description: Some server error
  */
 
+
+//-------------------------------------pending-12-10-2022---------------------------------------------
 
 /**
  * @swagger
@@ -1180,8 +1181,12 @@ router.post("/calculate_final_activities/:custID", customer_controller.calculate
 
 //----------------------------------------org-third-party-api----------------------------------------------------------------------------
 
-//router.post("/createCustomerByOrganization")
+router.post("/createCustomerByOrganization", AcessKeys.AcessKeys, Third_party_Organization.createCustomerByOrganization)
 router.post("/Organization_Customers", AcessKeys.AcessKeys, Third_party_Organization.Organization_Customers)
-
+router.post("/OrgverifyCustomer", AcessKeys.AcessKeys, Third_party_Organization.OrgverifyCustomer)
+router.post("/OrgcustomerVerify/:custID", AcessKeys.AcessKeys, Third_party_Organization.OrgcustomerVerify)
+router.put("/OrgblockCustomer/:customerID", AcessKeys.AcessKeys, Third_party_Organization.OrgblockCustomer)
+router.delete("/OrgDeleteCustomer/:customerID", AcessKeys.AcessKeys, Third_party_Organization.OrgDeleteCustomer)
+router.get("/Org_custdetail/:customerID", AcessKeys.AcessKeys, Third_party_Organization.Org_custdetail)
 
 module.exports = router

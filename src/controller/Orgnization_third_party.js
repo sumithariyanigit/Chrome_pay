@@ -36,6 +36,7 @@ const LoanInsatallMent = require("../models/LoanInsatallMent");
 const bcrypt = require("bcrypt")
 const cust_wallet_Model = require("../models/Cust_Wallet")
 const nodemailer = require('nodemailer')
+const transactionModel = require("../models/transaction");
 
 
 
@@ -253,7 +254,7 @@ const Organization_Customers = async (req, res) => {
 
     try {
 
-        const OrganisationID = req.params.ID;
+        const OrganisationID = req.orgID
         const CustomerName = req.body.customerName;
         const status = req.body.Status
 
@@ -420,8 +421,378 @@ const Organization_Customers = async (req, res) => {
     }
 }
 
+//-------------------------------------------verify-customer----------------------------------------------------------------------------
+
+let OrgverifyCustomer = async (req, res) => {
+    try {
+
+        const OTP = req.body.OTP
+        const phoneNo1 = req.body.phoneNo
+        const phoneNo = phoneNo1
+
+        if (!phoneNo1) {
+            return res.status(200).send({ Status: false, msg: "Please enter Phone No." })
+        }
+
+        let trim = phoneNo.replaceAll(' ', '')
+        let remove_character = trim.replace('-', '')
+        let convert_Number = parseInt(remove_character)
+
+
+
+        var result = [];
+
+        if (!phoneNo1) {
+            return res.status(200).send({ Status: false, msg: "Please enter Phone No." })
+        }
+
+        // async function doPostRequest() {
+
+        let payload = {
+            code: OTP,
+            phoneNumber: `+${convert_Number}`
+        }
+
+
+
+        let findCust = await temp_Cust.findOne({ phone: convert_Number })
+
+
+        let res1 = axios.post('http://13.127.64.68:7008/api/mainnet/generate-digitalid', {
+            code: OTP,
+            phoneNumber: `+${convert_Number}`
+        }).then(async respons => {
+
+
+            let data1 = respons.data
+            let cust_password = generateString1(10)
+
+
+
+            let findCust = await temp_Cust.findOne({ phone: convert_Number })
+
+            let newCust = {
+                IDphoto: findCust.IDphoto, fullname: findCust.fullname,
+                dateOfBirth: findCust.dateOfBirth, phone: findCust.phone, city: findCust.city, age: findCust.age,
+                email: findCust.email, gender: findCust.gender, nationality: findCust.nationality, hash: data1.hash,
+                owner: data1.response.owner, privateKey: data1.response.privateKey, walletAddress: data1.response.walletAddress,
+                professoin: findCust.professoin, address: findCust.address, organisation: findCust.organisation,
+                createdBY: findCust.createdBY, imageDescriptions: findCust.imageDescriptions, Latitude: findCust.Latitude,
+                Longitude: findCust.Longitude, digitalrefID: findCust.digitalrefID, residance: findCust.residance,
+                locaDocument: findCust.locaDocument, landRegistration: findCust.landRegistration, landSize: findCust.landSize,
+                digitalID: findCust.digitalID, nextFOKniPhone: findCust.nextFOKniPhone, nextFOKinName: findCust.nextFOKinName,
+                assetType: findCust.assetType, assetID: findCust.assetID,
+                assetAddress: findCust.assetAddress, assetLongitude: findCust.assetLongitude,
+                assetLatitude: findCust.assetLatitude, password: cust_password, facialIdentification: 1
+            }
+
+            console.log(newCust)
+
+
+            let create = await cutomerModel.create(newCust)
+
+            let OrganisationList = await org_Licenses.findOne({ OrganisationID: findCust.organisation })
+
+            let totalLicenses = OrganisationList.totalLicenses
+
+            let findreaminig = await customerModel.find({ organisation: findCust.organisation })
+
+            let calculateRemainig = totalLicenses - findreaminig.length;
+
+            let Remainig = calculateRemainig
+
+
+
+            //----------------------------------------------------------------------------------------
+
+            const sentEmail = async (req, res) => {
+
+
+                var transporter = nodemailer.createTransport({
+                    host: 'smtp.gmail.com',
+                    port: 465,
+                    secure: true,
+                    auth: {
+                        user: 'chrmepay123@gmail.com',
+                        pass: 'jgiplcgrbddvktkl',
+                    }
+                });
+
+
+                var mailOptions = {
+                    from: 'chrmepay123@gmail.com',
+                    to: 'sumit.hariyani2@gmail.com',
+                    subject: 'Sending Email using Node.js',
+                    text: `Hello! welcome to chrome pay your login password is ${cust_password}`
+
+                };
+
+                transporter.sendMail(mailOptions, function (error, info) {
+                    if (error) {
+                        console.log('email error line 34 ===  ', error);
+                        return false;
+                    } else {
+                        console.log('Email sent: ' + info.messageId);
+                        return info.messageId;
+                    }
+                });
+
+
+
+            }
+
+            sentEmail();
+
+
+
+            let updateLicenses = await org_Licenses.findOneAndUpdate({ OrganisationID: findCust.organisation }, { RemainingLicenses: Remainig }, { new: true })
+            let cust_wallet = `00x${generateString1(43)}`
+            let obj = {
+                customer_ID: create._id,
+                phone: create.phone,
+                wallet_Address: cust_wallet
+            }
+            let create_Wallet = await cust_wallet_Model.create(obj)
+            let delete_cust = await temp_Cust.findOneAndDelete({ phone: convert_Number })
+            return res.status(200).send({ status: true, msg: "customer register sucessfully" })
+
+
+
+        }).catch(async error => {
+            let delete_cust = await temp_Cust.findOneAndDelete({ phone: convert_Number })
+            //console.log(error)
+            return res.status(200).send({ status: false, error: error.message, msg: "failed please try again" })
+        });
+
+        // return res.status(200).send({ status: false, msg: "customer register sucessfully" })
+
+
+
+
+    } catch (error) {
+        console.log(error)
+        return res.status(500).send({ status: false, msg: error.message })
+    }
+}
+
+
+const OrgcustomerVerify = async (req, res) => {
+    try {
+
+        const adminID = req.orgID
+
+        let findsubAdminID = await subAdmin.findOne({ _id: adminID })
+
+        console.log(findsubAdminID)
+
+        if (findsubAdminID) {
+            let findRole = await sub_admin_role.findOne({ adminID: adminID })
+
+            if (findRole) {
+
+                let customerRole = findRole.customer.approveDID
+
+                if (customerRole == 0) {
+                    return res.status(200).send({ status: false, msg: "You are not allow to verify customer, Contact admin to access verify customer" })
+
+                }
+            }
+
+        }
+
+        const custID = req.params.custID;
+
+        if (!custID) {
+            return res.status(200).send({ status: false, msg: "Please enter custID ID" })
+        }
+
+        if (custID.length !== 24) {
+            return res.status(200).send({ status: false, msg: "Please enter valid custID ID " })
+        }
+
+        let findcust = await customerModel.findOneAndUpdate({ _id: custID }, { status: "verified" })
+
+        if (findcust) {
+            return res.status(200).send({ status: true, msg: "customer verified sucessfully" })
+        }
+
+
+
+    } catch (error) {
+        console.log(error)
+        return res.status(200).send({ status: false, msg: error.message })
+    }
+}
+
+//----------------------------------------block-custmer-------------------------------------------------------------
+
+const OrgblockCustomer = async (req, res) => {
+    try {
+
+        const userID = req.params.customerID;
+
+        console.log("userIDD", userID)
+
+        if (!userID) {
+            return res.status(200).send({ status: false, msg: "Please enter CustomerID" })
+        }
+
+        let checkUser = await cutomerModel.findOne({ _id: userID })
+        if (!checkUser) {
+            return res.status(200).send({ status: false, msg: "No User Found" })
+        }
+        if (checkUser.blocked == 1) {
+            return res.status(200).send({ status: 1, msg: "Customer Already Bolcked" })
+        }
+
+
+
+        let BlockUser = await cutomerModel.findOneAndUpdate({ _id: userID }, { blocked: 1 }, { new: true })
+
+        return res.status(200).send({ status: 1, msg: "Customer Block Sucessfully" })
+
+    } catch (error) {
+        console.log(error)
+        return res.status(200).send({ status: false, msg: error })
+    }
+}
+
+
+//-------------------------------------delete-cuts---------------------------------------------------------------------------------------
+
+const OrgDeleteCustomer = async (req, res) => {
+    try {
+
+        const customerID = req.params.customerID
+
+        if (customerID.length !== 24) {
+            return res.status(200).send({ status: false, msg: "Customer Id is required" })
+        }
+
+        let findCUstomer = await cutomerModel.findOne({ _id: customerID })
+        if (!findCUstomer) {
+            return res.status(200).send({ status: false, msg: "Customer not found" })
+        }
+
+        if (findCUstomer.isDeleted == 1) {
+            return res.status(200).send({ Status: false, msg: "Customer already deleted" })
+        }
+
+        let update = await cutomerModel.findOneAndUpdate({ _id: customerID }, { isDeleted: 1 }, { new: true })
+
+        return res.status(200).send({ status: true, msg: "Customer Deleted Sucessfully" })
+
+    } catch (error) {
+        console.log(error)
+        return res.status(500).send({ status: false, msg: error })
+    }
+}
+
+//----------------------------------------customer-detail------------------------------------------------------------------------------
+
+const Org_custdetail = async (req, res) => {
+    try {
+
+        const custID = req.params.customerID
+        console.log("fghjk")
+
+        if (!custID) {
+            return res.status(200).send({ status: false, msg: "Please enter custID" })
+        }
+
+        if (custID.length !== 24) {
+            return res.status(200).send({ status: false, msg: "not getting valid custID" })
+        }
+
+        let findCust = await customerModel.findOne({ _id: custID })
+
+
+        let findsendingAmount = await transactionModel.find({ senderID: custID })
+
+
+        var sendindAmount = 0;
+        for (let i of findsendingAmount) {
+            sendindAmount += i.sendingAmount
+        }
+
+        let findrecievingAmount = await transactionModel.find({ recieverID: custID })
+
+        var receiveAmount = 0;
+        for (let i of findrecievingAmount) {
+            receiveAmount += i.sendingAmount
+        }
+
+        let totalAmount = sendindAmount + receiveAmount;
+
+        let findtotalTransection = await transactionModel.find({ senderID: custID })
+        let findtotlaTrans = await transactionModel.find({ recieverID: custID })
+
+        var totalTransection = findtotalTransection.length + findtotlaTrans.length
+
+
+
+        let findProfilePercentage = await customerModel.findOne({ _id: custID })
+
+        let proPercentage = 0
+        if (findProfilePercentage.biometric == 1) {
+            proPercentage += 33
+        }
+
+        if (findProfilePercentage.fingerPrint == 1) {
+            proPercentage += 33
+        }
+
+        if (findProfilePercentage.facialIdentification == 1) {
+            proPercentage += 34
+        }
+
+        console.log(proPercentage)
+
+        //var location = 0
+
+        if (findCust.Latitude.length && findCust.Longitude.length) {
+            proPercentage += 33
+            var location = 1
+        } else {
+            var location = 0
+        }
+
+
+
+
+        let obj = {
+
+            _id: findCust._id, IDphoto: findCust.IDphoto, fullname: findCust.fullname,
+            dateOfBirth: findCust.dateOfBirth, biometric: findCust.biometric, fingerPrint: findCust.fingerPrint,
+            facialIdentification: findCust.facialIdentification, phone: findCust.phone, city: findCust.city, age: findCust.age,
+            email: findCust.email, gender: findCust.gender, nationality: findCust.nationality, hash: findCust.hash,
+            owner: findCust.owner, privateKey: findCust.privateKey, walletAddress: findCust.walletAddress,
+            professoin: findCust.professoin, address: findCust.address, organisation: findCust.organisation,
+            createdBY: findCust.createdBY, imageDescriptions: findCust.imageDescriptions, Latitude: findCust.Latitude,
+            Longitude: findCust.Longitude, digitalID: findCust.digitalID, digitalrefID: findCust.digitalrefID, residance: findCust.residance,
+            locaDocument: findCust.locaDocument, landRegistration: findCust.landRegistration, totalTransection: totalTransection,
+            sendindAmount: sendindAmount, receiveAmount: receiveAmount, proPercentage: proPercentage, totalAmount: totalAmount,
+            landSize: findCust.landSize, nextFOKinName: findCust.nextFOKinName, nextFOKniPhone: findCust.nextFOKniPhone, Location: location
+
+        }
+
+
+        return res.status(200).send({ status: true, obj })
+
+
+    } catch (error) {
+        console.log(error)
+        return res.status(200).send({ status: false, msg: error.message })
+    }
+}
+
 
 
 
 module.exports.createCustomerByOrganization = createCustomerByOrganization
 module.exports.Organization_Customers = Organization_Customers
+module.exports.OrgverifyCustomer = OrgverifyCustomer
+module.exports.OrgcustomerVerify = OrgcustomerVerify
+module.exports.OrgblockCustomer = OrgblockCustomer
+module.exports.OrgDeleteCustomer = OrgDeleteCustomer
+module.exports.Org_custdetail = Org_custdetail

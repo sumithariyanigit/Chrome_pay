@@ -8,20 +8,20 @@ const AcessKeys = async (req, res, next) => {
 
         //const accessKeyId = req.header('accessKeyId')
         //const secretAccessKey = req.header('secretAccessKey')
-        const token = req.header('token')
+        const token = req.headers["token"]
         const token1 = req.body.token
 
 
         // console.log("fghf", req.headers);
         console.log("token", token)
 
-        if (!accessKeyId) {
-            return res.status(200).send({ status: false, msg: "Please enter accessKeyId " })
-        }
+        // if (!accessKeyId) {
+        //     return res.status(200).send({ status: false, msg: "Please enter accessKeyId " })
+        // }
 
-        if (!secretAccessKey) {
-            return res.status(200).send({ status: false, msg: "Please enter secretAccessKey " })
-        }
+        // if (!secretAccessKey) {
+        //     return res.status(200).send({ status: false, msg: "Please enter secretAccessKey " })
+        // }
 
         if (!token) {
             return res.status(200).send({ status: false, message: `Missing authentication token in request` });
@@ -37,15 +37,15 @@ const AcessKeys = async (req, res, next) => {
 
         let find = await Organisation.findOne({ _id: req.orgID })
 
-        if (find.accessKeyId !== accessKeyId) {
-            return res.status(200).send({ status: false, msg: "Please enter valid access Key Id" })
+        if (!find.accessKeyId) {
+            return res.status(200).send({ status: false, msg: " Access Key Id is Missing, You are Not Authorized To This Activity" })
         }
 
-        if (find.secretAccessKey !== secretAccessKey) {
-            return res.status(200).send({ status: false, msg: "Please enter valid secret access Key" })
+        if (!find.secretAccessKey) {
+            return res.status(200).send({ status: false, msg: "Secret AccessKey Key Id Is Missing, You Are Not Authorized To This Activity" })
         }
 
-        console.log(find)
+
 
         next()
 
