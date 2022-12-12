@@ -675,11 +675,14 @@ const OrgDeleteCustomer = async (req, res) => {
 
         const customerID = req.params.customerID
 
+        console.log("customerID", customerID)
+
         if (customerID.length !== 24) {
             return res.status(200).send({ status: false, msg: "Customer Id is required" })
         }
 
         let findCUstomer = await cutomerModel.findOne({ _id: customerID })
+        console.log("findCUstomer", findCUstomer)
         if (!findCUstomer) {
             return res.status(200).send({ status: false, msg: "Customer not found" })
         }
@@ -895,6 +898,8 @@ const organisation_transections = async (req, res) => {
     try {
 
         const OrganisationID = req.orgID
+
+        console.log("123")
 
         let pageNO = req.body.page;
         if (pageNO == 0) {

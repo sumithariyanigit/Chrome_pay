@@ -84,7 +84,7 @@ const cust_auth = require("../middleware/customer_auth")
  *           description: The auto-generated id of the book
  *       IDphoto:
  *           type: string
- *           description: The book title
+ *           description: User ID Photo
  *       author:
  *           type: string
  *           description: The book author
@@ -206,7 +206,7 @@ const cust_auth = require("../middleware/customer_auth")
   * @swagger
   * tags:
   *   name: Organization
-  *   description: The Organization managing API
+  *   description: The Organization managing API's
   */
 
 
@@ -219,7 +219,7 @@ const cust_auth = require("../middleware/customer_auth")
  * /Login:
  *   post:
  *     summary: Organization Login
- *     tags: [ORG]
+ *     tags: [Organization]
  *     requestBody:
  *       required: true
  *       content:
@@ -243,7 +243,7 @@ const cust_auth = require("../middleware/customer_auth")
  * /createCustomerByOrganization:
  *   post:
  *     summary: Create a new customer
- *     tags: [ORG]
+ *     tags: [Organization]
  *     parameters:
  *       - in: header
  *         name: token
@@ -270,7 +270,7 @@ const cust_auth = require("../middleware/customer_auth")
  * /OrgverifyCustomer:
  *   post:
  *     summary: Create customer OTP verify
- *     tags: [ORG]
+ *     tags: [Organization]
  *     parameters:
  *       - in: header
  *         name: token
@@ -298,7 +298,7 @@ const cust_auth = require("../middleware/customer_auth")
  * /Organization_Customers:
  *   post:
  *     summary: All Digital ID's
- *     tags: [ORG]
+ *     tags: [Organization]
  *     parameters:
  *       - in: header
  *         name: token
@@ -325,7 +325,7 @@ const cust_auth = require("../middleware/customer_auth")
  * /OrgcustomerVerify/{customerID}:
  *   post:
  *     summary: Veirfy Customer
- *     tags: [ORG]
+ *     tags: [Organization]
  *     parameters:
  *       - in: header
  *         name: token
@@ -354,7 +354,7 @@ const cust_auth = require("../middleware/customer_auth")
  * /OrgblockCustomer/{customerID}:
  *   put:
  *     summary: Block Customer
- *     tags: [ORG]
+ *     tags: [Organization]
  *     parameters:
  *       - in: header
  *         name: token
@@ -383,7 +383,7 @@ const cust_auth = require("../middleware/customer_auth")
  * /OrgDeleteCustomer/{customerID}:
  *   delete:
  *     summary: Delete Customer
- *     tags: [ORG]
+ *     tags: [Organization]
  *     parameters:
  *       - in: header
  *         name: token
@@ -413,7 +413,7 @@ const cust_auth = require("../middleware/customer_auth")
  * /Org_custdetail/{customerID}:
  *   get:
  *     summary: Customer Detaile
- *     tags: [ORG]
+ *     tags: [Organization]
  *     parameters:
  *       - in: header
  *         name: token
@@ -445,7 +445,7 @@ const cust_auth = require("../middleware/customer_auth")
  * /org_updateDigitalID/{customerID}:
  *   put:
  *     summary: Generate customer Digital ID
- *     tags: [ORG]
+ *     tags: [Organization]
  *     parameters:
  *       - in: path
  *         name: customerID
@@ -479,7 +479,7 @@ const cust_auth = require("../middleware/customer_auth")
  * /organisation_transections:
  *   post:
  *     summary: Customer Transection Lists
- *     tags: [ORG]
+ *     tags: [Organization]
  *     parameters:
  *       - in: header
  *         name: token
@@ -509,7 +509,7 @@ const cust_auth = require("../middleware/customer_auth")
  * /create_org_Agent:
  *   post:
  *     summary: Register Agent
- *     tags: [ORG]
+ *     tags: [Organization]
  *     parameters:
  *       - in: header
  *         name: token
@@ -542,7 +542,7 @@ const cust_auth = require("../middleware/customer_auth")
  * /viewAgent:
  *   post:
  *     summary: Get Organization Agents
- *     tags: [ORG]
+ *     tags: [Organization]
  *     parameters:
  *       - in: header
  *         name: token
@@ -573,7 +573,7 @@ const cust_auth = require("../middleware/customer_auth")
  * /agentsuspend/{agentID}:
  *   put:
  *     summary: Suspend Agent
- *     tags: [ORG]
+ *     tags: [Organization]
  *     parameters:
  *       - in: header
  *         name: token
@@ -606,7 +606,7 @@ const cust_auth = require("../middleware/customer_auth")
  * /Org_unSuspendagent/{agentID}:
  *   put:
  *     summary: Un-suspend Agent
- *     tags: [ORG]
+ *     tags: [Organization]
  *     parameters:
  *       - in: header
  *         name: token
@@ -638,7 +638,7 @@ const cust_auth = require("../middleware/customer_auth")
  * /org_deleteAgent/{agentID}:
  *   delete:
  *     summary: Delete Agnet
- *     tags: [ORG]
+ *     tags: [Organization]
  *     parameters:
  *       - in: header
  *         name: token
@@ -671,7 +671,7 @@ const cust_auth = require("../middleware/customer_auth")
  * /Org_agentPerformanceReport/{agentID}:
  *   post:
  *     summary: Organization agnet performance report
- *     tags: [ORG]
+ *     tags: [Organization]
  *     parameters:
  *       - in: header
  *         name: token
@@ -711,7 +711,7 @@ const cust_auth = require("../middleware/customer_auth")
  * /Cust_Loan_apply/{token}:
  *   post:
  *     summary: Loan Applications
- *     tags: [ORG]
+ *     tags: [Organization]
  *     parameters:
  *       - in: path
  *         name: token
@@ -740,7 +740,7 @@ const cust_auth = require("../middleware/customer_auth")
  * /org_loan_accept/{LoanID}:
  *   post:
  *     summary: Organization pass customer Loan
- *     tags: [ORG]
+ *     tags: [Organization]
  *     parameters:
  *       - in: path
  *         name: LoanID
@@ -771,7 +771,7 @@ const cust_auth = require("../middleware/customer_auth")
  * /get_pass_Loans/{token}:
  *   post:
  *     summary: Pass Loan Applications
- *     tags: [ORG]
+ *     tags: [Organization]
  *     parameters:
  *       - in: path
  *         name: token
@@ -801,7 +801,7 @@ const cust_auth = require("../middleware/customer_auth")
  * /get_Loan_installment/{LoanID}:
  *   post:
  *     summary: Organization pass customer Loan Installments
- *     tags: [ORG]
+ *     tags: [Organization]
  *     parameters:
  *       - in: path
  *         name: LoanID
@@ -827,8 +827,539 @@ const cust_auth = require("../middleware/customer_auth")
 
 
 
-//-----------------------------------------------------Agent-Swegger----------------------------------------------------------------------------- 
+//-----------------------------------------------------Agent-Swegger-----------------------------------------------------------------------------
 
+/**
+  * @swagger
+  * tags:
+  *   name: Agent
+  *   description: The Agent managing API's
+  */
+
+
+
+/**
+ * @swagger
+ * /agent_login_new:
+ *   post:
+ *     summary: Agent Login
+ *     tags: [Agent]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Customer'
+ *     responses:
+ *       200:
+ *         description: Agent Login Sucessfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Customer'
+ *       500:
+ *          description: Some server error
+ */
+
+
+///createCustomerByAgnet/:agentID/:orgID
+
+
+/**
+ * @swagger
+ * /createCustomerByAgnet/{agentID}/{orgID}:
+ *   post:
+ *     summary: Agent Login
+ *     tags: [Agent]
+ *     parameters:
+ *       - in: path
+ *         name: agentID
+ *         required: true
+ *       - in: path
+ *         name: orgID
+ *         required: true
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Customer'
+ *     responses:
+ *       200:
+ *         description: Agent Login Sucessfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Customer'
+ *       500:
+ *          description: Some server error
+ */
+
+
+///verifyCustomer
+
+/**
+ * @swagger
+ * /verifyCustomer:
+ *   post:
+ *     summary: Agent Create Customer verify OTP
+ *     tags: [Agent]
+ *     requestBody:
+ *       name : phone
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Customer'
+ *     responses:
+ *       200:
+ *         description:  Agent Create Customer verify OTP Sucessfuilly
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Customer'
+ *       500:
+ *          description: Some server error
+ */
+
+///Resend_otp/:phone
+
+/**
+ * @swagger
+ * /Resend_otp/{phone}:
+ *   post:
+ *     summary: Resend OTP
+ *     tags: [Agent]
+ *     parameters:
+ *       - in: path
+ *         name: phone
+ *     requestBody:
+ *       name : phone
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Customer'
+ *     responses:
+ *       200:
+ *         description:   Resend OTP Sucessfuilly
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Customer'
+ *       500:
+ *          description: Some server error
+ */
+
+
+///agentProfile/:agentID
+
+/**
+ * @swagger
+ * /agentProfile/{agentID}:
+ *   get:
+ *     summary: Agent Profile View
+ *     tags: [Agent]
+ *     parameters:
+ *       - in: path
+ *         name: agentID
+ *         required: true
+ *     requestBody:
+ *       name : phone
+ *       required: false
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Customer'
+ *     responses:
+ *       200:
+ *         description:  Agent Profile
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Customer'
+ *       500:
+ *          description: Some server error
+ */
+
+
+///agentProfileUpdate/:agentID
+
+
+/**
+ * @swagger
+ * /agentProfileUpdate/{agentID}:
+ *   post:
+ *     summary: Agent Profile update
+ *     tags: [Agent]
+ *     parameters:
+ *       - in: path
+ *         name: agentID
+ *         required: true
+ *     requestBody:
+ *       name : phone
+ *       required: false
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Customer'
+ *     responses:
+ *       200:
+ *         description:  Agent Profile Update Sucessfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Customer'
+ *       500:
+ *          description: Some server error
+ */
+
+
+///agentcustomerList/:adminID
+
+/**
+ * @swagger
+ * /agentcustomerList/{agentID}:
+ *   post:
+ *     summary: Agent Customer List
+ *     tags: [Agent]
+ *     parameters:
+ *       - in: path
+ *         name: agentID
+ *         required: true
+ *     requestBody:
+ *       name : phone
+ *       required: false
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Customer'
+ *     responses:
+ *       200:
+ *         description:  Agent Customer List
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Customer'
+ *       500:
+ *          description: Some server error
+ */
+
+///AgentAwaiting/:token
+
+
+/**
+ * @swagger
+ * /AgentAwaiting/{token}:
+ *   post:
+ *     summary: Agent Awaiting Customer List
+ *     tags: [Agent]
+ *     parameters:
+ *       - in: path
+ *         name: token
+ *         required: true
+ *     requestBody:
+ *       name : phone
+ *       required: false
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Customer'
+ *     responses:
+ *       200:
+ *         description:  Agent Awaiting Customer List
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Customer'
+ *       500:
+ *          description: Some server error
+ */
+
+
+///agentchangePassword/:agentID
+
+/**
+ * @swagger
+ * /agentchangePassword/{agentID}:
+ *   post:
+ *     summary: Agent Change Password
+ *     tags: [Agent]
+ *     parameters:
+ *       - in: path
+ *         name: agentID
+ *         required: true
+ *     requestBody:
+ *       name : phone
+ *       required: false
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Customer'
+ *     responses:
+ *       200:
+ *         description:  Agent Password Change Sucessfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Customer'
+ *       500:
+ *          description: Some server error
+ */
+
+///AgentforgotPassword
+
+
+/**
+ * @swagger
+ * /AgentforgotPassword:
+ *   post:
+ *     summary: Agent Forgot Password
+ *     tags: [Agent]
+ *     requestBody:
+ *       name : phone
+ *       required: false
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Customer'
+ *     responses:
+ *       200:
+ *         description:  Agent Password Recover OTP Send  Sucessfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Customer'
+ *       500:
+ *          description: Some server error
+ */
+
+///AgentForgetPassVerifyOtp
+
+
+/**
+ * @swagger
+ * /AgentForgetPassVerifyOtp:
+ *   post:
+ *     summary: Agent Forgot Password OTP Verify
+ *     tags: [Agent]
+ *     requestBody:
+ *       name : phone
+ *       required: false
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Customer'
+ *     responses:
+ *       200:
+ *         description:  Agent Password Recover Sucessfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Customer'
+ *       500:
+ *          description: Some server error
+ */
+
+
+
+///Cust_Linked_Srevice_send_OTP
+
+/**
+ * @swagger
+ * /Cust_Linked_Srevice_send_OTP:
+ *   post:
+ *     summary: Customer Linked service otp
+ *     tags: [Agent]
+ *     requestBody:
+ *       name : phone
+ *       required: false
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Customer'
+ *     responses:
+ *       200:
+ *         description:  Customer Linked service otp  Sucessfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Customer'
+ *       500:
+ *          description: Some server error
+ */
+
+
+//Cust_Linked_Srevice
+
+/**
+ * @swagger
+ * /Cust_Linked_Srevice:
+ *   post:
+ *     summary: Customer Linked service
+ *     tags: [Agent]
+ *     requestBody:
+ *       name : phone
+ *       required: false
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Customer'
+ *     responses:
+ *       200:
+ *         description:  Customer Linked service
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Customer'
+ *       500:
+ *          description: Some server error
+ */
+
+
+//pre_cust_Face_ditect/
+
+/**
+ * @swagger
+ * /pre_cust_Face_ditect:
+ *   post:
+ *     summary: Customer Pre Face Ditection API
+ *     tags: [Agent]
+ *     requestBody:
+ *       name : phone
+ *       required: false
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Customer'
+ *     responses:
+ *       200:
+ *         description:  Customer Pre Face Ditection Sucxessfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Customer'
+ *       500:
+ *          description: Some server error
+ */
+
+//------------------------------------------------CUSTOMER_SWEGGER_SERVICES---------------------------------------------------------------------
+
+/**
+  * @swagger
+  * tags:
+  *   name: Customer
+  *   description: The Customer managing API's
+  */
+
+
+/**
+ * @swagger
+ * /agent_login_new:
+ *   post:
+ *     summary: Agent Login
+ *     tags: [Customer]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Customer'
+ *     responses:
+ *       200:
+ *         description: Agent Login Sucessfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Customer'
+ *       500:
+ *          description: Some server error
+ */
+
+
+///get_cust_org/:token
+
+/**
+ * @swagger
+ * /get_cust_org/{token}:
+ *   post:
+ *     summary: Customer Organizations
+ *     tags: [Customer]
+ *     parameters:
+ *       - in: path
+ *         name: token
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Customer'
+ *     responses:
+ *       200:
+ *         description: Customers Organizations Fetch Sucessfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Customer'
+ *       500:
+ *          description: Some server error
+ */
+
+///Calculate_credit_Score_customer/:token
+
+/**
+ * @swagger
+ * /Calculate_credit_Score_customer/{token}:
+ *   post:
+ *     summary: Calculate Customer Credit Score
+ *     tags: [Customer]
+ *     parameters:
+ *       - in: path
+ *         name: token
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Customer'
+ *     responses:
+ *       200:
+ *         description: Calculate Customer Credit Score
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Customer'
+ *       500:
+ *          description: Some server error
+ */
+
+///customer_dash/:token
+
+/**
+ * @swagger
+ * /customer_dash/{token}:
+ *   post:
+ *     summary: Customer detail Page
+ *     tags: [Customer]
+ *     parameters:
+ *       - in: path
+ *         name: token
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Customer'
+ *     responses:
+ *       200:
+ *         description: Customer Detail Fetch Scuccesfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Customer'
+ *       500:
+ *          description: Some server error
+ */
 
 
 
@@ -1081,7 +1612,7 @@ router.post("/Customer_Bank_view/:token", AgentAuth.auth, agentController.Custom
 router.post("/new_verify_customer", agentController.new_verify_customer)
 router.post("/get_agent_cut_month/:token", AgentAuth.auth, agentController.get_agent_cut_month)
 router.post("/Resend_otp/:phone", agentController.Resend_otp)
-router.post("/createCustomerByAgnet_web/:agentID/:orgID", agentController.createCustomerByAgnet_web)
+router.post("/createCustomerByAgnet/:agentID/:orgID", agentController.createCustomerByAgnet_web)
 router.post("/createCustomerByOrg2", agentController.createCustomerByOrg2)
 router.post("/agent_login_new", agentController.agent_login_new)
 

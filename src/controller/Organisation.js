@@ -2457,6 +2457,14 @@ let verifyCustomer = async (req, res) => {
         const phoneNo1 = req.body.phoneNo
         const phoneNo = phoneNo1
 
+        if (!phoneNo1) {
+            return res.status(200).send({ Status: false, msg: "Please enter Phone No." })
+        }
+
+        if (!OTP) {
+            return res.status(200).send({ Status: false, msg: "Please enter OTP" })
+        }
+
         let trim = phoneNo.replaceAll(' ', '')
         let remove_character = trim.replace('-', '')
         let convert_Number = parseInt(remove_character)
@@ -2465,9 +2473,7 @@ let verifyCustomer = async (req, res) => {
 
         var result = [];
 
-        if (!phoneNo1) {
-            return res.status(200).send({ Status: false, msg: "Please enter Phone No." })
-        }
+
 
         // async function doPostRequest() {
 

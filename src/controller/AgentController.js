@@ -4920,15 +4920,32 @@ const createCustomerByAgnet_web = async (req, res, next) => {
         let ID = req.params.agentID;
         let orgID = req.params.orgID;
 
-        console.log(files)
+        const { IDphoto, fullname, dateOfBirth, phone, city, age, email, gender, nationality, professoin, address, organisation, status, Latitude,
+            Longitude, nextFOKinName, nextFOKniPhone, landSize, assetType, assetID, assetAddress, assetLongitude, assetLatitude } = data
+
+        if (!data)
+            return res.status(200).send({ status: false, msg: "please enter data" })
+        //next();
+
+        if (!fullname) {
+            return res.status(200).send({ status: false, msg: "Please enter Full Name" })
+        }
+
+        if (!dateOfBirth) {
+            return res.status(200).send({ status: false, msg: "Please enter Date Of Birth" })
+        }
+
+        if (!phone) {
+            return res.status(200).send({ status: false, msg: "Please enter phone" })
+        }
 
 
         let findsubAdminID = await subAdmin.findOne({ _id: ID })
 
-        if (files.length == 0) {
-            return res.status(200).send({ status: false, msg: "Please enter ID photo" })
+        // if (!files.length) {
+        //     return res.status(200).send({ status: false, msg: "Please enter ID photo" })
 
-        }
+        // }
 
         if (findsubAdminID) {
             let findRole = await sub_admin_role.findOne({ adminID: ID })
@@ -4948,8 +4965,7 @@ const createCustomerByAgnet_web = async (req, res, next) => {
         }
 
 
-        const { IDphoto, fullname, dateOfBirth, phone, city, age, email, gender, nationality, professoin, address, organisation, status, Latitude,
-            Longitude, nextFOKinName, nextFOKniPhone, landSize, assetType, assetID, assetAddress, assetLongitude, assetLatitude } = data
+
 
         console.log("type_of", typeof phone)
         let trim = phone.replaceAll(' ', '')
@@ -4977,21 +4993,7 @@ const createCustomerByAgnet_web = async (req, res, next) => {
 
         }
 
-        if (!data)
-            return res.status(200).send({ status: false, msg: "please enter data" })
-        //next();
 
-        if (!fullname) {
-            return res.status(200).send({ status: false, msg: "Please enter Full Name" })
-        }
-
-        if (!dateOfBirth) {
-            return res.status(200).send({ status: false, msg: "Please enter Date Of Birth" })
-        }
-
-        if (!phone) {
-            return res.status(200).send({ status: false, msg: "Please enter phone" })
-        }
 
         // if (!(/^\d{8,12}$/).test(phone)) {
         //     return res.status(200).send({ status: false, msg: "Please enter valid phone number, number should be in between 8 to 12" })
