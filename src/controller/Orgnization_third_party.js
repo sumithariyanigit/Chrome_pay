@@ -59,7 +59,6 @@ const createCustomerByOrganization = async (req, res, next) => {
         let localDoc = req.files
         let ladregistration = req.files
         let ID = req.orgID;
-        console.log("ID", ID)
 
 
         if (!ID) {
@@ -118,11 +117,11 @@ const createCustomerByOrganization = async (req, res, next) => {
 
         // ------------------------------------Manage - Linked - service----------------------------------------------------------------------
 
-        console.log("Phone", phone)
+
         let trim = phone.replaceAll(' ', '')
         let remove_character = trim.replace('-', '')
         let convert_Number = parseInt(remove_character)
-        console.log("trim", convert_Number)
+
         const cheack_cus = await customerModel.findOne({ phone: convert_Number })
         if (cheack_cus) {
 
@@ -134,13 +133,8 @@ const createCustomerByOrganization = async (req, res, next) => {
 
 
 
-        console.log("orgID", ID)
-
         let findcust = await customerModel.find({ organisation: ID })
         let findOrg = await org_Licenses.findOne({ OrganisationID: ID })
-
-        console.log("cutomer==", findcust.length)
-        console.log("cutomer license==", findOrg.totalLicenses)
 
         if (findOrg.totalLicenses <= findcust.length) {
             return res.status(200).send({ status: false, msg: "You have not enough licenses to add DID, Please contact admin to update your licenses" })
@@ -212,7 +206,6 @@ const createCustomerByOrganization = async (req, res, next) => {
                 phoneNumber: `+${convert_Number}`
             }
 
-            console.log("paylaod", payload)
 
             let res = await axios.post('http://13.127.64.68:7008/api/mainnet/getUserData', payload);
             let data1 = res.data;
@@ -222,7 +215,6 @@ const createCustomerByOrganization = async (req, res, next) => {
 
 
         var seq = (Math.floor(Math.random() * 1000000000) + 1000000000).toString().substring()
-        console.log(seq);
 
 
 
@@ -276,7 +268,7 @@ const Organization_Customers = async (req, res) => {
             return res.status(200).send({ status: false, msg: "Please enter Organisation ID" })
         }
 
-        //let currPage = 0
+
         let pageNO = req.body.page;
         if (pageNO == 0) {
             pageNO = 1
@@ -291,10 +283,7 @@ const Organization_Customers = async (req, res) => {
                 .limit(limit * 1)
                 .skip((page - 1) * limit)
                 .exec();
-            // let totlaRow = filter.length;
-            // if (filter.length == 0) {
-            //     return res.status(200).send({ status: false, msg: "No Customer Found" })
-            // }
+
             return res.status(200).send({ statussss: true, totlaRow: totalRaow1, currenPage: parseInt(pageNO), filter })
         } else if (req.body.nationality) {
             let option = [{ nationality: req.body.nationality }]
@@ -306,9 +295,7 @@ const Organization_Customers = async (req, res) => {
                 .skip((page - 1) * limit)
                 .exec();
             let totlaRow = filter.length;
-            // if (filter.length == 0) {
-            //     return res.status(200).send({ status: false, msg: "No Customer Found" })
-            // }
+
             return res.status(200).send({ status: true, totlaRow: contRow, currenPage: parseInt(pageNO), filter })
 
         } else if (req.body.fromDate) {
@@ -329,9 +316,7 @@ const Organization_Customers = async (req, res) => {
                 .skip((page - 1) * limit)
                 .exec();
             let totlaRow = filter.length;
-            // if (filter.length == 0) {
-            //     return res.status(200).send({ status: false, msg: "No Customer Found" })
-            // }
+
             return res.status(200).send({ status: true, totlaRow: contRow, currenPage: parseInt(pageNO), filter })
 
 
@@ -353,17 +338,13 @@ const Organization_Customers = async (req, res) => {
                 .skip((page - 1) * limit)
                 .exec();
             let totlaRow = filter.length;
-            // if (filter.length == 0) {
-            //     return res.status(200).send({ status: false, msg: "No Customer Found" })
-            // }
+
             return res.status(200).send({ status: true, totlaRow: contRow, currenPage: parseInt(pageNO), filter })
         }
 
-        // let ID = req.body.ID
-        //console.log(ID.length)
+
         else if (req.body.ID && req.body.ID > 0) {
             let option = [{ digitalrefID: req.body.ID }, { phone: req.body.phone }, { status: req.body.status }, { nationality: req.body.nationality }]
-            console.log("1")
             let countpages2 = await cutomerModel.find({ $or: option, organisation: OrganisationID, isDeleted: 0 })
             let contRow = countpages2.length
             let filter = await cutomerModel.find({ $or: option, organisation: OrganisationID, isDeleted: 0 }).sort({ createdAt: -1 })
@@ -371,9 +352,7 @@ const Organization_Customers = async (req, res) => {
                 .skip((page - 1) * limit)
                 .exec();
             let totlaRow = filter.length;
-            // if (filter.length == 0) {
-            //     return res.status(200).send({ status: false, msg: "No Customer Found" })
-            // }
+
             return res.status(200).send({ status: true, totlaRow: contRow, currenPage: parseInt(pageNO), filter })
 
 
@@ -383,7 +362,6 @@ const Organization_Customers = async (req, res) => {
 
 
             let option = [{ digitalrefID: req.body.ID }, { phone: req.body.phone }, { status: req.body.status }, { nationality: req.body.nationality }]
-            console.log("2")
             let countpages2 = await cutomerModel.find({ $or: option, organisation: OrganisationID, isDeleted: 0 })
             let contRow = countpages2.length
             let filter = await cutomerModel.find({ $or: option, organisation: OrganisationID, isDeleted: 0 }).sort({ createdAt: -1 })
@@ -391,9 +369,7 @@ const Organization_Customers = async (req, res) => {
                 .skip((page - 1) * limit)
                 .exec();
             let totlaRow = filter.length;
-            // if (filter.length == 0) {
-            //     return res.status(200).send({ status: false, msg: "No Customer Found" })
-            // }
+
             return res.status(200).send({ status: true, totlaRow: contRow, currenPage: parseInt(pageNO), filter })
 
         }
@@ -412,9 +388,7 @@ const Organization_Customers = async (req, res) => {
                 .limit(limit * 1)
                 .skip((page - 1) * limit)
                 .exec();
-            // if (filter.length == 0) {
-            //     return res.status(200).send({ status: false, msg: "No Customer Found1" })
-            // }
+
             let totlaRow = filter.length;
 
             return res.status(200).send({ status: true, totlaRow: contRow3, currenPage: parseInt(pageNO), filter })
@@ -569,12 +543,10 @@ let OrgverifyCustomer = async (req, res) => {
 
 
         }).catch(async error => {
-           // let delete_cust = await temp_Cust.findOneAndDelete({ phone: convert_Number })
-            //console.log(error)
+
             return res.status(200).send({ status: false, error: error.message, msg: "failed please try again" })
         });
 
-        // return res.status(200).send({ status: false, msg: "customer register sucessfully" })
 
 
 
@@ -593,7 +565,7 @@ const OrgcustomerVerify = async (req, res) => {
 
         let findsubAdminID = await subAdmin.findOne({ _id: adminID })
 
-        console.log(findsubAdminID)
+
 
         if (findsubAdminID) {
             let findRole = await sub_admin_role.findOne({ adminID: adminID })
@@ -641,7 +613,6 @@ const OrgblockCustomer = async (req, res) => {
 
         const userID = req.params.customerID;
 
-        console.log("userIDD", userID)
 
         if (!userID) {
             return res.status(200).send({ status: false, msg: "Please enter CustomerID" })
@@ -675,14 +646,12 @@ const OrgDeleteCustomer = async (req, res) => {
 
         const customerID = req.params.customerID
 
-        console.log("customerID", customerID)
 
         if (customerID.length !== 24) {
             return res.status(200).send({ status: false, msg: "Customer Id is required" })
         }
 
         let findCUstomer = await cutomerModel.findOne({ _id: customerID })
-        console.log("findCUstomer", findCUstomer)
         if (!findCUstomer) {
             return res.status(200).send({ status: false, msg: "Customer not found" })
         }
@@ -707,7 +676,6 @@ const Org_custdetail = async (req, res) => {
     try {
 
         const custID = req.params.customerID
-        console.log("fghjk")
 
         if (!custID) {
             return res.status(200).send({ status: false, msg: "Please enter custID" })
@@ -759,9 +727,8 @@ const Org_custdetail = async (req, res) => {
             proPercentage += 34
         }
 
-        console.log(proPercentage)
 
-        //var location = 0
+
 
         if (findCust.Latitude.length && findCust.Longitude.length) {
             proPercentage += 33
@@ -839,18 +806,15 @@ const org_updateDigitalID = async (req, res) => {
 
                 var result11 = []
                 let result = await axios.get(`http://13.127.64.68:7008/api/mainnet/getDigitalIdOfOwner/${custOwnerKey}`)
-                    // .then(async (respons) => {
-                    //     console.log("res ==", respons)
-                    // })
 
                     .catch((error) => {
                         let data = error.response.data
                         result11.push(data)
-                        //console.log(error.response.data)
+
                     })
 
                 for (item of result11) {
-                    //console.log(item.owner)
+
                     let findCustomer = await cutomerModel.findOneAndUpdate({ _id: custID }, { digitalID: item.owner }, { new: true })
 
                     if (findCustomer) {
@@ -861,7 +825,6 @@ const org_updateDigitalID = async (req, res) => {
 
 
 
-                console.log("track", result11.owner)
 
                 let findCustomer = await cutomerModel.findOneAndUpdate({ _id: custID })
 
@@ -876,14 +839,14 @@ const org_updateDigitalID = async (req, res) => {
 
 
                 result.push(error)
-                console.log(result)
+
 
             }
         }
 
         getID()
 
-        //console.log("result", result)
+
 
     } catch (error) {
         console.log(error)
@@ -899,7 +862,6 @@ const organisation_transections = async (req, res) => {
 
         const OrganisationID = req.orgID
 
-        console.log("123")
 
         let pageNO = req.body.page;
         if (pageNO == 0) {
@@ -937,12 +899,7 @@ const organisation_transections = async (req, res) => {
                         $lte: new Date(req.body.toDate).toISOString().substring(0, 10).replace('T', ' '),
                     }
                 }
-                //, {
-                //     sendingAmount: {
-                //         $gte: req.body.fromAmount,
-                //         $lte: req.body.toAmount
-                //     }
-                // }
+
             ]
 
 
@@ -1098,7 +1055,6 @@ const organisation_transections = async (req, res) => {
 const create_org_Agent = async (req, res) => {
     try {
         let AgentCode = 10000000 + Math.floor(Math.random() * 90000000);
-        console.log(AgentCode)
 
         const data = req.body;
         const orgID = req.orgID
@@ -1253,11 +1209,9 @@ const viewAgent = async (req, res) => {
 
         const orgID = req.orgID
 
-        console.log("orgID===>", orgID)
 
         let pageNO = req.body.page;
-        //let countpages1 = await agentModel.find({ organisationID: '6311a0de778efce58f2336db' })
-        // console.log(countpages1)
+
         if (pageNO == 0) {
             pageNO = 1;
         }
@@ -1271,7 +1225,6 @@ const viewAgent = async (req, res) => {
         }
         const { page = pageNO, limit = 10 } = req.query;
         if (Object.keys(req.body).length <= 1) {
-            console.log("1")
             let countpages1 = await agentModel.find({ organisationID: orgID, isDeleted: 0 }).sort({ createdAt: 1 })
             let totalRaow1 = countpages1.length;
 
@@ -1283,7 +1236,6 @@ const viewAgent = async (req, res) => {
             return res.status(200).send({ statussss: true, totlaRow: totalRaow1, currenPage: parseInt(pageNO), filter })
         }
         else if (req.body.name || req.body.phone || req.body.agentCode || req.body.country) {
-            console.log("2")
             let option = [{ name: req.body.name }, { phone: req.body.phone }, { country: req.body.country }, { agentCode: req.body.agentCode }]
 
 
@@ -1294,9 +1246,7 @@ const viewAgent = async (req, res) => {
                 .skip((page - 1) * limit)
                 .exec();
             let totlaRow = filter.length;
-            // if (filter.length == 0) {
-            //     return res.status(200).send({ status: false, msg: "No Customer Found" })
-            // }
+
             return res.status(200).send({ status: true, totlaRow: contRow, currenPage: parseInt(pageNO), filter })
 
 
@@ -1392,7 +1342,6 @@ const Org_unSuspendagent = async (req, res) => {
             return res.status(200).send({ status: false, msg: "No agent Found" })
         }
 
-        //console.log(checkUser.createdBY)
 
         if (checkUser.organisationID != orgID) {
             return res.status(200).send({ status: false, msg: "you are not authorized person to un-suspend this agent" })
@@ -1444,8 +1393,6 @@ const org_deleteAgent = async (req, res) => {
             return res.status(200).send({ status: false, msg: "not getting valid agentID" })
         }
 
-
-
         let checkUser = await agentModel.findOne({ _id: agentID, organisationID: orgID })
         if (!checkUser) {
             return res.status(200).send({ status: false, msg: "No agent Found" })
@@ -1482,7 +1429,7 @@ const Org_agentPerformanceReport = async (req, res) => {
     try {
 
         const agentID = req.params.agentID
-        // console.log("==>", agentID)
+
 
         if (!agentID) {
             return res.status(200).send({ status: false, msg: "Please enter " })
@@ -1537,7 +1484,7 @@ const Org_agentPerformanceReport = async (req, res) => {
             }
         ])
 
-        //console.log("Last Month==>", LastMonthData)
+
 
         const startOfCurrentMonth = new Date();
         startOfCurrentMonth.setDate(1);
@@ -1559,8 +1506,7 @@ const Org_agentPerformanceReport = async (req, res) => {
             ],
         }).count();
 
-        console.log("last Month = ", LastMonthData.length)
-        console.log("current Month = ", Current_Month)
+
 
         let Last_Month = LastMonthData.length
         let perDayLastMonth = LastMonthData.length / 30
@@ -1571,7 +1517,7 @@ const Org_agentPerformanceReport = async (req, res) => {
 
 
         if (perDayLastMonth > perDayCurrMonth) {
-            ///let positive = perDayLastMonth - perDayCurrMonth
+
 
             let positive1 = `-${perDayLastMonth - perDayCurrMonth}`
             let positive = parseFloat(positive1)
@@ -1593,7 +1539,7 @@ const Org_agentPerformanceReport = async (req, res) => {
             return res.status(200).send({ status: true, positive, nexttarget, Current_Month, Last_Month, Today_date })
         }
 
-        //return res.status(200).send({ status: true, Current_Month })
+
 
     } catch (error) {
         console.log(error)

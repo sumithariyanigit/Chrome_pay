@@ -8,14 +8,12 @@ const jwt = require('jsonwebtoken')
 
 const auth = async (req, res, next) => {
     try {
-        // const token = req.header('x-api-key')
+
         let token = req.params.token
 
-        console.log(token)
         if (!token) {
             return res.status(200).send({ status: false, message: `Missing authentication token in request` });
         }
-
 
 
         const decoded = jwt.verify(token, 'organisation')
@@ -38,7 +36,7 @@ const auth = async (req, res, next) => {
 
         req.orgID = decoded.OrganisationID
 
-        console.log("middleware==>org", req.orgID)
+
 
 
 

@@ -103,8 +103,6 @@ const userTransaction = async (req, res, next) => {
 
         const PCNnumber = generateString(10).toLowerCase()
         const TransactionID = generateString11(10)
-        //.toLowerCase()
-
 
         sendername = findsenderID.fullname,
             receivername = findrecevrID.fullname

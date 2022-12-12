@@ -145,7 +145,6 @@ const createOrganisation = async (req, res, next) => {
             Personal_Loans, secured_Loans, Insatallment_Loans, Student_Loans, Home_Loans, BussinessLoans, PensionLoans,
             PaydeyLoans, AssetLoans, OvercraftLoans } = data
 
-        console.log("Personal_Loans", Personal_Loans)
 
 
         let Code = generateString(10);
@@ -153,7 +152,6 @@ const createOrganisation = async (req, res, next) => {
         const saltRounds = 10
         const encryptedPassword = await bcrypt.hash(Orgpassword, saltRounds)
         let JoiningDate = new Date().toISOString().substring(0, 10)
-        console.log(JoiningDate)
 
 
         const profilePicture = await uploadFile(files[0])
@@ -213,8 +211,7 @@ const createOrganisation = async (req, res, next) => {
         const AccessKey = generateAccesskey(20)
         const SceretKey = generateSeceret(30)
 
-        console.log("AcessKey", AccessKey)
-        console.log("SceretKey", SceretKey)
+
 
 
         const sentEmail = async (req, res) => {
@@ -291,7 +288,6 @@ const createOrganisation = async (req, res, next) => {
 
 
 
-        console.log(create._id)
 
         let orgID = create._id
 
@@ -323,7 +319,6 @@ const organisationLogin = async (req, res, next) => {
         //next();
         const email = req.body.email;
         const password = req.body.password;
-        console.log("1213")
         if (!email) {
             return res.status(200).send({ status: false, msg: "email field required" })
         }
@@ -421,7 +416,6 @@ const organisationLogin = async (req, res, next) => {
             let createLogHistory = await organisationLog.create(data)
 
 
-            console.log(OrganisationID)
             let update = await Organisation.findOneAndUpdate({ email: email }, { WrongPassword: 0 })
             return res.status(200).send({ status: true, 'token': token, 'ID': OrganisationID, msg: "Login Sucessfully" })
         } else {
@@ -459,7 +453,6 @@ const getLogHistory = async (req, res) => {
         let countpages11 = await organisationLog.find();
         counPages = Math.ceil(countpages11.length / 10)
 
-        console.log("asdfghj")
 
 
 
@@ -584,7 +577,6 @@ const OrgDashSection = async (req, res) => {
         }
 
         let findName = await Organisation.findOne({ _id: organisationID })
-        console.log('name', findName.name)
         let orgName = findName.name
         let orgEmail = findName.email
         let country = findName.country
@@ -611,7 +603,6 @@ const OrgDashSection = async (req, res) => {
             numberOFUSer++
         }
 
-        console.log(numberOFUSer)
 
 
         let data = {
@@ -684,7 +675,6 @@ const organisationsTransectionList = async (req, res) => {
 const OrganisationCustomerTest = async (req, res) => {
 
     try {
-        console.log("api test")
         const OrganisationID = req.params.ID;
         const CustomerName = req.body.customerName;
         const status = req.body.Status
@@ -768,7 +758,6 @@ const OrganisationCustomerTest = async (req, res) => {
 
         else if (req.body.ID && req.body.ID > 0) {
             let option = [{ digitalrefID: req.body.ID }, { phone: req.body.phone }, { status: req.body.status }, { nationality: req.body.nationality }]
-            console.log("1")
             let countpages2 = await cutomerModel.find({ $or: option, organisation: OrganisationID, isDeleted: 0 })
             let contRow = countpages2.length
             let filter = await cutomerModel.find({ $or: option, organisation: OrganisationID, isDeleted: 0 }).sort({ createdAt: -1 })
@@ -786,7 +775,6 @@ const OrganisationCustomerTest = async (req, res) => {
 
 
             let option = [{ digitalrefID: req.body.ID }, { phone: req.body.phone }, { status: req.body.status }, { nationality: req.body.nationality }]
-            console.log("2")
             let countpages2 = await cutomerModel.find({ $or: option, organisation: OrganisationID, isDeleted: 0 })
             let contRow = countpages2.length
             let filter = await cutomerModel.find({ $or: option, organisation: OrganisationID, isDeleted: 0 }).sort({ createdAt: -1 })
@@ -932,7 +920,6 @@ const unSuspendagent = async (req, res) => {
             return res.status(200).send({ status: false, msg: "No agent Found" })
         }
 
-        //console.log(checkUser.createdBY)
 
         if (checkUser.organisationID != orgID) {
             return res.status(200).send({ status: false, msg: "you are not authorized person to un-suspend this agent" })
@@ -1245,7 +1232,6 @@ const changePassword = async (req, res) => {
 
         let findadmin = await Organisation.findOne({ _id: orgID })
 
-        console.log(findadmin)
 
 
         if (!findadmin) {
@@ -1254,8 +1240,6 @@ const changePassword = async (req, res) => {
 
         const decryptedPassword = await bcrypt.compare(oldPaasword, findadmin.password)
 
-        console.log(decryptedPassword)
-        console.log("old", findadmin.password)
 
 
         if (!decryptedPassword) {
@@ -1437,6 +1421,7 @@ const vieworg = async (req, res) => {
 
         let data = await Organisation.findOne({ _id: orgID })
 
+
         if (!find) {
             return res.status(200).send({ status: false, msg: "No organisation found" })
         }
@@ -1447,7 +1432,7 @@ const vieworg = async (req, res) => {
 
 
     } catch (error) {
-        console.log(errors)
+        console.log(error)
     }
 }
 
@@ -1461,6 +1446,8 @@ const org_update = async (req, res) => {
     try {
 
         const orgID = req.params.orgID;
+        let files = req.files;
+
 
         if (!orgID) {
             return res.status(200).send({ status: falsle, msg: "enter orgID" })
@@ -1470,14 +1457,19 @@ const org_update = async (req, res) => {
             return res.status(200).send({ status: false, msg: "not getting valid orgID" })
         }
 
-        if (req.body.logo) {
+        if (files.length > 0) {
 
             let data = req.body;
-            let files = req.files;
+
             const profilePicture = await uploadFile(files[0])
+
+
+
 
             const { logo, code, name, phone, email, country, city, joiningDate, postCode, address, password } = data
 
+            const saltRounds = 10
+            const encryptedPassword = await bcrypt.hash(password, saltRounds)
 
 
             let checkPhone = await Organisation.findOne({ phoneNo: phone })
@@ -1494,8 +1486,9 @@ const org_update = async (req, res) => {
                 city: city,
                 postCode: postCode,
                 address: address,
-                password: password
+                password: encryptedPassword
             }
+
 
             let update = await Organisation.findOneAndUpdate({ _id: orgID }, finalData)
 
@@ -1516,6 +1509,8 @@ const org_update = async (req, res) => {
             const { code, name, phone, email, country, city, joiningDate, postCode, address, password } = data
 
             let checkPhone = await Organisation.findOne({ phoneNo: phone })
+            const saltRounds = 10
+            const encryptedPassword = await bcrypt.hash(password, saltRounds)
 
 
             let checkEmail = await Organisation.findOne({ email: data.email })
@@ -1523,8 +1518,10 @@ const org_update = async (req, res) => {
             let finalData = {
                 name: name, phoneNo: phone, email: email,
                 country: country, city: city,
-                postCode: postCode, address: address, password: password
+                postCode: postCode, address: address, password: encryptedPassword
             }
+
+
 
             let update = await Organisation.findOneAndUpdate({ _id: orgID }, finalData, { new: true })
 
@@ -1532,7 +1529,6 @@ const org_update = async (req, res) => {
                 return res.status(200).send({ status: false, msg: "org not found" })
             }
 
-            console.log('sdsd')
 
 
             return res.status(200).send({ status: true, msg: "profile updated sucessfully" })
@@ -1557,7 +1553,6 @@ const createCustomerByOrg = async (req, res, next) => {
         let localDoc = req.files
         let ladregistration = req.files
         let ID = req.orgID;
-        console.log("ID", ID)
 
 
         if (!ID) {
@@ -1616,11 +1611,9 @@ const createCustomerByOrg = async (req, res, next) => {
 
        // ------------------------------------Manage - Linked - service----------------------------------------------------------------------
 
-        console.log("Phone", phone)
         let trim = phone.replaceAll(' ', '')
         let remove_character = trim.replace('-', '')
         let convert_Number = parseInt(remove_character)
-        console.log("trim", convert_Number)
         const cheack_cus = await temp_Cust.findOne({ phone: convert_Number })
         if (cheack_cus) {
 
@@ -1632,13 +1625,10 @@ const createCustomerByOrg = async (req, res, next) => {
 
 
 
-        console.log("orgID", ID)
 
         let findcust = await customerModel.find({ organisation: ID })
         let findOrg = await org_Licenses.findOne({ OrganisationID: ID })
 
-        console.log("cutomer==", findcust.length)
-        console.log("cutomer license==", findOrg.totalLicenses)
 
         if (findOrg.totalLicenses <= findcust.length) {
             return res.status(200).send({ status: false, msg: "You have not enough licenses to add DID, Please contact admin to update your licenses" })
@@ -1649,7 +1639,7 @@ const createCustomerByOrg = async (req, res, next) => {
 
         if (!data)
             return res.status(200).send({ status: false, msg: "please enter data" })
-        //next();
+
 
         if (!fullname) {
             return res.status(200).send({ status: false, msg: "Please enter Full Name" })
@@ -1663,9 +1653,7 @@ const createCustomerByOrg = async (req, res, next) => {
             return res.status(200).send({ status: false, msg: "Please enter phone" })
         }
 
-        // if (!(/^\d{8,20}$/).test(phone)) {
-        //     return res.status(200).send({ status: false, msg: "Please enter valid phone number, number should be in between 8 to 12" })
-        // } 
+
 
         let checkPhone = await customerModel.findOne({ phone: convert_Number })
 
@@ -1710,7 +1698,6 @@ const createCustomerByOrg = async (req, res, next) => {
                 phoneNumber: `+${convert_Number}`
             }
 
-            console.log("paylaod", payload)
 
             let res = await axios.post('http://13.127.64.68:7008/api/mainnet/getUserData', payload);
             let data1 = res.data;
@@ -1720,7 +1707,6 @@ const createCustomerByOrg = async (req, res, next) => {
 
 
         var seq = (Math.floor(Math.random() * 1000000000) + 1000000000).toString().substring()
-        console.log(seq);
 
 
 
@@ -1820,7 +1806,6 @@ let verifyCustomer = async (req, res) => {
                     assetLatitude: findCust.assetLatitude, password: cust_password, facialIdentification: 1
                 }
 
-            console.log(newCust)
 
 
                 let create = await cutomerModel.create(newCust)
@@ -1990,7 +1975,6 @@ const updateDigitalID = async (req, res) => {
 
 
 
-                console.log("track", result11.owner)
 
                 let findCustomer = await cutomerModel.findOneAndUpdate({ _id: custID })
 
@@ -2005,7 +1989,6 @@ const updateDigitalID = async (req, res) => {
 
 
                 result.push(error)
-                console.log(result)
 
             }
         }
@@ -2181,7 +2164,6 @@ const updateCommission = async (req, res) => {
 
         let lastUpdate = findCommissions[findCommissions.length - 1]
 
-        console.log(new Date())
 
 
         let obj = {
@@ -2192,7 +2174,6 @@ const updateCommission = async (req, res) => {
             type: agentAmountType
         }
 
-        console.log(lastUpdate)
 
         let updateOldData = await agent_Commission.findOneAndUpdate({ _id: lastUpdate._id }, { endDate: new Date() })
 
@@ -2250,7 +2231,6 @@ const OrgPerreort = async (req, res) => {
 
         }
 
-        console.log("orgID", orgID)
 
 
         const LastMonthData = await customerModel.aggregate([
@@ -2298,7 +2278,6 @@ const OrgPerreort = async (req, res) => {
                 }
             }
         ])
-        //  console.log("===>", LastMonthData)
 
         const startOfCurrentMonth = new Date();
         startOfCurrentMonth.setDate(1);
@@ -2319,8 +2298,7 @@ const OrgPerreort = async (req, res) => {
             ],
         }).count();
 
-        console.log("CM===>", Current_Month)
-        console.log("LM===>", LastMonthData.length)
+
 
         let Last_Month = LastMonthData.length
         let perDayLastMonth = LastMonthData.length / 30
@@ -2650,7 +2628,6 @@ const get_org_cust_data_graph = async (req, res) => {
 
         let orgID = req.orgID
 
-        console.log("orgID", orgID)
 
 
         var fromDate = new Date(Date.now() - 334 * 24 * 60 * 60 * 1000);
@@ -2715,7 +2692,9 @@ const get_org_cust_data_graph = async (req, res) => {
 }
 
 
-
+//org_update
+//const saltRounds = 10
+//const encryptedPassword = await bcrypt.hash(Orgpassword, saltRounds)
 
 
 

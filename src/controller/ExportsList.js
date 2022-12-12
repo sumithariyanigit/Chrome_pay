@@ -191,7 +191,6 @@ const Org_cust = async (req, res) => {
 const AdminCust = async (req, res) => {
     try {
 
-        console.log("Admin customer")
         if (req.body.fromDate) {
 
             let option = [
@@ -257,7 +256,6 @@ const AdminOrg = async (req, res) => {
 const AdminBlockedCust = async (req, res) => {
     try {
 
-        console.log("Admin customer")
         if (req.body.fromDate) {
 
             let option = [

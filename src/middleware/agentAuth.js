@@ -10,14 +10,14 @@ const auth = async (req, res, next) => {
     try {
         // const token = req.header('x-api-key')
         let token = req.params.token
-        console.log(token)
+        
         if (!token) {
             return res.status(200).send({ status: false, message: `Missing authentication token in request` });
         }
 
-        console.log("1")
+       
         const decoded = jwt.verify(token, 'Agent')
-        console.log("2")
+        
 
 
         if (!decoded) {
@@ -26,7 +26,7 @@ const auth = async (req, res, next) => {
 
         req.userId = decoded.agentID
 
-        console.log("middleware==>agent", req.userId)
+        
 
 
 

@@ -98,7 +98,7 @@ const cust_login = async (req, res) => {
 
             try {
                 return await axios.get(url).then(function (response) {
-                    //console.log(response);
+                   
                     return response;
                 });
             } catch (error) {
@@ -145,7 +145,6 @@ const cust_opt_verify = async (req, res) => {
         let agentID1 = find_cust.createdBY
         let agentID = agentID1[0]
 
-        // console.log(orgID[0])
 
 
 
@@ -159,7 +158,7 @@ const cust_opt_verify = async (req, res) => {
         let token = jwt.sign({ custID, email, agentID }, 'Customer')
 
         if (find_cust.login_otp == otp) {
-            console.log("find")
+            
             let update_otp = await customer_Model.findOneAndUpdate({ phone: phone }, { login_otp: FakeOTP })
         }
 
@@ -488,15 +487,7 @@ const Calculate_credit_Score_customer = async (req, res) => {
         let percentage = `0.${CREDIT_SCORE / 900 * 100}`
         let slice = percentage.slice(0, 4)
         let per = Number(slice)
-        console.log("PER", slice)
-        console.log("PER", percentage)
-
-
-
         return res.status(200).send({ status: true, CREDIT_SCORE, CREDIT_PERCENTEGE: per })
-
-
-
     } catch (error) {
         console.log(error)
         return res.status(200).send({ status: false, msg: error.message })
@@ -732,7 +723,7 @@ const Chrome_pay_dash = async (req, res) => {
 
         let find_chrome_wallet = await Chrome_pay_wallet.findOne({ customer_ID: custID })
 
-        console.log("chrome", find_chrome_wallet)
+    
 
         let hash_chrome_wallet = find_chrome_wallet.wallet_Address.slice(40, 46)
         let chrome_wallet = find_chrome_wallet.wallet_Address
@@ -912,7 +903,7 @@ const Chrome_pay_cust_transection = async (req, res, next) => {
             let find_reciver_Current_Amount = await Chrome_pay_wallet.findOne({ phone: reciever_phone })
             let reciver_curr_amount = find_reciver_Current_Amount.current_Amount
             let add_amount = reciver_curr_amount + amount
-            console.log("add_amount", add_amount)
+            
             const find_reciver_account = await Chrome_pay_wallet.findOneAndUpdate({ phone: reciever_phone }, { current_Amount: add_amount })
 
             //------------------------send-messege-to-sender------------------------------------------------------------------------
@@ -921,10 +912,9 @@ const Chrome_pay_cust_transection = async (req, res, next) => {
                 let mobile = 9877487381 //phoneNO
                 let url = `http://sms.bulksmsind.in/v2/sendSMS?username=d49games&message=W/A+${654}+debited+$+${amount}+DT+${123}+${123}+thru+${654}+$+${amount}+Not+u?Fwd+this+SMS+to+Chrome+pay+to+block+Chrome+pay+wallet+GLDCRW&sendername=GLDCRW&smstype=TRANS&numbers=${mobile}&apikey=b1b6190c-c609-4add-b03d-ab3a22e9d635&peid=1701165034632151350&%20templateid=1707165155715063574`;
 
-                //let url = `http://sms.bulksmsind.in/v2/sendSMS?username=d49games&message=Dear+user+your+registration+OTP+for+D49+is+${123}+GLDCRW&sendername=GLDCRW&smstype=TRANS&numbers=${mobile}&apikey=b1b6190c-c609-4add-b03d-ab3a22e9d635&peid=1701165034632151350&%20templateid=1707165155715063574`
                 try {
                     return await axios.get(url).then(function (response) {
-                        //console.log("==>", response);
+                       
                         return response;
                     });
                 } catch (error) {
@@ -1010,7 +1000,6 @@ const getOrgForLoan_cust = async (req, res) => {
 
         let organisations = find.organisation
 
-        console.log(organisations)
 
         if (!custID) {
             return res.status(200).send({ status: false, msg: "Please enter Customer ID" })
@@ -1021,7 +1010,6 @@ const getOrgForLoan_cust = async (req, res) => {
         for (let i of organisations) {
             let findOrg = await organisation_Model.find({ _id: i })
             result.push(findOrg)
-            //console.log("====>", findOrg)
         }
 
         let final = []
@@ -1047,7 +1035,6 @@ const getOrgForLoan_cust = async (req, res) => {
 const calculate_Amount_cust = async (req, res) => {
     try {
 
-        console.log("calculate_amount")
 
         let custID = req.userId
         let agentID = req.agentID
@@ -1056,7 +1043,6 @@ const calculate_Amount_cust = async (req, res) => {
         const Amount1 = req.body.Amount
         const Emi_Months1 = req.body.Emi_Months
         const orgID = req.body.orgID
-        //const custID = req.body.custID
         const Loan_type = req.body.Loan_type
         const recidence = req.body.recidence
         const LocalGov = req.body.LocalGov
@@ -1071,8 +1057,7 @@ const calculate_Amount_cust = async (req, res) => {
         let Interest = parseInt(Interest1)
 
         let find_OTP = await customer_Model.findOne({ _id: custID })
-        console.log("Loan", find_OTP.Loan_OTP)
-        console.log("front OTp", OTP)
+       
 
         if (find_OTP.Loan_OTP != OTP) {
             return res.status(200).send({ status: false, msg: "Please enter Valid OTP" })
@@ -1103,19 +1088,7 @@ const calculate_Amount_cust = async (req, res) => {
             return res.status(200).send({ staus: false, msg: "Please enter Emi Loan_type" })
         }
 
-        // if (!recidence) {
-        //     return res.status(200).send({ staus: false, msg: "Please enter Emi recidence " })
-        // }
-        // if (!LocalGov) {
-        //     return res.status(200).send({ staus: false, msg: "Please enter Emi Local Gov certificate " })
-        // }
-        // if (!LandRegistration) {
-        //     return res.status(200).send({ staus: false, msg: "Please enter Emi Land Registration " })
-        // }
-
-
-
-
+        
         let Calculate = Interest / 100 * Amount
         let year = Emi_Months / 12
         let totalAmount = Calculate * year
@@ -1181,7 +1154,6 @@ const get_cust_logs = async (req, res) => {
         }
         let options = [{ field: req.body.field }, { status: req.body.status }]
 
-        console.log(req.body.field)
 
         let filter = await customer_logs.find({ $or: options, customer_ID: custID })
             .sort({ createdAt: -1 })
@@ -1200,7 +1172,7 @@ const get_cust_logs = async (req, res) => {
 let Pay_bills = async (req, res) => {
     try {
 
-        let create = await customer_bills.create({ customerID: "6388bb24932fecd402d93245", bill_ID: "123456456456", amount: 2500 })
+        let create = await customer_bills.create({ customerID: "638f11b9d856765b70def2f2", bill_ID: "123456456456", amount: 2500 })
 
         return res.status(200).send({ status: true, msg: "bill pay" })
 
@@ -1214,7 +1186,7 @@ let Pay_bills = async (req, res) => {
 let cust_Recaharge = async (req, res) => {
     try {
 
-        let create = await customer_recharge.create({ customerID: "6388bb24932fecd402d93245", Recharge_ID: "123456456456", amount: 250 })
+        let create = await customer_recharge.create({ customerID: "638f11b9d856765b70def2f2", Recharge_ID: "123456456456", amount: 4521 })
 
         return res.status(200).send({ status: true, msg: "recharhe succesfully" })
 

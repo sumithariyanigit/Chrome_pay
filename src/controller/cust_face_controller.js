@@ -11,7 +11,6 @@ const { promisify } = require("util");
 const cust_Face_ditect = async (req, res) => {
     try {
 
-        console.log("Working")
 
         const custID = req.params.custID;
         let files = req.files
@@ -35,7 +34,6 @@ const cust_Face_ditect = async (req, res) => {
         }
 
         const profilePicture = await uploadFile(files[0])
-        console.log("==>", profilePicture)
 
 
         //----------------------------------Check_faec_data-------------------------------------------------------------------------------------
@@ -54,7 +52,6 @@ const cust_Face_ditect = async (req, res) => {
 
         for (i = 0; i < faces.length; i++) {
 
-            console.log("==>", faces[i])
 
             for (j = 0; j < faces[i].descriptions.length; j++) {
                 faces[i].descriptions[j] = new Float32Array(Object.values(faces[i].descriptions[j]));
@@ -63,7 +60,6 @@ const cust_Face_ditect = async (req, res) => {
             faces[i] = new faceapi.LabeledFaceDescriptors(faces[i].name, faces[i].descriptions);
         }
 
-        console.log("time test")
 
         const faceMatcher = new faceapi.FaceMatcher(faces, 0.6);
         const img = await canvas.loadImage(profilePicture);
@@ -73,26 +69,21 @@ const cust_Face_ditect = async (req, res) => {
         const detections = await faceapi.detectAllFaces(img).withFaceLandmarks().withFaceDescriptors();
         const resizedDetections = faceapi.resizeResults(detections, displaySize);
         const results = resizedDetections.map((d) => faceMatcher.findBestMatch(d.descriptor));
-        console.log("tag", results)
         for (let items of results) {
             if (items._label === "unknown") {
-                console.log("8")
                 const descriptions = []
                 const img1 = await canvas.loadImage(profilePicture);
                 const detections1 = await faceapi.detectSingleFace(img1).withFaceLandmarks().withFaceDescriptor();
                 descriptions.push(detections1.descriptor);
-                console.log("9")
                 const obj = {
                     customerID: custID,
                     name: Cust_Name,
                     descriptions: descriptions,
                 }
-                console.log(descriptions)
                 let createFce = await Face_model.create(obj)
                 let update_face_data = await customerModel.findOneAndUpdate({ _id: custID }, { facialIdentification: 1 })
                 return res.status(200).send({ status: true, msg: "Face identify Successfully" })
             } else {
-                console.log("Face Match")
                 return res.status(200).send({ status: false, msg: "Face already register ", results })
             }
 
@@ -110,7 +101,6 @@ const cust_Face_ditect = async (req, res) => {
 const pre_cust_Face_ditect = async (req, res) => {
     try {
 
-        console.log("Working")
 
        
         let files = req.files
@@ -126,7 +116,6 @@ const pre_cust_Face_ditect = async (req, res) => {
        
 
         const profilePicture = await uploadFile(files[0])
-        console.log("==>", profilePicture)
 
 
         //----------------------------------Check_faec_data-------------------------------------------------------------------------------------
@@ -151,7 +140,6 @@ const pre_cust_Face_ditect = async (req, res) => {
             faces[i] = new faceapi.LabeledFaceDescriptors(faces[i].name, faces[i].descriptions);
         }
 
-        console.log("time test")
 
         const faceMatcher = new faceapi.FaceMatcher(faces, 0.6);
         const img = await canvas.loadImage(profilePicture);
@@ -161,7 +149,6 @@ const pre_cust_Face_ditect = async (req, res) => {
         const detections = await faceapi.detectAllFaces(img).withFaceLandmarks().withFaceDescriptors();
         const resizedDetections = faceapi.resizeResults(detections, displaySize);
         const results = resizedDetections.map((d) => faceMatcher.findBestMatch(d.descriptor));
-        console.log("tag", results)
         if (results.length == 0) {
             return res.status(200).send({ status: false, msg: "Please enter valid Image" })
         }
@@ -169,7 +156,6 @@ const pre_cust_Face_ditect = async (req, res) => {
             if (items._label === "unknown") {
                 return res.status(200).send({ status: true, msg: "Face identify Successfully" })
             } else {
-                console.log("Face Match")
                 return res.status(200).send({ status: false, msg: "Face already register ", results })
             }
 

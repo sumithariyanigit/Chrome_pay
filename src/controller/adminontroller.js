@@ -272,9 +272,9 @@ const verifyOTP = async (req, res) => {
     try {
 
         const OTP = req.body.OTP;
-        //const userID = req.body.userID;
+
         let admminID = req.params.ID
-        console.log("ID", admminID)
+
 
         if (!OTP) {
             return res.status(200).send({ status: false, msg: "Please Enter OTP" })
@@ -887,7 +887,7 @@ const UnBlockIP = async (req, res) => {
         const adminID = req.params.adminID;
         const ID = req.params.ID;
 
-        console.log("123", adminID)
+
 
         if (!adminID) {
             return res.status(200).send({ status: false, msg: "adminID not getting" })
@@ -1385,14 +1385,14 @@ const CreateIPs = async (req, res) => {
 
         let findsubAdminID = await subAdmin.findOne({ _id: adminID })
 
-        console.log(findsubAdminID)
+
 
         if (findsubAdminID) {
             let findRole = await sub_admin_role.findOne({ adminID: adminID })
             if (findRole) {
 
                 let customerRole = findRole.IP.IPblackListing
-                console.log(customerRole)
+
 
                 if (customerRole == 0) {
                     return res.status(200).send({ status: false, msg: "You are not allow to block IP, Contact admin to access block IP" })
@@ -1454,12 +1454,12 @@ const blockIPList = async (req, res) => {
 
 
         if (req.body.IP) {
-            console.log("else")
+
             let option = [{ IP: req.body.IP }]
 
             let countpages2 = await BlockIP.find({ $or: option }).sort({ createdAt: -1 })
             let contRow = countpages2.length
-            console.log(contRow)
+
             let filter = await BlockIP.find({ $or: option }).sort({ createdAt: -1 })
                 .limit(limit * 1)
                 .skip((page - 1) * limit)
@@ -1470,7 +1470,7 @@ const blockIPList = async (req, res) => {
         }
 
         if (!Object.keys(req.body).length <= 1) {
-            console.log("if")
+
 
             let filter = await BlockIP.find().sort({ createdAt: -1 }).limit(limit * 1)
                 .skip((page - 1) * limit)
@@ -1517,9 +1517,7 @@ const updatelimits = async (req, res) => {
             return res.status(200).send({ status: false, msg: "Please enter admin password limit" })
         }
 
-        if (agentotplimit === null) {
-            console.log("full null")
-        }
+        
 
         if (!agentpasswordlimit) {
             return res.status(200).send({ status: false, msg: "Please enter agent password limit" })
@@ -1545,7 +1543,7 @@ const updatelimits = async (req, res) => {
 
         let updatedata = await adminModel.findOneAndUpdate({ _id: adminID }, data, { new: true })
 
-        console.log(updatedata)
+
         if (!updatedata) {
             return res.status(200).send({ status: false, msg: "admin not found" })
         }
@@ -1714,7 +1712,7 @@ const admindash = async (req, res) => {
 
         let findcust = await customerModel.find();
 
-        console.log(findcust.length)
+
         let totaluser = findcust.length
 
         let findtrans = await transactionModel.find()
@@ -1724,7 +1722,7 @@ const admindash = async (req, res) => {
             sum += i.sendingAmount
         }
 
-        console.log(sum)
+
 
         let findorg = await Organisation.find()
 
@@ -1758,7 +1756,7 @@ const custdetail = async (req, res) => {
     try {
 
         const custID = req.params.custID
-        console.log("fghjk")
+
 
         if (!custID) {
             return res.status(200).send({ status: false, msg: "Please enter custID" })
@@ -1810,7 +1808,7 @@ const custdetail = async (req, res) => {
             proPercentage += 34
         }
 
-        console.log(proPercentage)
+
 
         //var location = 0
 
@@ -1975,7 +1973,7 @@ const getAllDIDs = async (req, res) => {
             .skip((page - 1) * limit)
             .exec();
 
-        console.log("findDIDs11 ==", findDIDs11)
+
 
 
         let totalRaow1 = findCust12.length;
@@ -2000,7 +1998,7 @@ const recentUser = async (req, res) => {
 
         let final = findUser.slice(Math.max(findUser.length - 3, 0))
 
-        console.log(final.length)
+
 
         return res.status(200).send({ status: true, totalCustomer: totalCustomer, final })
 
@@ -2022,7 +2020,7 @@ const recentTransection = async (req, res) => {
 
         let totalTransection = findUser.length
 
-        console.log(final.length)
+
 
         return res.status(200).send({ status: true, totalTransection: totalTransection, data: final })
 
@@ -2626,7 +2624,7 @@ const customerVerify = async (req, res) => {
 
         let findsubAdminID = await subAdmin.findOne({ _id: adminID })
 
-        console.log(findsubAdminID)
+
 
         if (findsubAdminID) {
             let findRole = await sub_admin_role.findOne({ adminID: adminID })
@@ -2723,7 +2721,6 @@ const OrgCust = async (req, res) => {
     try {
 
         const custID = req.params.custID;
-        console.log(custID)
         let pageNO = req.body.page;
         if (pageNO == 0) {
             pageNO = 1
@@ -2850,14 +2847,14 @@ const createCustomerByAdmin = async (req, res, next) => {
         const { IDphoto, fullname, dateOfBirth, phone, city, age, email, gender, nationality, professoin, address, organisation, status, Latitude,
             Longitude, nextFOKinName, nextFOKniPhone, landSize, assetType, assetID, assetAddress, assetLongitude, assetLatitude } = data
 
-        console.log("organisation11", organisation)
+
 
         //------------------------------------Manage-Linked-service----------------------------------------------------------------------
-        console.log("Phone11", phone)
+
         let trim = phone.replaceAll(' ', '')
         let remove_character = trim.replace('-', '')
         let convert_Number = parseInt(remove_character)
-        console.log("trim", convert_Number)
+
         const cheack_cus = await temp_Cust.findOne({ phone: convert_Number })
 
 
@@ -2943,7 +2940,6 @@ const createCustomerByAdmin = async (req, res, next) => {
                 phoneNumber: `+${convert_Number}`
             }
 
-            console.log("payload", payload)
 
             let res = await axios.post('http://13.127.64.68:7008/api/mainnet/getUserData', payload);
             let data1 = res.data;
@@ -2954,7 +2950,7 @@ const createCustomerByAdmin = async (req, res, next) => {
 
 
         var seq = (Math.floor(Math.random() * 1000000000) + 1000000000).toString().substring()
-        console.log(seq);
+
 
 
 
@@ -2995,9 +2991,9 @@ const pendingCust = async (req, res) => {
     try {
 
 
-        console.log("nm")
+
         let pageNO = req.body.page;
-        console.log("==>", pageNO)
+
         if (pageNO == 0) {
             pageNO = 1
         }
@@ -3008,7 +3004,7 @@ const pendingCust = async (req, res) => {
         let totalRow = findcust1.length
         if (Object.keys(req.body).length <= 1) {
 
-            console.log("vbnmn")
+
             let findcust = await customerModel.find({ status: "pending", isDeleted: 0, blocked: 0 }).select({ fullname: 1, dateOfBirth: 1, phone: 1, email: 1, status: 1, walletAddress: 1, digitalID: 1, digitalrefID: 1 }).sort({ createdAt: -1 }).limit(limit * 1)
                 .skip((page - 1) * limit)
                 .exec()
@@ -3178,7 +3174,7 @@ const orgLicenses = async (req, res) => {
 
         let orgID = req.params.orgID;
 
-        console.log(orgID)
+
 
         if (!orgID) {
             return res.status(200).send({ status: false, msg: "not getting orgID" })
@@ -3299,7 +3295,7 @@ const add_Licenses = async (req, res) => {
 
         let addLicenses = updateLicenses += parseInt(Licenses)
 
-        console.log("===>", addLicenses)
+
 
 
         let update = await org_Licenses.findOneAndUpdate({ OrganisationID: orgID }, { totalLicenses: addLicenses, LicenseUpdateStatus: 1 }, { new: true })
@@ -3342,7 +3338,7 @@ const viewFee = async (req, res) => {
         return res.status(200).send({ status: true, findLicenseFees })
 
 
-        //console.log(findLicenseFees)
+
 
     } catch (error) {
         console.log(error)
@@ -3596,9 +3592,7 @@ const customer_bank = async (req, res) => {
 
         let findCust = await customer_Bank.find({ customerID: custID }).populate('customerID', { 'IDphoto': 1, 'fullname': 1, 'phone': 1, 'email': 1, })
 
-        for (let i of findCust) {
-            console.log("custID", i.customerID._id)
-        }
+
 
         return res.status(200).send({ status: true, findCust })
 

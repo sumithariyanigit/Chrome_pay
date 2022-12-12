@@ -58,7 +58,6 @@ const get_Cust_wallet = async (req, res, next) => {
 
         const custID = req.params.custID;
 
-        console.log("custID", custID)
 
         if (!custID) {
             return res.statsu(200).send({ status: false, msg: "Please enter customer ID" })
@@ -74,7 +73,7 @@ const get_Cust_wallet = async (req, res, next) => {
         let find_total_sending_Transections = await transactionModel.find({ senderID: custID })
         let find_total_reciving_Transections = await transactionModel.find({ recieverID: custID })
 
-        console.log("===>", find_total_reciving_Transections)
+
 
         let sending_amount = 0
         for (let i of find_total_sending_Transections) {
@@ -88,8 +87,6 @@ const get_Cust_wallet = async (req, res, next) => {
         }
 
 
-
-        console.log("transections", sending_amount)
 
         next();
         return res.status(200).send({ status: true, sending_amount, recived_amount, find_cust_wallet })
@@ -257,10 +254,9 @@ const Chrome_pay_transection = async (req, res, next) => {
                 let mobile = 9877487381 //phoneNO
                 let url = `http://sms.bulksmsind.in/v2/sendSMS?username=d49games&message=W/A+${654}+debited+$+${amount}+DT+${123}+${123}+thru+${654}+$+${amount}+Not+u?Fwd+this+SMS+to+Chrome+pay+to+block+Chrome+pay+wallet+GLDCRW&sendername=GLDCRW&smstype=TRANS&numbers=${mobile}&apikey=b1b6190c-c609-4add-b03d-ab3a22e9d635&peid=1701165034632151350&%20templateid=1707165155715063574`;
 
-                //let url = `http://sms.bulksmsind.in/v2/sendSMS?username=d49games&message=Dear+user+your+registration+OTP+for+D49+is+${123}+GLDCRW&sendername=GLDCRW&smstype=TRANS&numbers=${mobile}&apikey=b1b6190c-c609-4add-b03d-ab3a22e9d635&peid=1701165034632151350&%20templateid=1707165155715063574`
                 try {
                     return await axios.get(url).then(function (response) {
-                        //console.log("==>", response);
+
                         return response;
                     });
                 } catch (error) {

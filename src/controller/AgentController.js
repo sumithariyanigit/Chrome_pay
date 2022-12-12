@@ -68,7 +68,7 @@ function generateString1(length) {
 const createAgent = async (req, res) => {
     try {
         let AgentCode = 10000000 + Math.floor(Math.random() * 90000000);
-        console.log(AgentCode)
+
 
         const data = req.body;
         const orgID = req.params.orgID
@@ -226,13 +226,13 @@ const agentLogin = async (req, res) => {
 
         const { username, password } = data
 
-        console.log(password)
+
 
         if (!username) {
             return res.status(200).send({ status: false, msg: "Please enter email or phone number" })
         }
 
-        console.log(username)
+
 
         if (!password) {
             return res.status(200).send({ status: false, msg: "Please enter pasword" })
@@ -465,7 +465,6 @@ const forgotpassword = async (req, res) => {
 
         const email = req.body.email;
 
-        console.log(email)
 
         let cheackEmail = await agentModel.findOne({ email: email })
 
@@ -613,7 +612,7 @@ const agentCustomerList = async (req, res) => {
     try {
 
         const adminID = req.params.adminID;
-        console.log("test run")
+
         let countpages = await cutomerModel.find({ createdBY: adminID, isDeleted: 0 }).sort({ createdAt: -1 })
         let totlaRow = countpages.length
         if (!adminID) {
@@ -641,7 +640,7 @@ const agentCustomerList = async (req, res) => {
             return res.status(200).send({ statussss: true, totlaRow: totalRaow1, currenPage: parseInt(pageNO), filter })
         } else if (req.body.nationality) {
             let option = [{ nationality: req.body.nationality }]
-            console.log("verif", req.body.nationality)
+
             let countpages2 = await cutomerModel.find({ $or: option, createdBY: adminID, isDeleted: 0, status: "verified" })
             let contRow = countpages2.length
             let filter = await cutomerModel.find({ $or: option, createdBY: adminID, isDeleted: 0, status: "verified" }).sort({ createdAt: -1 })
@@ -654,7 +653,7 @@ const agentCustomerList = async (req, res) => {
 
         } else if (req.body.fromDate) {
 
-            console.log("fghj", req.body.fromDate)
+
 
             let option = [{
                 createdAt: {
@@ -666,7 +665,7 @@ const agentCustomerList = async (req, res) => {
 
 
             let countpages2 = await cutomerModel.find({ $or: option, createdBY: adminID, isDeleted: 0, status: "verified" })
-            console.log("countpages2", adminID)
+
             let contRow = countpages2.length
             let filter = await cutomerModel.find({ $or: option, createdBY: adminID, isDeleted: 0, status: "verified" }).sort({ createdAt: -1 })
                 .limit(limit * 1)
@@ -679,8 +678,7 @@ const agentCustomerList = async (req, res) => {
 
         else if (req.body.ID && req.body.ID > 0) {
             let option = [{ digitalrefID: req.body.ID }, { phone: req.body.phone }, { status: req.body.status }, { nationality: req.body.nationality }]
-            console.log(req.body.nationality)
-            console.log("verif", req.body.nationality)
+
             let countpages2 = await cutomerModel.find({ $or: option, createdBY: adminID, isDeleted: 0, status: "verified" })
             let contRow = countpages2.length
             let filter = await cutomerModel.find({ $or: option, createdBY: adminID, isDeleted: 0, status: "verified" }).sort({ createdAt: -1 })
@@ -713,7 +711,7 @@ const agentCustomerList = async (req, res) => {
             let countpages3 = await cutomerModel.find({ $or: option, createdBY: adminID, status: "verified", isDeleted: 0, })
             let contRow3 = countpages3.length
 
-            console.log("verif", req.body.nationality)
+
 
             let filter = await cutomerModel.find({ $or: option, createdBY: adminID, isDeleted: 0, status: "verified" }).sort({ createdAt: -1 })
                 .limit(limit * 1)
@@ -839,7 +837,6 @@ const deleteCustomer = async (req, res) => {
         const userID = req.params.userID;
         const agentID = req.userId
 
-        console.log("===>", agentID)
 
         if (!userID) {
             return res.status(200).send({ status: false, msg: " Id is required" })
@@ -1414,13 +1411,12 @@ let verifyCustomeragent = async (req, res) => {
     try {
 
         const otp = req.body.OTP
-        console.log(otp)
+
 
         const phoneNo1 = req.body.phoneNo
         const phoneNo = `+91${phoneNo1}`
 
-        console.log("phoneNo", phoneNo)
-        console.log("otp", otp)
+
 
 
         if (!otp) {
@@ -1431,8 +1427,7 @@ let verifyCustomeragent = async (req, res) => {
             return res.status(200).send({ status: false, msg: "Please enter phoneNo" })
         }
 
-        console.log(otp)
-        console.log(phoneNo)
+
 
         var result = [];
 
@@ -1455,7 +1450,6 @@ let verifyCustomeragent = async (req, res) => {
 
                 let data1 = respons.data
 
-                console.log(data1.response.owner);
 
 
 
@@ -1471,10 +1465,10 @@ let verifyCustomeragent = async (req, res) => {
                     createdBY: findCust.createdBY, Longitude: findCust.Longitude, Latitude: findCust.Latitude
                 }
 
-                console.log("1")
+
                 let create = await cutomerModel.create(newCust)
 
-                console.log("2")
+
 
                 let OrganisationList = await org_Licenses.findOne({ OrganisationID: findCust.organisation })
 
@@ -1488,7 +1482,7 @@ let verifyCustomeragent = async (req, res) => {
 
                 let updateLicenses = await org_Licenses.findOneAndUpdate({ OrganisationID: findCust.organisation }, { RemainingLicenses: Remainig })
 
-                console.log("===>", updateLicenses)
+
                 return res.status(200).send({ status: true, msg: "customer register sucessfully", create })
             })
             .catch(error => {
@@ -1535,7 +1529,6 @@ const agentDash = async (req, res) => {
             data.push(i._id)
         }
 
-        console.log(data)
 
         let findtrans = await transectionModel.find({ senderID: data })
 
@@ -1553,8 +1546,6 @@ const agentDash = async (req, res) => {
         for (let i of findAgentUsers) {
             data1.push(i._id)
         }
-
-        console.log(data1)
 
         let findtrans1 = await transectionModel.find({ recieverID: data1 })
 
@@ -1873,7 +1864,7 @@ const AgentAwaiting = async (req, res) => {
         const agentID = req.userId
         const CustomerName = req.body.customerName;
         const status = req.body.Status
-        console.log("====>", agentID)
+
 
         let countpages = await cutomerModel.find({ createdBY: agentID, isDeleted: 0 }).sort({ createdAt: -1 })
         let totlaRow = countpages.length
@@ -2088,8 +2079,7 @@ const agentPerformanceReport = async (req, res) => {
             ],
         }).count();
 
-        console.log("last Month = ", LastMonthData.length)
-        console.log("current Month = ", Current_Month)
+
 
         let Last_Month = LastMonthData.length
         let perDayLastMonth = LastMonthData.length / 30
@@ -2244,7 +2234,7 @@ const getOrgForLoan = async (req, res) => {
 
         let organisations = find.organisation
 
-        console.log(organisations)
+
 
         if (!custID) {
             return res.status(200).send({ status: false, msg: "Please enter Customer ID" })
@@ -2313,7 +2303,6 @@ const getInterestOFLoan = async (req, res) => {
         const orgID = req.params.orgID
         var LoanType = req.body.LoanType
 
-        console.log("LoanType", LoanType)
 
         if (!orgID) {
             return res.status(200).send({ status: false, msg: "Please enter org ID" })
@@ -2389,7 +2378,7 @@ const send_Loan_Otp = async (req, res) => {
 
         let Phone = findPhone.phone
 
-        console.log(Phone)
+
 
         let OTP = 100000 + Math.floor(Math.random() * 900000);
 
@@ -2404,7 +2393,7 @@ const send_Loan_Otp = async (req, res) => {
 
             try {
                 return await axios.get(url).then(function (response) {
-                    //console.log(response);
+
                     return response;
                 });
             } catch (error) {
@@ -2433,7 +2422,7 @@ const send_Loan_Otp = async (req, res) => {
 const calculate_Amount = async (req, res) => {
     try {
 
-        console.log("calculate_amount")
+
 
         let = req.userId
 
@@ -2456,8 +2445,7 @@ const calculate_Amount = async (req, res) => {
         let Interest = parseInt(Interest1)
 
         let find_OTP = await cutomerModel.findOne({ _id: custID })
-        console.log("Loan", find_OTP.Loan_OTP)
-        console.log("front OTp", OTP)
+
 
         if (find_OTP.Loan_OTP != OTP) {
             return res.status(200).send({ status: false, msg: "Please enter Valid OTP" })
@@ -2518,7 +2506,7 @@ const calculate_Amount = async (req, res) => {
 
         }
 
-        console.log(obj)
+
         let create = await Loan_applay_customer.create(obj)
 
 
@@ -2541,7 +2529,7 @@ const Cust_apply_Agent_Loans = async (req, res) => {
 
         const agentID = req.userId
 
-        console.log("my ip")
+
 
         if (!agentID) {
             return res.status(200).send({ status: false, msg: "Please enter custID" })
@@ -2966,8 +2954,7 @@ const Calculate_credit_Score = async (req, res) => {
         let percentage = `0.${CREDIT_SCORE / 900 * 100}`
         let slice = percentage.slice(0, 4)
         let per = Number(slice)
-        console.log("PER", slice)
-        console.log("PER", percentage)
+
 
 
         return res.status(200).send({ status: true, CREDIT_SCORE, CREDIT_PERCENTEGE: per })
@@ -3025,7 +3012,7 @@ const Cust_Linked_Srevice_send_OTP = async (req, res) => {
 
         let OTP = 100000 + Math.floor(Math.random() * 900000);
 
-        console.log("OTP", OTP)
+
 
         const send_mobile_otp = async (req, res) => {
 
@@ -3141,7 +3128,7 @@ const get_next_month_emi = async (req, res) => {
         let current = new Date()
         let current_Month = current.getMonth() + 1;
         let current_year = current.getFullYear();
-        console.log(("date", current_Month))
+  
         let Next_EMI = `${getDay}-${current_Month}-${current_year}`
         let Amount = getInsatllment.Installment_Amount
         return res.status(200).send({ status: true, Next_EMI, Amount })
@@ -3233,9 +3220,9 @@ const Customer_Bank_view = async (req, res) => {
         let customers_banks = []
 
         for (let i of IDs) {
-            console.log("==>", i)
+           
             let find_banks = await cust_Bank.find({ customerID: i })
-            console.log(find_banks)
+            
             customers_banks.push(find_banks)
         }
 
@@ -3283,7 +3270,6 @@ const new_verify_customer = async (req, res) => {
         const response = await axios.post('http://13.127.64.68:7008/api/mainnet/generate-digitalid', payload)
 
         let data1 = response.data
-        //  console.log(data1)
         let cust_password = generateString1(5)
 
         let newCust = {
@@ -3298,24 +3284,22 @@ const new_verify_customer = async (req, res) => {
             digitalID: findCust.digitalID, nextFOKniPhone: findCust.nextFOKniPhone, nextFOKinName: findCust.nextFOKinName,
             password: cust_password, facialIdentification: 1
         }
-        console.log("123")
+     
 
 
         let create_cust = await cutomerModel.create(newCust)
 
-        console.log("123")
 
         let OrganisationList = await org_Licenses.findOne({ OrganisationID: findCust.organisation })
 
-        console.log("OrganisationList", OrganisationList)
-
+        
         let totalLicenses = OrganisationList.totalLicenses
 
-        console.log("totalLicenses", totalLicenses)
+       
 
         let findreaminig = await cutomerModel.find({ organisation: findCust.organisation })
 
-        console.log("findreaminig", findreaminig)
+        
 
         let calculateRemainig = totalLicenses - findreaminig.length;
 
@@ -3323,7 +3307,7 @@ const new_verify_customer = async (req, res) => {
 
         let updateLicenses = await org_Licenses.findOneAndUpdate({ OrganisationID: findCust.organisation }, { RemainingLicenses: Remainig }, { new: true })
 
-        console.log("updateLicenses", updateLicenses)
+        
         let cust_wallet = `00x${generateString1(43)}`
         let obj = {
             customer_ID: create_cust._id,
@@ -3333,7 +3317,7 @@ const new_verify_customer = async (req, res) => {
 
 
         let create_Wallet = await cust_wallet_Model.create(obj)
-        console.log("create_Wallet", create_Wallet)
+       
         let delete_cust = await temp_Cust.findOneAndDelete({ phone: phoneNo1 })
 
 
@@ -3495,7 +3479,7 @@ const Resend_otp = async (req, res) => {
                 phoneNumber: `+${phone}`
             }
 
-            console.log("pay", payload)
+            
             let res = await axios.post('http://13.127.64.68:7008/api/mainnet/getUserData', payload);
             let data1 = res.data;
         }
@@ -3503,7 +3487,7 @@ const Resend_otp = async (req, res) => {
         return res.status(200).send({ status: true, msg: "OTP send sucessfully" })
 
     } catch (error) {
-        // console.log(error)
+      
         return res.status(200).send({ status: false, msg: error.message })
     }
 }
@@ -3511,7 +3495,7 @@ const Resend_otp = async (req, res) => {
 const createCustomerByAgnet_web = async (req, res, next) => {
     try {
         url = "http://localhost:3000/customer";
-        console.log("456")
+        
         let data = req.body;
         let files = req.files
         let recidence = req.files
@@ -3564,11 +3548,11 @@ const createCustomerByAgnet_web = async (req, res, next) => {
 
 
 
-        console.log("type_of", typeof phone)
+    
         let trim = phone.replaceAll(' ', '')
         let remove_character = trim.replace('-', '')
         let convert_Number = parseInt(remove_character)
-        console.log("trim", convert_Number)
+       
         //------------------------------------Manage-Linked-service----------------------------------------------------------------------
 
         const cheack_cus = await cutomerModel.findOne({ phone: convert_Number })
@@ -3648,7 +3632,7 @@ const createCustomerByAgnet_web = async (req, res, next) => {
 
             let res = await axios.post('http://13.127.64.68:7008/api/mainnet/getUserData', payload);
             let data1 = res.data;
-            // console.log(data1);
+            
         }
 
         await doPostRequest();
@@ -3766,7 +3750,7 @@ const createCustomerByOrg2 = async (req, res) => {
 
         const { landSize, assetType, assetID, } = data
 
-        console.log("data", data)
+     
 
 
         const residace = await uploadFile(recidence[0])
@@ -3794,7 +3778,7 @@ const createCustomerByOrg2 = async (req, res) => {
 
                 }
 
-                console.log("payload", payload)
+                
 
                 let res = await axios.post('http://13.127.64.68:7008/api/mainnet/getUserData', payload);
                 let data1 = res.data;
@@ -3803,7 +3787,7 @@ const createCustomerByOrg2 = async (req, res) => {
 
             await doPostRequest();
 
-            console.log("456")
+           
 
             return res.status(200).send({ status: true, msg: "Otp send sucessfully" })
         } else {

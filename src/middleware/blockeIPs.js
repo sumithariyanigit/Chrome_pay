@@ -6,7 +6,7 @@ const findBlockIPs = async (req, res, next) => {
     try {
 
         let UserIP = ip.address()
-        //console.log(UserIP);
+
         let findIPs = await BlockedIPsModel.findOne({IP:UserIP});
         if(findIPs){
             return res.status(403).send({ status: false, msg: "You are not authorized for this activity, you are blocked" })
