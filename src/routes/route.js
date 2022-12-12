@@ -442,16 +442,16 @@ const cust_auth = require("../middleware/customer_auth")
 
 /**
  * @swagger
- * /updateDigitalID/{customerID}/{OrganizationID}:
- *   post:
+ * /org_updateDigitalID/{customerID}:
+ *   put:
  *     summary: Generate customer Digital ID
  *     tags: [ORG]
  *     parameters:
  *       - in: path
  *         name: customerID
  *         required: true
- *       - in: path
- *         name: OrganizationID
+ *       - in: header
+ *         name: token
  *         required: true
  *     requestBody:
  *       required: false
@@ -476,13 +476,13 @@ const cust_auth = require("../middleware/customer_auth")
 
 /**
  * @swagger
- * /orgtransection/{OrganizationID}:
+ * /organisation_transections:
  *   post:
  *     summary: Customer Transection Lists
  *     tags: [ORG]
  *     parameters:
- *       - in: path
- *         name: OrganizationID
+ *       - in: header
+ *         name: token
  *         required: true
  *     requestBody:
  *       required: false
@@ -506,13 +506,13 @@ const cust_auth = require("../middleware/customer_auth")
 
 /**
  * @swagger
- * /agentregister/{OrganizationID}:
+ * /create_org_Agent:
  *   post:
  *     summary: Register Agent
  *     tags: [ORG]
  *     parameters:
- *       - in: path
- *         name: OrganizationID
+ *       - in: header
+ *         name: token
  *         required: true
  *     requestBody:
  *       required: true
@@ -539,13 +539,13 @@ const cust_auth = require("../middleware/customer_auth")
 
 /**
  * @swagger
- * /getagent/{OrganizationID}:
+ * /viewAgent:
  *   post:
  *     summary: Get Organization Agents
  *     tags: [ORG]
  *     parameters:
- *       - in: path
- *         name: OrganizationID
+ *       - in: header
+ *         name: token
  *         required: true
  *     requestBody:
  *       required: false
@@ -570,16 +570,16 @@ const cust_auth = require("../middleware/customer_auth")
 
 /**
  * @swagger
- * /agentSusupend/{AgentID}/{OrganizationID}:
+ * /agentsuspend/{agentID}:
  *   put:
  *     summary: Suspend Agent
  *     tags: [ORG]
  *     parameters:
- *       - in: path
- *         name: AgentID
+ *       - in: header
+ *         name: token
  *         required: true
  *       - in: path
- *         name: OrganizationID
+ *         name: agentID
  *         required: true
  *     requestBody:
  *       required: false
@@ -603,16 +603,16 @@ const cust_auth = require("../middleware/customer_auth")
 
 /**
  * @swagger
- * /unSuspendagent/{AgentID}/{OrganizationID}:
+ * /Org_unSuspendagent/{agentID}:
  *   put:
  *     summary: Un-suspend Agent
  *     tags: [ORG]
  *     parameters:
- *       - in: path
- *         name: AgentID
+ *       - in: header
+ *         name: token
  *         required: true
  *       - in: path
- *         name: OrganizationID
+ *         name: agentID
  *         required: true
  *     requestBody:
  *       required: false
@@ -635,16 +635,16 @@ const cust_auth = require("../middleware/customer_auth")
 
 /**
  * @swagger
- * /deleteAgent/{AgentID}/{OrganizationID}:
+ * /org_deleteAgent/{agentID}:
  *   delete:
  *     summary: Delete Agnet
  *     tags: [ORG]
  *     parameters:
- *       - in: path
- *         name: AgentID
+ *       - in: header
+ *         name: token
  *         required: true
  *       - in: path
- *         name: OrganizationID
+ *         name: agentID
  *         required: true
  *     requestBody:
  *       required: false
@@ -668,13 +668,16 @@ const cust_auth = require("../middleware/customer_auth")
 
 /**
  * @swagger
- * /agentPerformanceReport/{AgentID}:
+ * /Org_agentPerformanceReport/{agentID}:
  *   post:
  *     summary: Organization agnet performance report
  *     tags: [ORG]
  *     parameters:
+ *       - in: header
+ *         name: token
+ *         required: true
  *       - in: path
- *         name: AgentID
+ *         name: agentID
  *         required: true
  *     requestBody:
  *       required: false
@@ -698,32 +701,7 @@ const cust_auth = require("../middleware/customer_auth")
 
 
 
-/**
- * @swagger
- * /agentPerformanceReport/{AgentID}:
- *   post:
- *     summary: Organization agnet performance report
- *     tags: [ORG]
- *     parameters:
- *       - in: path
- *         name: AgentID
- *         required: true
- *     requestBody:
- *       required: false
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/Customer'
- *     responses:
- *       200:
- *         description: Organization agnet performance report
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Customer'
- *       500:
- *         description: Some server error
- */
+
 
 ///Cust_Loan_apply/:token
 
@@ -1188,5 +1166,13 @@ router.post("/OrgcustomerVerify/:custID", AcessKeys.AcessKeys, Third_party_Organ
 router.put("/OrgblockCustomer/:customerID", AcessKeys.AcessKeys, Third_party_Organization.OrgblockCustomer)
 router.delete("/OrgDeleteCustomer/:customerID", AcessKeys.AcessKeys, Third_party_Organization.OrgDeleteCustomer)
 router.get("/Org_custdetail/:customerID", AcessKeys.AcessKeys, Third_party_Organization.Org_custdetail)
+router.put("/org_updateDigitalID/:customerID", AcessKeys.AcessKeys, Third_party_Organization.org_updateDigitalID)
+router.post("/organisation_transections", AcessKeys.AcessKeys, Third_party_Organization.organisation_transections)
+router.post("/create_org_Agent", AcessKeys.AcessKeys, Third_party_Organization.create_org_Agent)
+router.post("/viewAgent", AcessKeys.AcessKeys, Third_party_Organization.viewAgent)
+router.put("/agentsuspend/:agentID", AcessKeys.AcessKeys, Third_party_Organization.agentsuspend)
+router.put("/Org_unSuspendagent/:agentID", AcessKeys.AcessKeys, Third_party_Organization.Org_unSuspendagent)
+router.delete("/org_deleteAgent/:agentID", AcessKeys.AcessKeys, Third_party_Organization.org_deleteAgent)
+router.post("/Org_agentPerformanceReport/:agentID", AcessKeys.AcessKeys, Third_party_Organization.Org_agentPerformanceReport)
 
 module.exports = router

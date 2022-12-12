@@ -39,7 +39,15 @@ const nodemailer = require('nodemailer')
 const transactionModel = require("../models/transaction");
 
 
-
+function generatePassword() {
+    var length = 8,
+        charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",
+        retVal = "";
+    for (var i = 0, n = charset.length; i < length; ++i) {
+        retVal += charset.charAt(Math.floor(Math.random() * n));
+    }
+    return retVal;
+}
 
 
 const createCustomerByOrganization = async (req, res, next) => {
@@ -115,7 +123,7 @@ const createCustomerByOrganization = async (req, res, next) => {
         let remove_character = trim.replace('-', '')
         let convert_Number = parseInt(remove_character)
         console.log("trim", convert_Number)
-        const cheack_cus = await temp_Cust.findOne({ phone: convert_Number })
+        const cheack_cus = await customerModel.findOne({ phone: convert_Number })
         if (cheack_cus) {
 
             return res.status(200).send({ status: false, service: "Linked", msg: "Customer already register, you want to linked service" })
@@ -453,6 +461,8 @@ let OrgverifyCustomer = async (req, res) => {
             phoneNumber: `+${convert_Number}`
         }
 
+        console.log(payload)
+
 
 
         let findCust = await temp_Cust.findOne({ phone: convert_Number })
@@ -559,7 +569,7 @@ let OrgverifyCustomer = async (req, res) => {
 
 
         }).catch(async error => {
-            let delete_cust = await temp_Cust.findOneAndDelete({ phone: convert_Number })
+           // let delete_cust = await temp_Cust.findOneAndDelete({ phone: convert_Number })
             //console.log(error)
             return res.status(200).send({ status: false, error: error.message, msg: "failed please try again" })
         });
@@ -786,6 +796,806 @@ const Org_custdetail = async (req, res) => {
     }
 }
 
+//--------------------------------------Update-didgital-ID--------------------------------------------------------------------------------------
+
+const org_updateDigitalID = async (req, res) => {
+    try {
+
+        const custID = req.params.customerID;
+
+        if (!custID) {
+            return res.status(200).send({ status: false, msg: "not getting customer ID" })
+        }
+
+        if (custID < 24) {
+            return res.status(200).send({ status: false, msg: "not getting valid custID" })
+        }
+
+
+
+
+
+
+        let findCustomer = await cutomerModel.findOne({ _id: custID })
+
+        if (!findCustomer) {
+            return res.status(200).send({ status: false, msg: "not found ciustomer" })
+        }
+
+        if (!findCustomer.owner) {
+            return res.status(200).send({ status: false, msg: "Customer not have owner key" })
+        }
+
+        let custOwnerKey = findCustomer.owner;
+
+
+        async function getID() {
+
+            try {
+                const Ownwe_key = '0x12734821a5B2be1D204fEdb3e986a6d149772a6B'
+
+                var result11 = []
+                let result = await axios.get(`http://13.127.64.68:7008/api/mainnet/getDigitalIdOfOwner/${custOwnerKey}`)
+                    // .then(async (respons) => {
+                    //     console.log("res ==", respons)
+                    // })
+
+                    .catch((error) => {
+                        let data = error.response.data
+                        result11.push(data)
+                        //console.log(error.response.data)
+                    })
+
+                for (item of result11) {
+                    //console.log(item.owner)
+                    let findCustomer = await cutomerModel.findOneAndUpdate({ _id: custID }, { digitalID: item.owner }, { new: true })
+
+                    if (findCustomer) {
+
+                        return res.status(200).send({ status: false, msg: "Digital ID added sucessfullt", findCustomer })
+                    }
+                }
+
+
+
+                console.log("track", result11.owner)
+
+                let findCustomer = await cutomerModel.findOneAndUpdate({ _id: custID })
+
+
+
+
+
+
+            } catch (error) {
+
+                return res.status(200).send({ "catch error": error.message })
+
+
+                result.push(error)
+                console.log(result)
+
+            }
+        }
+
+        getID()
+
+        //console.log("result", result)
+
+    } catch (error) {
+        console.log(error)
+        return res.status(200).send({ status: false, msg: error.message })
+    }
+}
+
+
+//--------------------------------------org-transection---------------------------------------------------------------------------------------
+
+const organisation_transections = async (req, res) => {
+    try {
+
+        const OrganisationID = req.orgID
+
+        let pageNO = req.body.page;
+        if (pageNO == 0) {
+            pageNO = 1
+        }
+        const { page = pageNO, limit = 10 } = req.query;
+
+        if (!OrganisationID) {
+            return res.status(200).send({ status: false, msg: "Please enter adminID" })
+        }
+
+        if (OrganisationID.length < 24) {
+            return res.status(200).send({ status: false, msg: "not getting valid adminID" })
+        }
+
+        if (Object.keys(req.body).length <= 1) {
+            let countpages1 = await transectionModel.find({ OrganisationID: OrganisationID }).sort({ createdAt: 1 })
+            let totalRaow1 = countpages1.length;
+            let filter = await transectionModel.find({ OrganisationID: OrganisationID }).sort({ createdAt: -1 })
+                .limit(limit * 1)
+                .skip((page - 1) * limit)
+                .exec();
+
+            return res.status(200).send({ statussss: true, totlaRow: totalRaow1, currenPage: parseInt(pageNO), filter })
+
+
+
+        } else if (req.body.fromDate) {
+
+            let option = [
+                // { senderName: req.body.senderName }, { beneficiaryName: req.body.beneficiaryName },
+                {
+                    createdAt: {
+                        $gte: new Date(req.body.fromDate).toISOString().substring(0, 10).replace('T', ' '),
+                        $lte: new Date(req.body.toDate).toISOString().substring(0, 10).replace('T', ' '),
+                    }
+                }
+                //, {
+                //     sendingAmount: {
+                //         $gte: req.body.fromAmount,
+                //         $lte: req.body.toAmount
+                //     }
+                // }
+            ]
+
+
+
+
+            let countpages2 = await transectionModel.find({ $or: option, OrganisationID: OrganisationID })
+            let contRow = countpages2.length
+            let filter = await transectionModel.find({ $or: option, OrganisationID: OrganisationID }).sort({ transactionDate: -1 })
+                .limit(limit * 1)
+                .skip((page - 1) * limit)
+                .exec();
+            let totlaRow = filter.length;
+            return res.status(200).send({ status: true, totlaRow: contRow, currenPage: parseInt(pageNO), filter })
+
+        } else if (req.body.fromAmount && req.body.senderName) {
+            let option = [{ senderName: req.body.senderName }, {
+                sendingAmount: {
+                    $gte: req.body.fromAmount,
+                    $lte: req.body.toAmount
+                }
+            }]
+
+
+
+
+            let countpages2 = await transectionModel.find({ $and: option, OrganisationID: OrganisationID })
+            let contRow = countpages2.length
+            let filter = await transectionModel.find({ $and: option, OrganisationID: OrganisationID }).sort({ transactionDate: -1 })
+                .limit(limit * 1)
+                .skip((page - 1) * limit)
+                .exec();
+            let totlaRow = filter.length;
+            return res.status(200).send({ status: true, totlaRow: contRow, currenPage: parseInt(pageNO), filter })
+
+        } else if (req.body.fromAmount && req.body.beneficiaryName) {
+            let option = [{ beneficiaryName: req.body.beneficiaryName }, {
+                sendingAmount: {
+                    $gte: req.body.fromAmount,
+                    $lte: req.body.toAmount
+                }
+            }]
+
+
+
+
+            let countpages2 = await transectionModel.find({ $and: option, OrganisationID: OrganisationID })
+            let contRow = countpages2.length
+            let filter = await transectionModel.find({ $and: option, OrganisationID: OrganisationID }).sort({ transactionDate: -1 })
+                .limit(limit * 1)
+                .skip((page - 1) * limit)
+                .exec();
+            let totlaRow = filter.length;
+            return res.status(200).send({ status: true, totlaRow: contRow, currenPage: parseInt(pageNO), filter })
+
+        } else if (req.body.senderName && req.body.beneficiaryName) {
+            let option = [{ beneficiaryName: req.body.beneficiaryName }, { senderName: req.body.senderName },
+                // {
+                //     sendingAmount: {
+                //         $gte: req.body.fromAmount,
+                //         $lte: req.body.toAmount
+                //     }
+                // }
+            ]
+
+
+
+
+            let countpages2 = await transectionModel.find({ $and: option, OrganisationID: OrganisationID })
+            let contRow = countpages2.length
+            let filter = await transectionModel.find({ $and: option, OrganisationID: OrganisationID }).sort({ transactionDate: -1 })
+                .limit(limit * 1)
+                .skip((page - 1) * limit)
+                .exec();
+            let totlaRow = filter.length;
+            return res.status(200).send({ status: true, totlaRow: contRow, currenPage: parseInt(pageNO), filter })
+
+        } else if (req.body.fromAmount && req.body.senderName) {
+            let option = [{ senderName: req.body.senderName }, {
+                sendingAmount: {
+                    $gte: req.body.fromAmount,
+                    $lte: req.body.toAmount
+                }
+            }]
+
+
+
+
+            let countpages2 = await transectionModel.find({ $and: option, OrganisationID: OrganisationID })
+            let contRow = countpages2.length
+            let filter = await transectionModel.find({ $and: option, OrganisationID: OrganisationID }).sort({ transactionDate: -1 })
+                .limit(limit * 1)
+                .skip((page - 1) * limit)
+                .exec();
+            let totlaRow = filter.length;
+            return res.status(200).send({ status: true, totlaRow: contRow, currenPage: parseInt(pageNO), filter })
+
+        } else if (req.body.senderName && req.body.beneficiaryName && req.body.fromAmount && req.body.toAmount) {
+            let option = [{ beneficiaryName: req.body.beneficiaryName }, { senderName: req.body.senderName },
+            {
+                sendingAmount: {
+                    $gte: req.body.fromAmount,
+                    $lte: req.body.toAmount
+                }
+            }
+            ]
+
+
+
+
+            let countpages2 = await transectionModel.find({ $and: option, OrganisationID: OrganisationID })
+            let contRow = countpages2.length
+            let filter = await transectionModel.find({ $and: option, OrganisationID: OrganisationID }).sort({ transactionDate: -1 })
+                .limit(limit * 1)
+                .skip((page - 1) * limit)
+                .exec();
+            let totlaRow = filter.length;
+            return res.status(200).send({ status: true, totlaRow: contRow, currenPage: parseInt(pageNO), filter })
+
+        }
+
+        else {
+
+
+
+            let option = [{
+                sendingAmount: {
+                    $gte: req.body.fromAmount,
+                    $lte: req.body.toAmount
+                }
+            }, { senderName: req.body.senderName }, { beneficiaryName: req.body.beneficiaryName }]
+
+
+
+
+            let countpages2 = await transectionModel.find({ $or: option, OrganisationID: OrganisationID })
+            let contRow = countpages2.length
+            let filter = await transectionModel.find({ $or: option, OrganisationID: OrganisationID }).sort({ transactionDate: -1 })
+                .limit(limit * 1)
+                .skip((page - 1) * limit)
+                .exec();
+            let totlaRow = filter.length;
+            return res.status(200).send({ status: true, totlaRow: contRow, currenPage: parseInt(pageNO), filter })
+        }
+
+    } catch (error) {
+        console.log(error)
+        return res.status(200).send({ status: false, msg: error })
+    }
+}
+
+//---------------------------------------------create-agent--------------------------------------------------------------------------
+
+const create_org_Agent = async (req, res) => {
+    try {
+        let AgentCode = 10000000 + Math.floor(Math.random() * 90000000);
+        console.log(AgentCode)
+
+        const data = req.body;
+        const orgID = req.orgID
+        let findOrg = await Organisation.findOne({ _id: orgID })
+        let AgentPass = generatePassword()
+
+        const saltRounds = 10
+        const encryptedPassword = await bcrypt.hash(AgentPass, saltRounds)
+
+
+
+        let orgName = findOrg.name;
+
+        const { name, email, phone, agentCode, country, address, city, postCode, transectionLimit, password, organisationID,
+            Addsubagent, performPayOut, cancelTarnsection, approveTransection, createdigitalID, cashierapprove, commisionType, commissionAmount } = data
+
+        if (!orgID) {
+            return res.status(200).send({ status: false, msg: "Please enter OrganisationID" })
+        }
+
+        if (orgID.length < 24) {
+            return res.status(200).send({ status: false, msg: "Please enter valid Organisation ID" })
+        }
+
+        if (!name) {
+            return res.status(200).send({ status: false, msg: "Please enter name" })
+        }
+        if (!email) {
+            return res.status(200).send({ status: false, msg: "Please enter email" })
+        }
+        let checkemail = await agentModel.findOne({ email: email })
+
+        if (checkemail) {
+            return res.status(200).send({ status: false, msg: "Email already register try Unique email" })
+        }
+        if (!phone) {
+            return res.status(200).send({ status: false, msg: "Please enter phonne number" })
+        }
+
+        if (!(/^\d{8,12}$/).test(phone)) {
+            return res.status(200).send({ status: false, msg: "Please enter valid phone number, number should be in between 8 to 12" })
+        }
+
+        let chechphone = await agentModel.findOne({ phone: phone })
+        if (chechphone) {
+            return res.status(200).send({ status: false, msg: "Phone number already register please try unique number" })
+        }
+
+        if (!country) {
+            return res.status(200).send({ status: false, msg: "Please enter country" })
+        }
+        if (!address) {
+            return res.status(200).send({ status: false, msg: "Please enter address" })
+        }
+        if (!city) {
+            return res.status(200).send({ status: false, msg: "Please enter city" })
+        }
+        if (!postCode) {
+            return res.status(200).send({ status: false, msg: "Please enter postCode" })
+        }
+        if (!transectionLimit) {
+            return res.status(200).send({ status: false, msg: "Please enter transectionLimit" })
+        }
+
+        let agentData = {
+
+            name: name,
+            email: email,
+            password: encryptedPassword,
+            phone: phone,
+            agentCode: AgentCode,
+            country: country,
+            address: address,
+            city: city,
+            postCode: postCode,
+            transectionLimit: transectionLimit,
+            organisationID: orgID,
+            agentBy: orgID,
+
+            role: {
+                Addsubagent: Addsubagent,
+                performPayOut: performPayOut,
+                cancelTarnsection: cancelTarnsection,
+                approveTransection: approveTransection,
+                createdigitalID: createdigitalID,
+                cashierapprove: cashierapprove
+            }
+        }
+
+
+        const nodemailer = require("nodemailer");
+
+
+        const sentEmail = async (req, res) => {
+
+            var transporter = nodemailer.createTransport({
+                host: 'smtp.gmail.com',
+                port: 465,
+                secure: true,
+                auth: {
+                    user: 'chrmepay123@gmail.com',
+                    pass: 'jgiplcgrbddvktkl',
+                }
+            });
+
+
+            var mailOptions = {
+                from: 'chrmepay123@gmail.com',
+                to: 'sumit.hariyani2@gmail.com',
+                subject: 'Agent Register',
+                text: `Hello ${name}! congratulation now you are part of ${orgName} family, your username ${email} & your password ${AgentPass}`
+            };
+
+            transporter.sendMail(mailOptions, function (error, info) {
+                if (error) {
+                    console.log('email error line 34 ===', error);
+                    return false;
+                } else {
+                    console.log('Email sent: ' + info.messageId);
+                    return info.messageId;
+                }
+            });
+        }
+        sentEmail();
+
+
+
+
+        let create = await agentModel.create(agentData)
+
+        let obj = {
+            agentID: create._id,
+            type: commisionType,
+            Amount: commissionAmount,
+            startDate: create.createdAt,
+        }
+
+        let createCommissiin = await agent_Commission.create(obj)
+
+        return res.status(200).send({ status: true, msg: "Agent Register sucessfully", data: create })
+
+    } catch (error) {
+        console.log(error)
+        return res.status(200).send({ status: false, msg: error })
+    }
+}
+
+//------------------------------------------get-agent----------------------------------------------------------------------------------------------
+
+const viewAgent = async (req, res) => {
+    try {
+
+        const orgID = req.orgID
+
+        console.log("orgID===>", orgID)
+
+        let pageNO = req.body.page;
+        //let countpages1 = await agentModel.find({ organisationID: '6311a0de778efce58f2336db' })
+        // console.log(countpages1)
+        if (pageNO == 0) {
+            pageNO = 1;
+        }
+
+        if (!orgID) {
+            return res.status(200).send({ status: false, msg: "Please enter agentID" })
+        }
+
+        if (orgID.length < 24) {
+            return res.status(200).send({ status: false, msg: "Please enter valid agentID" })
+        }
+        const { page = pageNO, limit = 10 } = req.query;
+        if (Object.keys(req.body).length <= 1) {
+            console.log("1")
+            let countpages1 = await agentModel.find({ organisationID: orgID, isDeleted: 0 }).sort({ createdAt: 1 })
+            let totalRaow1 = countpages1.length;
+
+            let filter = await agentModel.find({ organisationID: orgID, isDeleted: 0 }).sort({ createdAt: -1 })
+                .limit(limit * 1)
+                .skip((page - 1) * limit)
+                .exec();
+
+            return res.status(200).send({ statussss: true, totlaRow: totalRaow1, currenPage: parseInt(pageNO), filter })
+        }
+        else if (req.body.name || req.body.phone || req.body.agentCode || req.body.country) {
+            console.log("2")
+            let option = [{ name: req.body.name }, { phone: req.body.phone }, { country: req.body.country }, { agentCode: req.body.agentCode }]
+
+
+            let countpages2 = await agentModel.find({ $or: option, organisationID: orgID })
+            let contRow = countpages2.length
+            let filter = await agentModel.find({ $or: option, organisationID: orgID }).sort({ createdAt: -1 })
+                .limit(limit * 1)
+                .skip((page - 1) * limit)
+                .exec();
+            let totlaRow = filter.length;
+            // if (filter.length == 0) {
+            //     return res.status(200).send({ status: false, msg: "No Customer Found" })
+            // }
+            return res.status(200).send({ status: true, totlaRow: contRow, currenPage: parseInt(pageNO), filter })
+
+
+
+
+
+
+        }
+
+
+    } catch (error) {
+        console.log(error)
+        return res.status(200).send({ status: false, msg: error })
+    }
+}
+
+//------------------------------------------------------agent-suspend-------------------------------------------------------------------------
+
+const agentsuspend = async (req, res) => {
+    try {
+
+        const agentID = req.params.agentID;
+        const orgID = req.orgID
+
+        if (!agentID) {
+            return res.status(200).send({ status: false, msg: "Please enter Agent" })
+        }
+
+        if (!orgID) {
+            return res.status(200).send({ status: false, msg: "not getting org id" })
+        }
+
+        if (orgID.length < 24) {
+            return res.status(200).send({ status: false, msg: "not getting valid agent ID" })
+        }
+
+        if (agentID.length < 24) {
+            return res.status(200).send({ status: false, msg: "not getting valid agent ID" })
+        }
+
+        let checkUser = await agentModel.findOne({ _id: agentID, organisationID: orgID })
+        if (!checkUser) {
+            return res.status(200).send({ status: false, msg: "No agent Found" })
+        }
+
+        if (checkUser.organisationID != orgID) {
+            return res.status(200).send({ status: false, msg: "you are not authorized person, to suspend this agent" })
+        }
+
+
+        if (checkUser.blocked == 1) {
+            return res.status(200).send({ status: 1, msg: "Agent Already Bolcked" })
+        }
+
+        if (checkUser.organisationID == orgID) {
+            let BlockUser = await agentModel.findOneAndUpdate({ _id: agentID }, { blocked: 1, blockedBY: agentID }, { new: true })
+
+            return res.status(200).send({ status: true, msg: "Agent Block Sucessfully" })
+        }
+
+    } catch (error) {
+        console.log(error)
+        return res.status(200).send({ status: false, msg: error })
+    }
+}
+
+//-----------------------------------un-suspend-agent------------------------------------------------------------------------------------
+
+const Org_unSuspendagent = async (req, res) => {
+    try {
+
+        const agentID = req.params.agentID;
+        const orgID = req.orgID
+
+        if (!agentID) {
+            return res.status(200).send({ status: false, msg: "Please enter AgentID" })
+        }
+
+        if (!orgID) {
+            return res.status(200).send({ status: false, msg: "not getting agent ID" })
+        }
+
+        if (orgID.length < 24) {
+            return res.status(200).send({ status: false, msg: "not getting valid orgID" })
+        }
+
+        if (agentID.length < 24) {
+            return res.status(200).send({ status: false, msg: "not getting valid agentID" })
+        }
+
+        let checkUser = await agentModel.findOne({ _id: agentID, organisationID: orgID })
+        if (!checkUser) {
+            return res.status(200).send({ status: false, msg: "No agent Found" })
+        }
+
+        //console.log(checkUser.createdBY)
+
+        if (checkUser.organisationID != orgID) {
+            return res.status(200).send({ status: false, msg: "you are not authorized person to un-suspend this agent" })
+        }
+
+
+        if (checkUser.blocked == 0) {
+            return res.status(200).send({ status: 1, msg: "Agent Already Unbolcked" })
+        }
+
+        if (checkUser.organisationID == orgID) {
+            let BlockUser = await agentModel.findOneAndUpdate({ _id: agentID }, { blocked: 0 }, { new: true })
+
+            return res.status(200).send({ status: true, msg: "Agent Un-block Sucessfully" })
+        }
+
+
+
+
+
+
+    } catch (error) {
+        console.log(error)
+        return res.status(200).send({ status: false, msg: error })
+    }
+}
+
+//------------------------------------------------agent-delete----------------------------------------------------------------------------------
+
+const org_deleteAgent = async (req, res) => {
+    try {
+
+        const agentID = req.params.agentID;
+        const orgID = req.orgID;
+
+        if (!agentID) {
+            return res.status(200).send({ status: false, msg: "Please enter AgentID" })
+        }
+
+        if (!orgID) {
+            return res.status(200).send({ status: false, msg: "not getting agent ID" })
+        }
+
+        if (orgID.length < 24) {
+            return res.status(200).send({ status: false, msg: "not getting valid orgID" })
+        }
+
+        if (agentID.length < 24) {
+            return res.status(200).send({ status: false, msg: "not getting valid agentID" })
+        }
+
+
+
+        let checkUser = await agentModel.findOne({ _id: agentID, organisationID: orgID })
+        if (!checkUser) {
+            return res.status(200).send({ status: false, msg: "No agent Found" })
+        }
+
+
+        if (checkUser.organisationID != orgID) {
+            return res.status(200).send({ status: false, msg: "you are not authorized person to un-suspend this agent" })
+        }
+
+
+        if (checkUser.isDeleted == 1) {
+            return res.status(200).send({ status: 1, msg: "Agent Already deleted" })
+        }
+
+        if (checkUser.organisationID == orgID) {
+            let BlockUser = await agentModel.findOneAndUpdate({ _id: agentID }, { isDeleted: 1, DeletedBy: orgID }, { new: true })
+
+            return res.status(200).send({ status: true, msg: "Customer Deleted Sucessfully" })
+        }
+
+
+
+
+    } catch (error) {
+        console.log(error)
+        return res.status(200).send({ status: false, msg: error })
+    }
+}
+
+//---------------------------------------agent-perfornamce---------------------------------------------------------------------------------
+
+const Org_agentPerformanceReport = async (req, res) => {
+    try {
+
+        const agentID = req.params.agentID
+        // console.log("==>", agentID)
+
+        if (!agentID) {
+            return res.status(200).send({ status: false, msg: "Please enter " })
+        }
+
+        if (agentID.length < 24) {
+            return res.status(200).send({ status: false, msg: "Please enter valid ID" })
+        }
+
+
+        const LastMonthData = await cutomerModel.aggregate([
+            {
+                $match: {
+                    createdBY: agentID,
+                    $expr: {
+                        $and: [
+                            {
+                                "$eq": [
+                                    {
+                                        $month: "$createdAt"
+                                    },
+                                    {
+                                        $month: {
+                                            $dateAdd: {
+                                                startDate: new Date(),
+                                                unit: "month",
+                                                amount: -1
+                                            }
+                                        }
+                                    }
+                                ]
+                            },
+                            {
+                                "$eq": [
+                                    {
+                                        $year: "$createdAt"
+                                    },
+                                    {
+                                        $year: {
+                                            $dateAdd: {
+                                                startDate: new Date(),
+                                                unit: "month",
+                                                amount: -1
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                }
+            }
+        ])
+
+        //console.log("Last Month==>", LastMonthData)
+
+        const startOfCurrentMonth = new Date();
+        startOfCurrentMonth.setDate(1);
+
+        const startOfNextMonth = new Date();
+        startOfNextMonth.setDate(1);
+        startOfNextMonth.setMonth(startOfNextMonth.getMonth() + 1);
+
+        const Current_Month = await cutomerModel.find({
+            $and: [
+
+                {
+                    createdAt: {
+                        $gte: startOfCurrentMonth,
+                        $lt: startOfNextMonth
+                    },
+                    createdBY: agentID
+                },
+            ],
+        }).count();
+
+        console.log("last Month = ", LastMonthData.length)
+        console.log("current Month = ", Current_Month)
+
+        let Last_Month = LastMonthData.length
+        let perDayLastMonth = LastMonthData.length / 30
+        let currentDays = startOfNextMonth.getDay()
+        let perDayCurrMonth = Current_Month / currentDays
+
+        let Today_date = new Date()
+
+
+        if (perDayLastMonth > perDayCurrMonth) {
+            ///let positive = perDayLastMonth - perDayCurrMonth
+
+            let positive1 = `-${perDayLastMonth - perDayCurrMonth}`
+            let positive = parseFloat(positive1)
+            let nextMonthTarget = positive1 * 30
+            let nexttarget1 = nextMonthTarget + Last_Month
+            let nexttarget = Math.ceil(nexttarget1)
+            if (nexttarget <= 0) {
+                nexttarget = 100
+            }
+
+
+            return res.status(200).send({ status: true, positive, nexttarget, Current_Month, Last_Month, Today_date })
+
+        } else {
+            let positive = perDayCurrMonth - perDayLastMonth
+            let nextMonthTarget = positive * 30
+            let nexttarget1 = nextMonthTarget + Last_Month
+            let nexttarget = Math.ceil(nexttarget1)
+            return res.status(200).send({ status: true, positive, nexttarget, Current_Month, Last_Month, Today_date })
+        }
+
+        //return res.status(200).send({ status: true, Current_Month })
+
+    } catch (error) {
+        console.log(error)
+        return res.status(200).send({ status: false, msg: error.message })
+    }
+}
+
 
 
 
@@ -796,3 +1606,11 @@ module.exports.OrgcustomerVerify = OrgcustomerVerify
 module.exports.OrgblockCustomer = OrgblockCustomer
 module.exports.OrgDeleteCustomer = OrgDeleteCustomer
 module.exports.Org_custdetail = Org_custdetail
+module.exports.org_updateDigitalID = org_updateDigitalID
+module.exports.organisation_transections = organisation_transections
+module.exports.create_org_Agent = create_org_Agent
+module.exports.viewAgent = viewAgent
+module.exports.agentsuspend = agentsuspend
+module.exports.Org_unSuspendagent = Org_unSuspendagent
+module.exports.org_deleteAgent = org_deleteAgent
+module.exports.Org_agentPerformanceReport = Org_agentPerformanceReport

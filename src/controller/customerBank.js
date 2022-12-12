@@ -412,6 +412,17 @@ const unSuspendAccount = async (req, res) => {
     }
 }
 
+//------------------------------------------------------customer-transection---------------------------------------------------------------------
+
+const customer_transection = async (req, res) => {
+    try {
+
+    } catch (error) {
+        console.log(error)
+        return res.status(200).send({ status: false, msg: error.message })
+    }
+}
+
 module.exports.createCustomer = createCustomer;
 module.exports.viewBankAccount = viewBankAccount;
 module.exports.updateAccount = updateAccount;
