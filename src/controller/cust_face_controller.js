@@ -4,9 +4,8 @@ const { uploadFile } = require("../aws/aws.js");
 const faceapi = require("face-api.js");
 const { Canvas, Image } = require("canvas");
 const canvas = require("canvas");
-//const redis = require("redis");
 const { promisify } = require("util");
-//const redisclient = redis.createClient();
+
 
 
 const cust_Face_ditect = async (req, res) => {
@@ -49,7 +48,7 @@ const cust_Face_ditect = async (req, res) => {
         LoadModels();
 
 
-        // async function getDescriptorsFromDB(image) {
+ 
 
         let faces = await Face_model.find();
 
@@ -113,7 +112,7 @@ const pre_cust_Face_ditect = async (req, res) => {
 
         console.log("Working")
 
-        // const custID = req.params.custID;
+       
         let files = req.files
 
         if (!files) {
@@ -124,20 +123,7 @@ const pre_cust_Face_ditect = async (req, res) => {
         if (files.length == 0) {
             return res.status(200).send({ sttaus: false, msg: "Please provide image" })
         }
-        // if (!custID) {
-        //     return res.status(200).send({ sttaus: false, msg: "Please enter customer ID" })
-        // }
-
-        // if (custID.length != 24) {
-        //     return res.status(200).send({ status: false, msg: "Please enter vallid customer ID" })
-        // }
-
-        //let findCust = await customerModel.findOne({ _id: custID })
-        // let Cust_Name = findCust.fullname
-
-        // if (!findCust) {
-        //     return res.status(200).send({ status: false, msg: "customer not found" })
-        // }
+       
 
         const profilePicture = await uploadFile(files[0])
         console.log("==>", profilePicture)
@@ -153,7 +139,6 @@ const pre_cust_Face_ditect = async (req, res) => {
         LoadModels();
 
 
-        // async function getDescriptorsFromDB(image) {
 
         let faces = await Face_model.find();
 
@@ -202,4 +187,3 @@ const pre_cust_Face_ditect = async (req, res) => {
 
 module.exports.pre_cust_Face_ditect = pre_cust_Face_ditect
 module.exports.cust_Face_ditect = cust_Face_ditect
-// module.exports.get_items = get_items

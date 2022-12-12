@@ -1,4 +1,4 @@
-//const Organisation = require("../models/Organisation");
+
 const Organisation = require("../models/Organisation")
 const adminModel = require("../models/AdminModel");
 const cutomerModel = require("../models/customer");
@@ -24,7 +24,6 @@ const sub_admin_role = require("../models/subAdminRole");
 const { findByIdAndRemove } = require("../models/customerBank");
 const org_Licenses = require("../models/OrgLicenses")
 const License_fee = require("../models/org_LicensesFees")
-//const org_Licenses = require("../models/OrgLicenses");
 const admin_Email_request = require("../models/adminEmail")
 const customerModel = require("../models/customer")
 const agent_Commission = require("../models/agentCommission")
@@ -219,9 +218,6 @@ const createOrganisation = async (req, res, next) => {
 
 
         const sentEmail = async (req, res) => {
-            //var email = req.email;
-            //var otp = req.otp;
-            //console.log(email + " ==jk== " + otp);
 
             var transporter = nodemailer.createTransport({
                 host: 'smtp.gmail.com',
@@ -230,8 +226,7 @@ const createOrganisation = async (req, res, next) => {
                 auth: {
                     user: 'chrmepay123@gmail.com',
                     pass: 'jgiplcgrbddvktkl',
-                    // user: 'mailto:donotreply@d49.co.in',
-                    //   pass: '&4e=XSQB'
+
                 }
             });
 
@@ -337,9 +332,6 @@ const organisationLogin = async (req, res, next) => {
             return res.status(200).send({ status: false, msg: "password field required" })
         }
 
-
-
-
         let findData = await Organisation.findOne({ email: email })
 
 
@@ -347,16 +339,7 @@ const organisationLogin = async (req, res, next) => {
             let time = Date.now();
             let UserIP = ip.address()
             return res.status(200).send({ status: false, msg: "Please enter valid email" })
-            let data = {
-                name: findData.name,
-                email: email,
-                ID: findData._id,
-                loginTime: time,
-                IP: UserIP,
-                status: "Please enter valid email"
 
-            };
-            let createLogHistory = await organisationLog.create(data)
         }
 
         const decryptedPassword = await bcrypt.compare(password, findData.password)
@@ -401,7 +384,7 @@ const organisationLogin = async (req, res, next) => {
             let createLogHistory = await organisationLog.create(data)
             return res.status(200).send({ status: false, msg: `Invalid password remaining chances ${remainingchance}` });
 
-            // return res.status(200).send({ status: false, msg: "Please enter valid password" })
+
         }
 
         let OrganisationID = findData._id;
@@ -437,7 +420,7 @@ const organisationLogin = async (req, res, next) => {
 
             let createLogHistory = await organisationLog.create(data)
 
-            //next();
+
             console.log(OrganisationID)
             let update = await Organisation.findOneAndUpdate({ email: email }, { WrongPassword: 0 })
             return res.status(200).send({ status: true, 'token': token, 'ID': OrganisationID, msg: "Login Sucessfully" })
@@ -452,211 +435,9 @@ const organisationLogin = async (req, res, next) => {
     }
 }
 
-//----------------------------------------------------get-Organisation---------------------------------------------------------------------------//
-
-
-const getListOfOrganisation = async (req, res, next) => {
-    try {
-
-        url = "http://localhost:3000/getOrganisations";
-        // next();
-
-        //----------------Pagination--------------------------------//
-        let pageNO = req.body.page;
-        if (pageNO == 0) {
-            pageNO = 1
-        }
-        let countpages11 = await Organisation.find();
-        counPages = Math.ceil(countpages11.length / 10)
-
-        const { page = pageNO, limit = 10 } = req.query;
-
-        //-----------------------------------------------------------//
-        let getdata = await Organisation.find().limit(limit * 1)
-            .skip((page - 1) * limit)
-            .exec();;
-
-        // let result = [];
-        // for (users of getdata) {
-        //     let findCustomer = await cutomerModel.find({ organisation: users._id })
-
-
-        //     let data = {
-        //         logo: users._doc.logo,
-        //         code: users._doc.code,
-        //         Organization: users._doc.name,
-        //         Country: users._doc.country,
-        //         DateOfCreation: users._doc.joiningDate,
-        //         Status: "Confirmed",
-        //         NumberOfUser: findCustomer.length
-        //     }
-
-        //     result.push(data)
-        // }
-        //next();
-        return res.status(200).send({ status: true, totalPage: counPages, CurrentPage: parseInt(pageNO), data: getdata })
-    } catch (error) {
-        console.log(error)
-        return res.status(500).send({ status: false, msg: error })
-    }
-}
-
-
-//----------------------------------------------------------get-Organisation-by-ID-----------------------------------------------------------------
-
-
-const getListOfOrganisationwithUser = async (req, res, next) => {
-    try {
-        url = "http://localhost:3000/getWithUser";
-        next();
-        const OraganisatioId = req.body.ID;
-
-        //-------------------------Pagination-----------------------//
-
-        let pageNO = req.body.page;
-        if (pageNO == 0) {
-            pageNO = 1
-        }
-
-        let countpages11 = await Organisation.find({ _id: OraganisatioId });
-        counPages = Math.ceil(countpages11.length / 10)
-
-        const { page = pageNO, limit = 10 } = req.query;
-
-        //-----------------------------------------------------//
-
-        let getdata = await Organisation.find({ _id: OraganisatioId }).limit(limit * 1)
-            .skip((page - 1) * limit)
-            .exec();;
-
-        let result = [];
-        for (users of getdata) {
-            let findCustomer = await cutomerModel.find({ organisation: users })
-
-
-            let data = {
-                logo: users._doc.logo,
-                code: users._doc.code,
-                Organization: users._doc.name,
-                Country: users._doc.country,
-                DateOfCreation: users._doc.joiningDate,
-                Status: "Confirmed",
-                User: findCustomer
-            }
-
-            result.push(data)
-        }
-        next();
-        return res.status(200).send({ totalPage: counPages, CurrentPage: parseInt(pageNO), result })
-    } catch (error) {
-        console.log(error)
-        return res.status(500).send({ status: false, msg: error })
-    }
-}
-
-
-//--------------------------------------------Delete-Organisation-------------------------------------------------------------------------------
-
-const deletOrganisation = async (req, res, next) => {
-    try {
-        url = "http://localhost:3000/organisation";
-        next();
-        const OrganisationID = req.body.OrganisationID;
-        const userID = req.body.userID;
-
-        if (!OrganisationID) {
-            return res.status(200).send({ status: false, msg: "Organisation id needed" })
-        }
-
-        if (!userID) {
-            return res.status(200).send({ status: false, msg: "userId is needed" })
-        }
-
-        let checkOrganisation = await cutomerModel.findOne({ _id: userID })
-
-        let organisations = checkOrganisation.organisation
-
-        //--------------------check Organisation----------------
-
-        if (!organisations.includes(OrganisationID)) {
-            return res.status(200).send({ status: false, msg: "Organisation not found" })
-        }
-
-        //------------------delete-----------------------------
-        const index = organisations.indexOf(OrganisationID);
-        if (index > -1) {
-            organisations.splice(index, 1);
-        }
-
-        let object = {
-            IDphoto: checkOrganisation.IDphoto,
-            fullname: checkOrganisation.fullname,
-            dateOfBirth: checkOrganisation.dateOfBirth,
-            phone: checkOrganisation.phone,
-            email: checkOrganisation.email,
-            gender: checkOrganisation.gender,
-            nationality: checkOrganisation.nationality,
-            address: checkOrganisation.address,
-            organisation: organisations,
-            createdAt: checkOrganisation.createdAt,
-            updatedAt: checkOrganisation.updatedAt
-        }
-
-        let add = await cutomerModel.findByIdAndUpdate({ _id: userID }, object, { new: true })
-        next();
-        return res.send(add)
 
 
 
-    } catch (error) {
-        console.log(error)
-        res.send(error)
-    }
-}
-
-
-//--------------------------------------get-Organisation-Transections---------------------------------------------------------------------------
-
-
-const getTransections = async (req, res, next) => {
-    try {
-        const OrganisationID = req.body.OrganisationID;
-        url = "http://localhost:3000/getTransection";
-        next();
-        //----------------------Pagination---------------------------------------------------
-        let pageNO = req.body.page;
-        if (pageNO == 0) {
-            pageNO = 1
-        }
-
-        const { page = pageNO, limit = 10 } = req.query;
-
-        let countpages11 = await transectionModel.find({ OrganisationID: OrganisationID })
-        counPages = Math.ceil(countpages11.length / 10)
-
-        //---------------------------------------------------------------------------------------        
-
-
-
-        if (!OrganisationID) {
-            return res.status(200).send({ status: false, msg: "OrganisationID field is needed" })
-        }
-
-        let findTransections = await transectionModel.find({ OrganisationID: OrganisationID }).limit(limit * 1)
-            .skip((page - 1) * limit)
-            .exec();
-        if (findTransections.length == 0) {
-            return res.status(200).send({ status: false, msg: "No Any Transection Found" })
-        }
-        next();
-        return res.status(200).send({ status: true, totalPages: counPages, currenPage: parseInt(pageNO), data: findTransections })
-
-
-    } catch (error) {
-        console.log(error)
-        res.send(error)
-    }
-}
 
 
 //----------------------------------------------get-organisation-log-history---------------------------------------------------------------------
@@ -709,144 +490,6 @@ const getLogHistory = async (req, res) => {
     }
 }
 
-
-//-------------------------------------------------Add-customer-by-organisation---------------------------------------------------------------------//
-
-
-
-const addCustomerByOrganisation = async (req, res, next) => {
-    try {
-
-        url = "http://localhost:3000/Addcustomer";
-        next();
-        let OrganisationID = req.body.OrganisationID;
-        let userID = req.body.userID;
-
-        if (!OrganisationID) {
-            return res.status(200).send({ status: false, msg: "Please enter organisation ID" })
-        }
-
-        if (!userID) {
-            return res.status(200).send({ status: false, msg: "Please enetr customer ID" })
-        }
-
-
-        let checkOrganisation = await cutomerModel.findOne({ _id: userID })
-        let organisation = checkOrganisation.organisation;
-
-
-        for (items of organisation) {
-            if (items == OrganisationID) {
-                return res.status(200).send({ status: false, msg: "already Enroll" });
-            }
-        }
-        organisation.push(OrganisationID)
-
-
-        let object = {
-            IDphoto: checkOrganisation.IDphoto,
-            fullname: checkOrganisation.fullname,
-            dateOfBirth: checkOrganisation.dateOfBirth,
-            phone: checkOrganisation.phone,
-            email: checkOrganisation.email,
-            gender: checkOrganisation.gender,
-            nationality: checkOrganisation.nationality,
-            address: checkOrganisation.address,
-            organisation: organisation,
-            createdAt: checkOrganisation.createdAt,
-            updatedAt: checkOrganisation.updatedAt
-        }
-
-        let add = await cutomerModel.findByIdAndUpdate({ _id: userID }, object, { new: true })
-        next();
-        return res.status(200).send({ status: true, msg: add })
-
-
-    } catch (error) {
-        console.log(error)
-        return res.status(500).send({ status: false, error: error })
-    }
-}
-
-//----------------------------get-customer-by-filter--------------------------------------------------------------------------------------------
-
-const getCustomerByFilter = async (req, res) => {
-    try {
-
-        const OrganisationID = req.body.organisationID;
-        const customerID = req.body.customerID;
-        const CustomerName = req.body.customerName;
-        const CustomerEmail = req.body.customerEmail;
-        const Nationality = req.body.Nationality
-
-        // // if (!OrganisationID) {
-        // //     return res.status(200).send({ status: false, msg: "Please enter organisationID" })
-        // // }
-
-        // let findCustomers = await cutomerModel.find();
-        // let result = [];
-
-        // for (items of findCustomers) {
-        //     console.log(items.organisation)
-        //     for (elements of items.organisation) {
-        //         if (elements === OrganisationID) {
-        //             result.push(items)
-        //         }
-        //     }
-        // }
-
-
-
-        let options = [{ _id: req.body.customerID }, { fullname: req.body.CustomerName }, { email: req.body.CustomerEmail }, { nationality: req.body.Nationality }]
-
-
-
-        console.log(Object.keys(req.body).length)
-        if (!Object.keys(req.body).length) {
-            let filter = await blog.find({ isDeleted: false, isPublished: true }).populate('authorId')
-            return res.status(200).send({ status: false, filter })
-        }
-
-        let filter = await cutomerModel.find({ $or: options })
-        if (!filter.length)
-            return res.status(404).send({ status: false, msg: "No such documents found" })
-        return res.status(200).send({ status: true, data: filter })
-
-
-
-    } catch (error) {
-        console.log(error)
-
-    }
-}
-
-//--------------------------------------View-Customer--------------------------------------------------------------------------------------------
-
-const viewCustomer = async (req, res) => {
-    try {
-
-        const organosationID = req.body.OrganisationID;
-
-        if (!organosationID) {
-            return res.status(200).send({ status: false, msg: "Please enter organosationID " })
-        }
-
-        let findCustomer = await cutomerModel.find({ organisation: organosationID })
-
-        if (!findCustomer) {
-            return res.status(200).send({ status: false, msg: "No customer found" })
-        }
-
-        return res.status(200).send({ status: true, msg: "Customers", data: findCustomer })
-
-
-
-    } catch (error) {
-        console.log(error)
-        return res.status(500).send({ status: false, error: error })
-    }
-}
-
 //---------------------------------------------------------Organisation-Dashboard-api-------------------------------------------------------------
 
 const Organisationdashboard = async (req, res) => {
@@ -873,7 +516,6 @@ const Organisationdashboard = async (req, res) => {
         let options = [{ fullname: req.body.customerName }, { status: req.body.status }]
 
         const { page = pageNO, limit = 5 } = req.query;
-        //console.log(Object.keys(req.body).length)
         if (!Object.keys(req.body).length) {
 
             let countpages2 = await cutomerModel.find({ organisation: OrganisationID }).sort({ createdAt: -1 })
@@ -919,7 +561,7 @@ const organisationsTransection = async (req, res) => {
         let filter = await transectionModel.find({ OrganisationID: organisationID }).sort({ createdAt: -1 }).limit(limit * 1)
             .skip((page - 1) * limit)
             .exec()
-        //.sort({ createdAt: -1 })
+            //.sort({ createdAt: -1 })
 
         return res.status(200).send({ status: true, data: filter })
 
@@ -991,57 +633,7 @@ const OrgDashSection = async (req, res) => {
     }
 }
 
-//---------------------------------------------------------Organisation-Customer-------------------------------------------------------------
 
-const OrganisationCustomer = async (req, res) => {
-
-    try {
-
-        const OrganisationID = req.params.ID;
-        const CustomerName = req.body.customerName;
-        const status = req.body.Status
-
-        if (!OrganisationID) {
-            return res.status(200).send({ status: false, msg: "Please enter Organisation ID" })
-        }
-        let countpages = await cutomerModel.find({ organisation: OrganisationID }).sort({ createdAt: 1 })
-        let totlaRow = countpages.length
-
-        let pageNO = req.body.page;
-        if (pageNO == 0) {
-            pageNO = 1
-        }
-        const { page = pageNO, limit = 10 } = req.query;
-
-        if (!Object.keys(req.body).length) {
-            let filter = await cutomerModel.find({ organisation: OrganisationID }).sort({ createdAt: 1 }).limit(limit * 1)
-                .skip((page - 1) * limit)
-                .exec();
-
-            let counPages = Math.ceil(countpages.length / 10)
-
-            return res.status(200).send({ status: false, totlaRow: totlaRow, totalPages: counPages, currenPage: parseInt(pageNO), filter })
-        }
-
-
-
-
-        let filter = await cutomerModel.find({ organisation: OrganisationID }).sort({ createdAt: 1 }).limit(limit * 1)
-            .skip((page - 1) * limit)
-            .exec();
-
-        let counPages = Math.ceil(countpages.length / 10)
-
-        if (!filter.length)
-            return res.status(404).send({ status: false, msg: "No such documents found" })
-        return res.status(200).send({ status: true, totlaRow: totlaRow, totalPages: counPages, currenPage: parseInt(pageNO), data: filter })
-
-
-    } catch (error) {
-        console.log(error)
-        return res.status(500).send({ status: false, msg: error })
-    }
-}
 
 
 //-----------------------------------Organisation-Transection-list---------------------------------------------------------------------------------//
@@ -1107,7 +699,6 @@ const OrganisationCustomerTest = async (req, res) => {
             return res.status(200).send({ status: false, msg: "Please enter Organisation ID" })
         }
 
-        //let currPage = 0
         let pageNO = req.body.page;
         if (pageNO == 0) {
             pageNO = 1
@@ -1122,10 +713,7 @@ const OrganisationCustomerTest = async (req, res) => {
                 .limit(limit * 1)
                 .skip((page - 1) * limit)
                 .exec();
-            // let totlaRow = filter.length;
-            // if (filter.length == 0) {
-            //     return res.status(200).send({ status: false, msg: "No Customer Found" })
-            // }
+
             return res.status(200).send({ statussss: true, totlaRow: totalRaow1, currenPage: parseInt(pageNO), filter })
         } else if (req.body.nationality) {
             let option = [{ nationality: req.body.nationality }]
@@ -1137,9 +725,7 @@ const OrganisationCustomerTest = async (req, res) => {
                 .skip((page - 1) * limit)
                 .exec();
             let totlaRow = filter.length;
-            // if (filter.length == 0) {
-            //     return res.status(200).send({ status: false, msg: "No Customer Found" })
-            // }
+
             return res.status(200).send({ status: true, totlaRow: contRow, currenPage: parseInt(pageNO), filter })
 
         } else if (req.body.fromDate) {
@@ -1160,22 +746,13 @@ const OrganisationCustomerTest = async (req, res) => {
                 .skip((page - 1) * limit)
                 .exec();
             let totlaRow = filter.length;
-            // if (filter.length == 0) {
-            //     return res.status(200).send({ status: false, msg: "No Customer Found" })
-            // }
+
             return res.status(200).send({ status: true, totlaRow: contRow, currenPage: parseInt(pageNO), filter })
 
 
 
 
         }
-
-
-
-
-
-
-
         else if (req.body.ID.length <= 0 && req.body.phone.length <= 0 && req.body.phone.length <= 0 && req.body.status.length <= 0 && req.body.nationality.length <= 0 && req.body.fromDate.length <= 0 && req.body.toDate.length <= 0) {
             let countpages2 = await cutomerModel.find({ organisation: OrganisationID, isDeleted: 0 })
             let contRow = countpages2.length
@@ -1184,14 +761,11 @@ const OrganisationCustomerTest = async (req, res) => {
                 .skip((page - 1) * limit)
                 .exec();
             let totlaRow = filter.length;
-            // if (filter.length == 0) {
-            //     return res.status(200).send({ status: false, msg: "No Customer Found" })
-            // }
+
             return res.status(200).send({ status: true, totlaRow: contRow, currenPage: parseInt(pageNO), filter })
         }
 
-        // let ID = req.body.ID
-        //console.log(ID.length)
+
         else if (req.body.ID && req.body.ID > 0) {
             let option = [{ digitalrefID: req.body.ID }, { phone: req.body.phone }, { status: req.body.status }, { nationality: req.body.nationality }]
             console.log("1")
@@ -1202,9 +776,7 @@ const OrganisationCustomerTest = async (req, res) => {
                 .skip((page - 1) * limit)
                 .exec();
             let totlaRow = filter.length;
-            // if (filter.length == 0) {
-            //     return res.status(200).send({ status: false, msg: "No Customer Found" })
-            // }
+
             return res.status(200).send({ status: true, totlaRow: contRow, currenPage: parseInt(pageNO), filter })
 
 
@@ -1222,18 +794,12 @@ const OrganisationCustomerTest = async (req, res) => {
                 .skip((page - 1) * limit)
                 .exec();
             let totlaRow = filter.length;
-            // if (filter.length == 0) {
-            //     return res.status(200).send({ status: false, msg: "No Customer Found" })
-            // }
+
             return res.status(200).send({ status: true, totlaRow: contRow, currenPage: parseInt(pageNO), filter })
 
         }
 
-
         else {
-
-
-
 
             let option = [{ phone: req.body.phone }, { status: req.body.status }, { nationality: req.body.nationality }]
             let countpages3 = await cutomerModel.find({ $or: option, organisation: OrganisationID })
@@ -1243,15 +809,9 @@ const OrganisationCustomerTest = async (req, res) => {
                 .limit(limit * 1)
                 .skip((page - 1) * limit)
                 .exec();
-            // if (filter.length == 0) {
-            //     return res.status(200).send({ status: false, msg: "No Customer Found1" })
-            // }
+
             let totlaRow = filter.length;
-
             return res.status(200).send({ status: true, totlaRow: contRow3, currenPage: parseInt(pageNO), filter })
-
-
-
         }
 
     } catch (error) {
@@ -1290,160 +850,8 @@ const DeleteCustomer = async (req, res) => {
     }
 }
 
-//------------------------------------------view-agents------------------------------------------------------------------------------
-
-const viewAgents = async (req, res) => {
-    try {
-
-        const orgID = req.params.OrgID;
-
-        if (!orgID) {
-            return res.status(200).send({ status: false, msg: "Please enter Organisation ID" })
-        }
-
-        if (orgID.length < 24) {
-            return res.status(200).send({ status: false, msg: "Please enter Valid Organisation ID" })
-        }
-
-        let findAgents = await agentModel.find({ organisationID: orgID })
-
-        if (!findAgents) {
-            return res.status(200).send({ status: false, msg: "No agent found" })
-        }
-
-        return res.status(200).send({ status: true, agents: findAgents })
-
-    } catch (error) {
-        console.log(error)
-        return res.status(200).send({ status: false, msg: error })
-    }
-}
-
-//-------------------------------------------------get-transection-by-month----------------------------------------------------------------------
-
-const getDataByMonth = async (req, res) => {
-    try {
-
-        const orgID = req.params.orgID;
 
 
-
-        let startTime = performance.now();
-        transectionModel.find({ OrganisationID: orgID, createdAt: { $gte: '2022-07-31T09:37:32.320+00:00', $lte: '2022-10-12T07:33:37.480+00:00' } }).then(result => {
-            let newMonthsArray = new Array();
-            let monthsArray = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-            let months = {};
-            console.log(req.body.startDate)
-            for (let i = parseInt("2022-12-31T09:37:32.320+00:00".substring(5, 7)) - 1; i < 12; i++) {
-                let year = parseInt("2022-12-31T09:37:32.320+00:00".substring(0, 4)) - 1;
-                let month = parseInt("2022-12-31T09:37:32.320+00:00".substring(5, 7));
-                newMonth = monthsArray[i] + '-' + year;
-                newMonthsArray.push(newMonth);
-                months[newMonth] = 0;
-            }
-
-            for (let i = 0; i < parseInt(req.body.startDate.substring(5, 7)); i++) {
-                let year = parseInt(req.body.startDate.substring(0, 4));
-                let month = parseInt(req.body.startDate.substring(5, 7));
-                newMonth = monthsArray[i] + '-' + year;
-                newMonthsArray.push(newMonth);
-                months[newMonth] = 0;
-            }
-
-            for (i = 0; i < result.length; i++) {
-                let getDate = result[i].createdAt.toISOString();
-                let year = getDate.substring(0, 4);
-                let month = parseInt(getDate.substring(5, 7));
-                let monthName = monthsArray[month - 1];
-                let date = monthName + '-' + year;
-                let count = Number(months[date]) + 1;
-                months[date] = count;
-            }
-
-            let endTime = performance.now();
-            res.status(200).send({ Data: months, 'Execution time': endTime - startTime + ' mls' });
-        });
-
-
-
-    } catch (error) {
-        console.log(error)
-        return res.status(200).send({ status: false, msg: error })
-    }
-}
-
-
-//--------------------------------Transection-List-with-Filters--------------------------------------------------------------------------------
-
-const orgtransectiontransectionList = async (req, res) => {
-    try {
-
-        let OrganisationID = req.params.orgID;
-
-        if (!OrganisationID) {
-            return res.status(200).send({ status: false, msg: "Please enter organisationDI" })
-        }
-
-        if (OrganisationID.length < 24) {
-            return res.status(200).send({ status: false, msg: "Please enter valid organisation ID " })
-        }
-
-        let pageNO = req.body.page;
-        if (pageNO == 0) {
-            pageNO = 1
-        }
-        const { page = pageNO, limit = 10 } = req.query;
-
-        if (Object.keys(req.body).length <= 1) {
-            let countpages1 = await transectionModel.find({ organisation: OrganisationID, isDeleted: 0 }).sort({ createdAt: 1 })
-            let totalRaow1 = countpages1.length;
-            let filter = await transectionModel.find({ organisation: OrganisationID, isDeleted: 0 }).sort({ createdAt: -1 })
-                .limit(limit * 1)
-                .skip((page - 1) * limit)
-                .exec();
-
-            return res.status(200).send({ statussss: true, totlaRow: totalRaow1, currenPage: parseInt(pageNO), filter })
-        } else if (req.body.PCN) {
-
-            let option = [{ PCN: req.body.PCN }]
-            let countpages2 = await transectionModel.find({ $or: option, isDeleted: 0 })
-            let contRow = countpages2.length
-            let filter = await transectionModel.find({ $or: option, organisation: OrganisationID, isDeleted: 0 }).sort({ createdAt: -1 })
-                .limit(limit * 1)
-                .skip((page - 1) * limit)
-                .exec();
-            let totlaRow = filter.length;
-            return res.status(200).send({ status: true, totlaRow: contRow, currenPage: parseInt(pageNO), filter })
-
-
-        } else if (req.body.senderName && req.body.fromDate) {
-
-            let option = [{ senderName: req.body.senderName } && {
-                createdAt: {
-                    $gte: new Date(req.body.fromDate).toISOString(),
-                    $lte: new Date(req.body.toDate).toISOString()
-                }
-            }]
-            let countpages2 = await transectionModel.find({ $or: option, organisation: OrganisationID, isDeleted: 0 })
-            let contRow = countpages2.length
-            let filter = await transectionModel.find({ $or: option, organisation: OrganisationID, isDeleted: 0 }).sort({ createdAt: -1 })
-                .limit(limit * 1)
-                .skip((page - 1) * limit)
-                .exec();
-            let totlaRow = filter.length;
-            return res.status(200).send({ status: true, totlaRow: contRow, currenPage: parseInt(pageNO), filter })
-
-        }
-
-
-
-
-
-    } catch (error) {
-        console.log(error)
-        return res.status(200).send({ status: false, msg: error })
-    }
-}
 
 //----------------------------------------------Agent-suspend----------------------------------------------------------------------------------------
 
@@ -1644,19 +1052,14 @@ const organisationtransectionfillter = async (req, res) => {
         } else if (req.body.fromDate) {
 
             let option = [
-                // { senderName: req.body.senderName }, { beneficiaryName: req.body.beneficiaryName },
+
                 {
                     createdAt: {
                         $gte: new Date(req.body.fromDate).toISOString().substring(0, 10).replace('T', ' '),
                         $lte: new Date(req.body.toDate).toISOString().substring(0, 10).replace('T', ' '),
                     }
                 }
-                //, {
-                //     sendingAmount: {
-                //         $gte: req.body.fromAmount,
-                //         $lte: req.body.toAmount
-                //     }
-                // }
+
             ]
 
 
@@ -1713,12 +1116,7 @@ const organisationtransectionfillter = async (req, res) => {
 
         } else if (req.body.senderName && req.body.beneficiaryName) {
             let option = [{ beneficiaryName: req.body.beneficiaryName }, { senderName: req.body.senderName },
-                // {
-                //     sendingAmount: {
-                //         $gte: req.body.fromAmount,
-                //         $lte: req.body.toAmount
-                //     }
-                // }
+
             ]
 
 
@@ -1906,9 +1304,6 @@ const orgforgotpassword = async (req, res) => {
 
 
         const sentEmail = async (req, res) => {
-            //var email = req.email;
-            //var otp = req.otp;
-            //console.log(email + " ==jk== " + otp);
 
             var transporter = nodemailer.createTransport({
                 host: 'smtp.gmail.com',
@@ -1917,8 +1312,7 @@ const orgforgotpassword = async (req, res) => {
                 auth: {
                     user: 'chrmepay123@gmail.com',
                     pass: 'jgiplcgrbddvktkl',
-                    // user: 'mailto:donotreply@d49.co.in',
-                    //   pass: '&4e=XSQB'
+
                 }
             });
 
@@ -1969,7 +1363,7 @@ const orgforgotpassword = async (req, res) => {
 const orgchangePasswordotp = async (req, res) => {
     try {
 
-        // const agentID = req.params.agentID;
+
         const email = req.body.email;
         const newPassword = req.body.newPassword;
         const confirmPassword = req.body.confirmPassword;
@@ -2000,7 +1394,6 @@ const orgchangePasswordotp = async (req, res) => {
         }
 
         let checkOTP = await Organisation.findOne({ email: email })
-        //console.log(checkOTP.otp)
 
         if (!checkOTP) {
             return res.status(200).send({ status: false, msg: "Please enter register email" })
@@ -2059,36 +1452,6 @@ const vieworg = async (req, res) => {
 }
 
 
-//------------------------------------------Agent-view-------------------------------------------------------------------------------------
-
-const agentView = async (req, res) => {
-    try {
-
-        const agentID = req.params.agentID;
-
-        if (!agentID) {
-            return res.status(200).send({ status: false, msg: "not getting customer ID" })
-        }
-
-        if (agentID.length < 24) {
-            return res.status(200).send({ status: false, msg: "not getting valid ID" })
-        }
-
-        let filter = await agentModel.findOne({ _id: agentID })
-
-        if (!filter) {
-            return res.status(200).send({ status: false, msgp })
-        }
-
-        return res.status(200).send({ status: true, filter })
-
-
-    } catch (error) {
-        console.log(error)
-        return res.status(200).send({ status: false, msg: error.message })
-    }
-}
-
 
 
 //---------------------------------------update-org------------------------------------------------------------------------------------
@@ -2119,34 +1482,7 @@ const org_update = async (req, res) => {
 
             let checkPhone = await Organisation.findOne({ phoneNo: phone })
 
-
-            // if (checkPhone)
-            //     return res.status(200).send({ status: false, msg: "Number already register " })
-            // //next();
-
-            // if (!email) {
-            //     return res.status(200).send({ status: false, msg: "Please enter email" })
-
-            // }
-
-
-            // if (!(/^\d{10}$/).test(phone)) {
-            //     return res.status(200).send({ status: false, msg: "Please enter valid phone number" })
-            // }
-
-            // if (!(/^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,20}$/).test(email)) {
-            //     return res.status(200).send({ status: false, msg: "Please enter valid email" })
-            // }
-
-
-
             let checkEmail = await Organisation.findOne({ email: data.email })
-
-            // if (checkEmail) {
-            //     return res.status(200).send({ status: false, msg: "Email is already register" })
-            // }
-
-
 
 
             let finalData = {
@@ -2176,44 +1512,13 @@ const org_update = async (req, res) => {
 
             let data = req.body;
             let files = req.files;
-            // const profilePicture = await uploadFile(files[0])
 
             const { code, name, phone, email, country, city, joiningDate, postCode, address, password } = data
-
-
-
 
             let checkPhone = await Organisation.findOne({ phoneNo: phone })
 
 
-            // if (checkPhone)
-            //     return res.status(200).send({ status: false, msg: "Number already register " })
-            //next();
-
-            // if (!email) {
-            //     return res.status(200).send({ status: false, msg: "Please enter email" })
-
-            // }
-
-
-            // if (!(/^\d{10}$/).test(phone)) {
-            //     return res.status(200).send({ status: false, msg: "Please enter valid phone number" })
-            // }
-
-            // if (!(/^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,20}$/).test(email)) {
-            //     return res.status(200).send({ status: false, msg: "Please enter valid email" })
-            // }
-
-
-
             let checkEmail = await Organisation.findOne({ email: data.email })
-
-            // if (checkEmail) {
-            //     return res.status(200).send({ status: false, msg: "Email is already register" })
-            // }
-
-
-
 
             let finalData = {
                 name: name, phoneNo: phone, email: email,
@@ -2589,14 +1894,9 @@ let verifyCustomer = async (req, res) => {
 
         }).catch(async error => {
             let delete_cust = await temp_Cust.findOneAndDelete({ phone: convert_Number })
-            //console.log(error)
+
             return res.status(200).send({ status: false, error: error.message, msg: "failed please try again" })
             });
-
-        // return res.status(200).send({ status: false, msg: "customer register sucessfully" })
-
-
-
 
     } catch (error) {
         console.log(error)
@@ -2605,113 +1905,8 @@ let verifyCustomer = async (req, res) => {
 }
 
 
-//-------------------------------get-owner-digital-ID--------------------------------------------------------------------------------------
-
-const getOwnerDigitalID = async (req, res) => {
-    try {
-
-        var fetch = require('cross-fetch')
-
-        const Ownwe_key = '0x66d14c9A62DEa37C755C023E2123f95db7d2d92F'
-
-
-        let options = {
-            method: 'GET',
-
-            url: `http://13.127.64.68:7008/api/testnet/getDigitalIdOfOwner/${Ownwe_key}`,
-            "header": [],
-            "description": ""
-        }
-        let result = await axios.get(`http://13.127.64.68:7008/api/testnet/getDigitalIdOfOwner/${Ownwe_key}`)
-        console.log("fetch result ==", result.data)
-
-    } catch (error) {
-        console.log(error)
-        return res.status(200).send({ status: false, msg: error.message })
-    }
-}
-
-
-
-//---------------------------------get-all-digitalIDs------------------------------------------------------------------------------------
-
-
-const getallGigitalIDs = async (req, res) => {
-    try {
-
-        let pageNO = req.body.page;
-        if (pageNO == 0) {
-            pageNO = 1
-        }
-        const { page = pageNO, limit = 10 } = req.query;
-
-        let options = await axios.get(`http://13.127.64.68:7008/api/testnet/getAllDigitalId`)
-
-        let result = options.data.data;
-
-
-
-
-        let filter = []
-        for (items of result) {
-
-            let findcust = await cutomerModel.find({ digitalID: items }).select({ _id: 1, fullname: 1, dateOfBirth: 1, email: 1, digitalID: 1 }).limit(limit * 1)
-                .skip((page - 1) * limit)
-                .exec();
-
-
-
-            for (i of findcust) {
-                filter.push(i)
-            }
-
-
-        }
-        let totalRaow1 = filter.length;
-        return res.status(200).send({ status: true, totlaRow: totalRaow1, currenPage: parseInt(pageNO), filter })
-
-
-
-
-
-    } catch (error) {
-        console.log(error)
-        return res.status(200).send({ status: false, msg: error.message })
-    }
-}
-//--------------------------------get-info-by-digitalID----------------------------------------------------------------------------------
-
-const getInfoByDigitalID = async (req, res) => {
-    try {
-
-        const digitalID = req.body.digitalID;
-
-        if (!digitalID) {
-            return res.status(200).send({ status: false, msg: "please enter digital ID" })
-        }
-
-        let options = await axios.get(`http://13.127.64.68:7008/api/testnet/getIpfsDetailsByDigitalId/${digitalID}`)
-
-        let result = options.data.data
-
-        console.log(result)
-
-        let option2 = await axios.get(result)
-
-        console.log(option2.data)
-
-        let final = option2.data
-
-        return res.status(200).send({ status: false, final })
-
-    } catch (error) {
-        console.log(error)
-        return res.status(200).send({ status: false, msg: error.message })
-    }
-}
-
 //-------------------------------------update-digitalID----------------------------------------------------------------------------------------
-//let fetch = require('node-fetch')
+
 const updateDigitalID = async (req, res) => {
     try {
 
@@ -2776,18 +1971,15 @@ const updateDigitalID = async (req, res) => {
 
                 var result11 = []
                 let result = await axios.get(`http://13.127.64.68:7008/api/mainnet/getDigitalIdOfOwner/${custOwnerKey}`)
-                    // .then(async (respons) => {
-                    //     console.log("res ==", respons)
-                    // })
 
                     .catch((error) => {
                         let data = error.response.data
                         result11.push(data)
-                        //console.log(error.response.data)
+
                     })
 
                 for (item of result11) {
-                    //console.log(item.owner)
+
                     let findCustomer = await cutomerModel.findOneAndUpdate({ _id: custID }, { digitalID: item.owner }, { new: true })
 
                     if (findCustomer) {
@@ -2820,7 +2012,7 @@ const updateDigitalID = async (req, res) => {
 
         getID()
 
-        //console.log("result", result)
+
 
     } catch (error) {
         console.log(error)
@@ -2845,24 +2037,8 @@ const orgList = async (req, res) => {
     }
 }
 
-//---------------------------------------------------Org-reports---------------------------------------------------------------------------------
-
-const organisationReports = async (req, res) => {
-    try {
-
-        const orgID = req.params.orgID;
 
 
-
-
-
-
-
-    } catch (error) {
-        console.log(error)
-        return res.status(200).send({ status: false, msg: error.message })
-    }
-}
 
 //--------------------------------------------Update-Licenses-send-request---------------------------------------------------------------------------------
 
@@ -2892,9 +2068,7 @@ const applyUpdateLicenses = async (req, res) => {
 
 
         const sentEmail = async (req, res) => {
-            //var email = req.email;
-            //var otp = req.otp;
-            //console.log(email + " ==jk== " + otp);
+
 
             var transporter = nodemailer.createTransport({
                 host: 'smtp.gmail.com',
@@ -2903,8 +2077,7 @@ const applyUpdateLicenses = async (req, res) => {
                 auth: {
                     user: 'chrmepay123@gmail.com',
                     pass: 'jgiplcgrbddvktkl',
-                    // user: 'mailto:donotreply@d49.co.in',
-                    //   pass: '&4e=XSQB'
+
                 }
             });
 
@@ -2914,7 +2087,7 @@ const applyUpdateLicenses = async (req, res) => {
                 to: 'sumit.hariyani2@gmail.com',
                 subject: 'Request for update licenses',
                 text: ` Hello! this is ${name} we want to update our licenses please add ${Licenses} Licenses in our licenses account, thakyou`
-                // text : otp
+
             };
 
             transporter.sendMail(mailOptions, function (error, info) {
@@ -3251,17 +2424,6 @@ const org_add_cust = async (req, res) => {
     }
 }
 
-//-----------------------------------------AcesssKeyTest-----------------------------------------------------------------------------------
-
-const test = async (req, res) => {
-    try {
-
-        return res.status(200).send({ status: false, msg: "HELLO WORLD" })
-
-    } catch (error) {
-        console.log(error)
-    }
-}
 
 //-------------------------------------------Customer_which_apply_Loan---------------------------------------------------------------------------
 
@@ -3561,25 +2723,14 @@ const get_org_cust_data_graph = async (req, res) => {
 
 
 module.exports.createOrganisation = createOrganisation;
-module.exports.getListOfOrganisation = getListOfOrganisation;
-module.exports.getListOfOrganisationwithUser = getListOfOrganisationwithUser;
-module.exports.deletOrganisation = deletOrganisation;
-module.exports.getTransections = getTransections;
 module.exports.organisationLogin = organisationLogin;
 module.exports.getLogHistory = getLogHistory;
-module.exports.addCustomerByOrganisation = addCustomerByOrganisation;
-module.exports.getCustomerByFilter = getCustomerByFilter;
-module.exports.viewCustomer = viewCustomer;
 module.exports.Organisationdashboard = Organisationdashboard;
 module.exports.organisationsTransection = organisationsTransection;
 module.exports.OrgDashSection = OrgDashSection;
-module.exports.OrganisationCustomer = OrganisationCustomer;
 module.exports.organisationsTransectionList = organisationsTransectionList;
 module.exports.OrganisationCustomerTest = OrganisationCustomerTest;
 module.exports.DeleteCustomer = DeleteCustomer;
-module.exports.viewAgents = viewAgents;
-module.exports.getDataByMonth = getDataByMonth;
-module.exports.orgtransectiontransectionList = orgtransectiontransectionList;
 module.exports.agentsuspend = agentsuspend;
 module.exports.unSuspendagent = unSuspendagent;
 module.exports.deleteAgent = deleteAgent;
@@ -3588,13 +2739,9 @@ module.exports.changePassword = changePassword;
 module.exports.orgforgotpassword = orgforgotpassword;
 module.exports.orgchangePasswordotp = orgchangePasswordotp;
 module.exports.vieworg = vieworg;
-module.exports.agentView = agentView;
 module.exports.org_update = org_update;
 module.exports.createCustomerByOrg = createCustomerByOrg
 module.exports.verifyCustomer = verifyCustomer;
-module.exports.getOwnerDigitalID = getOwnerDigitalID;
-module.exports.getallGigitalIDs = getallGigitalIDs;
-module.exports.getInfoByDigitalID = getInfoByDigitalID;
 module.exports.updateDigitalID = updateDigitalID;
 module.exports.orgList = orgList
 module.exports.applyUpdateLicenses = applyUpdateLicenses;
@@ -3603,7 +2750,6 @@ module.exports.updateCommission = updateCommission;
 module.exports.ViewAgentCommmission = ViewAgentCommmission;
 module.exports.OrgPerreort = OrgPerreort;
 module.exports.org_add_cust = org_add_cust;
-module.exports.test = test
 module.exports.Cust_Loan_apply = Cust_Loan_apply
 module.exports.org_cust_loan = org_cust_loan
 module.exports.org_loan_accept = org_loan_accept
