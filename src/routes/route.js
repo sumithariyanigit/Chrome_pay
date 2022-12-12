@@ -1392,7 +1392,7 @@ router.get("/viewtransection/:ID", MatchIPc.findBlockIPs, adminController.viewtr
 router.post("/adminProfileUpdate/:adminID", adminController.adminProfileUpdate)
 router.post("/updateAgentTransection/:adminID", adminController.updateAgentTransection)
 router.get("/admindash", adminController.admindash)
-router.post("/custdetail/:custID", AcessKeys.AcessKeys, adminController.custdetail)
+router.post("/custdetail/:custID", adminController.custdetail)
 router.post("/approvalDIDs", adminController.approvalDIDs)
 router.post("/blockedIDS", adminController.blockedIDS)
 router.post("/blockedOrglist", adminController.blockedOrglist)

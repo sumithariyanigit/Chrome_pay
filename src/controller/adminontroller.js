@@ -56,7 +56,7 @@ const createAdmin = async (req, res, next) => {
         const saltRounds = 10
         const encryptedPassword = await bcrypt.hash(password, saltRounds)
 
-        console.log("==>", encryptedPassword)
+
 
         if (!password) {
             return res.status(400).send({ status: false, msg: "Please enter name" });
@@ -214,7 +214,7 @@ const AdminLogin = async (req, res) => {
         const sentEmail = async (req, res) => {
             //var email = req.email;
             //var otp = req.otp;
-            console.log(email + " ==jk== " + otp);
+
 
             var transporter = nodemailer.createTransport({
                 host: 'smtp.gmail.com',

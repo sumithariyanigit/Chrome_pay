@@ -3983,7 +3983,6 @@ const agent_login_new = async (req, res) => {
                     let wrongCount = currStatus.WrongPassword + 1;
                     let update = await agentModel.findOneAndUpdate({ email: find_agent.email }, { WrongPassword: wrongCount })
                     let remainingchance = admindata.agentpasswordlimit - update.WrongPassword
-
                     if (update.WrongPassword >= admindata.agentpasswordlimit) {
                         let UserIP = ip.address()
                         let data = {
@@ -3991,24 +3990,16 @@ const agent_login_new = async (req, res) => {
                         }
                         let blockIP = await BlockIP.create(data)
                         let update = await agentModel.findOneAndUpdate({ email: find_agent.email }, { WrongPassword: 0 })
-
                         setTimeout(async () => {
                             let UserIP = ip.address()
                             let findIP = await BlockIP.findOneAndDelete({ IP: UserIP })
 
                         }, "10000")
-
                         return res.status(200).send({ status: false, msg: "You are blocked due to access try Please try againn after 10 mintutes" })
 
                     }
 
-
-
-
-
-
                     let MakeLogHIstory = await logHistory.create(logData);
-
                     return res.status(200).send({ status: false, msg: `Invalid password remaining chances ${remainingchance}` });
                 }
 
@@ -4063,10 +4054,6 @@ const agent_login_new = async (req, res) => {
         return res.status(200).send({ status: false, msg: error.message })
     }
 }
-
-
-
-
 
 
 
