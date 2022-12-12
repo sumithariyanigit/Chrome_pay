@@ -228,7 +228,7 @@ const cust_auth = require("../middleware/customer_auth")
  *             $ref: '#/components/schemas/Customer'
  *     responses:
  *       200:
- *         description: Login Sucessfully
+ *         description: Login Sucessfully 
  *         content:
  *           application/json:
  *             schema:

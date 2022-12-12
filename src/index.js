@@ -27,11 +27,11 @@ const options = {
         },
         servers: [
             {
-                url: "http://localhost:3300",
+                url: "http://ec2-13-233-63-235.ap-south-1.compute.amazonaws.com:3300",
             },
         ],
     },
-    apis: ["routes/route.js"],
+    apis: ["src/routes/route.js"],
 };
 
 const specs = swaggerJsDoc(options);
