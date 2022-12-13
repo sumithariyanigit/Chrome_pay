@@ -1490,6 +1490,7 @@ router.post("/get_num_of_Agnet/:token", OrgAuth.auth, Organisation.get_num_of_Ag
 router.post("/Blocking_DID_Note", Organisation.Blocking_DID_Note)
 router.post("/Delete_DID_Note", Organisation.Delete_DID_Note)
 router.post("/Org_get_agent_cut_month/:agentID", Organisation.Org_get_agent_cut_month)
+router.post("/getagent/:orgID", MatchIPc.findBlockIPs, agentController.viewAgent);
 
 
 

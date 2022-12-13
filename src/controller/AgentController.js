@@ -4041,6 +4041,71 @@ const agent_login_new = async (req, res) => {
     }
 }
 
+const viewAgent = async (req, res) => {
+    try {
+
+        const orgID = req.params.orgID
+
+        console.log("orgID===>", orgID)
+
+        let pageNO = req.body.page;
+        //let countpages1 = await agentModel.find({ organisationID: '6311a0de778efce58f2336db' })
+        // console.log(countpages1)
+        if (pageNO == 0) {
+            pageNO = 1;
+        }
+
+        if (!orgID) {
+            return res.status(200).send({ status: false, msg: "Please enter agentID" })
+        }
+
+        if (orgID.length < 24) {
+            return res.status(200).send({ status: false, msg: "Please enter valid agentID" })
+        }
+        const { page = pageNO, limit = 10 } = req.query;
+        if (Object.keys(req.body).length <= 1) {
+            console.log("1")
+            let countpages1 = await agentModel.find({ organisationID: orgID, isDeleted: 0 }).sort({ createdAt: 1 })
+            let totalRaow1 = countpages1.length;
+
+            let filter = await agentModel.find({ organisationID: orgID, isDeleted: 0 }).sort({ createdAt: -1 })
+                .limit(limit * 1)
+                .skip((page - 1) * limit)
+                .exec();
+
+            return res.status(200).send({ statussss: true, totlaRow: totalRaow1, currenPage: parseInt(pageNO), filter })
+        }
+        else if (req.body.name || req.body.phone || req.body.agentCode || req.body.country) {
+            console.log("2")
+            let option = [{ name: req.body.name }, { phone: req.body.phone }, { country: req.body.country }, { agentCode: req.body.agentCode }]
+
+
+            let countpages2 = await agentModel.find({ $or: option, organisationID: orgID })
+            let contRow = countpages2.length
+            let filter = await agentModel.find({ $or: option, organisationID: orgID }).sort({ createdAt: -1 })
+                .limit(limit * 1)
+                .skip((page - 1) * limit)
+                .exec();
+            let totlaRow = filter.length;
+            // if (filter.length == 0) {
+            //     return res.status(200).send({ status: false, msg: "No Customer Found" })
+            // }
+            return res.status(200).send({ status: true, totlaRow: contRow, currenPage: parseInt(pageNO), filter })
+
+
+
+
+
+
+        }
+
+
+    } catch (error) {
+        console.log(error)
+        return res.status(200).send({ status: false, msg: error })
+    }
+}
+
 
 
 
@@ -4096,4 +4161,5 @@ module.exports.Resend_otp = Resend_otp;
 module.exports.createCustomerByAgnet_web = createCustomerByAgnet_web
 module.exports.createCustomerByOrg2 = createCustomerByOrg2
 module.exports.agent_login_new = agent_login_new
+module.exports.viewAgent = viewAgent
 
