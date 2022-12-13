@@ -655,7 +655,6 @@ const organisationsTransectionList = async (req, res) => {
             let filter = await transectionModel.find({ OrganisationID: organisationID, }).sort({ createdAt: -1 }).limit(limit * 1)
                 .skip((page - 1) * limit)
                 .exec()
-            //.sort({ createdAt: -1 })
 
             return res.status(200).send({ status: true, filter })
         }
@@ -669,7 +668,7 @@ const organisationsTransectionList = async (req, res) => {
 
 
 //----------------------------------Organisation-Test-Filter-Data-Customer----------------------------------------------------------------------------
-///////////////////////////////////////////////////////////////////////////////
+
 
 
 const OrganisationCustomerTest = async (req, res) => {
@@ -681,7 +680,7 @@ const OrganisationCustomerTest = async (req, res) => {
 
 
 
-        let countpages = await cutomerModel.find({ organisation: OrganisationID, isDeleted: 0 }).sort({ createdAt: -1 })
+        let countpages = await cutomerModel.find({ organisation: OrganisationID, isDeleted: 0, blocked: 0 }).sort({ createdAt: -1 })
         let totlaRow = countpages.length
 
 
@@ -697,9 +696,9 @@ const OrganisationCustomerTest = async (req, res) => {
         let ID1 = req.body.ID
 
         if (Object.keys(req.body).length <= 1) {
-            let countpages1 = await cutomerModel.find({ organisation: OrganisationID, isDeleted: 0 }).sort({ createdAt: 1 })
+            let countpages1 = await cutomerModel.find({ organisation: OrganisationID, isDeleted: 0, blocked: 0 }).sort({ createdAt: 1 })
             let totalRaow1 = countpages1.length;
-            let filter = await cutomerModel.find({ organisation: OrganisationID, isDeleted: 0 }).sort({ createdAt: -1 })
+            let filter = await cutomerModel.find({ organisation: OrganisationID, isDeleted: 0, blocked: 0 }).sort({ createdAt: -1 })
                 .limit(limit * 1)
                 .skip((page - 1) * limit)
                 .exec();
@@ -708,9 +707,9 @@ const OrganisationCustomerTest = async (req, res) => {
         } else if (req.body.nationality) {
             let option = [{ nationality: req.body.nationality }]
 
-            let countpages2 = await cutomerModel.find({ $or: option, organisation: OrganisationID, isDeleted: 0 })
+            let countpages2 = await cutomerModel.find({ $or: option, organisation: OrganisationID, isDeleted: 0, blocked: 0 })
             let contRow = countpages2.length
-            let filter = await cutomerModel.find({ $or: option, organisation: OrganisationID, isDeleted: 0 }).sort({ createdAt: -1 })
+            let filter = await cutomerModel.find({ $or: option, organisation: OrganisationID, isDeleted: 0, blocked: 0 }).sort({ createdAt: -1 })
                 .limit(limit * 1)
                 .skip((page - 1) * limit)
                 .exec();
@@ -729,9 +728,9 @@ const OrganisationCustomerTest = async (req, res) => {
                 }
             }]
 
-            let countpages2 = await cutomerModel.find({ $or: option, organisation: OrganisationID, isDeleted: 0 })
+            let countpages2 = await cutomerModel.find({ $or: option, organisation: OrganisationID, isDeleted: 0, blocked: 0 })
             let contRow = countpages2.length
-            let filter = await cutomerModel.find({ $or: option, organisation: OrganisationID, isDeleted: 0 }).sort({ createdAt: -1 })
+            let filter = await cutomerModel.find({ $or: option, organisation: OrganisationID, isDeleted: 0, blocked: 0 }).sort({ createdAt: -1 })
                 .limit(limit * 1)
                 .skip((page - 1) * limit)
                 .exec();
@@ -744,9 +743,9 @@ const OrganisationCustomerTest = async (req, res) => {
 
         }
         else if (req.body.ID.length <= 0 && req.body.phone.length <= 0 && req.body.phone.length <= 0 && req.body.status.length <= 0 && req.body.nationality.length <= 0 && req.body.fromDate.length <= 0 && req.body.toDate.length <= 0) {
-            let countpages2 = await cutomerModel.find({ organisation: OrganisationID, isDeleted: 0 })
+            let countpages2 = await cutomerModel.find({ organisation: OrganisationID, isDeleted: 0, blocked: 0 })
             let contRow = countpages2.length
-            let filter = await cutomerModel.find({ organisation: OrganisationID, isDeleted: 0 }).sort({ createdAt: -1 })
+            let filter = await cutomerModel.find({ organisation: OrganisationID, isDeleted: 0, blocked: 0 }).sort({ createdAt: -1 })
                 .limit(limit * 1)
                 .skip((page - 1) * limit)
                 .exec();
@@ -758,9 +757,9 @@ const OrganisationCustomerTest = async (req, res) => {
 
         else if (req.body.ID && req.body.ID > 0) {
             let option = [{ digitalrefID: req.body.ID }, { phone: req.body.phone }, { status: req.body.status }, { nationality: req.body.nationality }]
-            let countpages2 = await cutomerModel.find({ $or: option, organisation: OrganisationID, isDeleted: 0 })
+            let countpages2 = await cutomerModel.find({ $or: option, organisation: OrganisationID, isDeleted: 0, blocked: 0 })
             let contRow = countpages2.length
-            let filter = await cutomerModel.find({ $or: option, organisation: OrganisationID, isDeleted: 0 }).sort({ createdAt: -1 })
+            let filter = await cutomerModel.find({ $or: option, organisation: OrganisationID, isDeleted: 0, blocked: 0 }).sort({ createdAt: -1 })
                 .limit(limit * 1)
                 .skip((page - 1) * limit)
                 .exec();
@@ -775,9 +774,9 @@ const OrganisationCustomerTest = async (req, res) => {
 
 
             let option = [{ digitalrefID: req.body.ID }, { phone: req.body.phone }, { status: req.body.status }, { nationality: req.body.nationality }]
-            let countpages2 = await cutomerModel.find({ $or: option, organisation: OrganisationID, isDeleted: 0 })
+            let countpages2 = await cutomerModel.find({ $or: option, organisation: OrganisationID, isDeleted: 0, blocked: 0 })
             let contRow = countpages2.length
-            let filter = await cutomerModel.find({ $or: option, organisation: OrganisationID, isDeleted: 0 }).sort({ createdAt: -1 })
+            let filter = await cutomerModel.find({ $or: option, organisation: OrganisationID, isDeleted: 0, blocked: 0 }).sort({ createdAt: -1 })
                 .limit(limit * 1)
                 .skip((page - 1) * limit)
                 .exec();
@@ -793,7 +792,7 @@ const OrganisationCustomerTest = async (req, res) => {
             let countpages3 = await cutomerModel.find({ $or: option, organisation: OrganisationID })
             let contRow3 = countpages3.length
 
-            let filter = await cutomerModel.find({ $or: option, organisation: OrganisationID, isDeleted: 0 }).sort({ createdAt: -1 })
+            let filter = await cutomerModel.find({ $or: option, organisation: OrganisationID, isDeleted: 0, blocked: 0 }).sort({ createdAt: -1 })
                 .limit(limit * 1)
                 .skip((page - 1) * limit)
                 .exec();
@@ -2691,6 +2690,80 @@ const get_org_cust_data_graph = async (req, res) => {
     }
 }
 
+//----------------------------------------------DID-awaiting----------------------------------------------------------------------------------
+
+const Org_pendingCust = async (req, res) => {
+    try {
+
+
+        const orgID = req.orgID
+        let pageNO = req.body.page;
+
+        if (pageNO == 0) {
+            pageNO = 1
+        }
+        const { page = pageNO, limit = 10 } = req.query;
+
+
+        let findcust1 = await customerModel.find({ organisation: orgID, status: "pending", isDeleted: 0, blocked: 0 }).sort({ createdAt: -1 })
+        let totalRow = findcust1.length
+        if (Object.keys(req.body).length <= 1) {
+
+
+            let findcust = await customerModel.find({ organisation: orgID, status: "pending", isDeleted: 0, blocked: 0 }).select({ fullname: 1, dateOfBirth: 1, phone: 1, email: 1, status: 1, walletAddress: 1, digitalID: 1, digitalrefID: 1 }).sort({ createdAt: -1 }).limit(limit * 1)
+                .skip((page - 1) * limit)
+                .exec()
+
+            return res.status(200).send({ status: true, totlaRow: totalRow, currenPage: parseInt(pageNO), findcust })
+
+        }
+
+
+        let option = [{ digitalrefID: req.body.digitalrefID }]
+        let findcust = await customerModel.find({ $or: option, organisation: orgID, status: "pending", isDeleted: 0, blocked: 0 }).select({ fullname: 1, dateOfBirth: 1, phone: 1, email: 1, status: 1, walletAddress: 1, digitalID: 1, digitalrefID: 1 }).sort({ createdAt: -1 }).limit(limit * 1)
+            .skip((page - 1) * limit)
+            .exec()
+
+        return res.status(200).send({ status: true, totlaRow: totalRow, currenPage: parseInt(pageNO), findcust })
+
+
+
+    } catch (error) {
+        console.log(error)
+        return res.status(200).send({ status: false, msg: error.message })
+    }
+}
+
+
+//------------------------------------------blocked-DID's-------------------------------------------------------------------------------------
+
+const Org_blockedIDS = async (req, res) => {
+    try {
+
+        const OrgID = req.orgID
+        let pageNO = req.body.page;
+        if (pageNO == 0) {
+            pageNO = 1
+        }
+        const { page = pageNO, limit = 10 } = req.query;
+
+        let findBlockedIDs1 = await customerModel.find({ organisation: OrgID, blocked: 1 })
+        let totlaRow = findBlockedIDs1.length
+
+        let findBlockedIDs = await customerModel.find({ organisation: OrgID, blocked: 1 }).limit(limit * 1)
+            .skip((page - 1) * limit)
+            .exec();
+
+        let totalRaow1 = findBlockedIDs.length;
+
+        return res.status(200).send({ status: true, totlaRow: totlaRow, currenPage: parseInt(pageNO), data: findBlockedIDs })
+
+    } catch (error) {
+        console.log(error)
+        return res.status(200).send({ status: false, msg: error.message })
+    }
+}
+
 
 //org_update
 //const saltRounds = 10
@@ -2736,3 +2809,5 @@ module.exports.get_pass_Loans = get_pass_Loans
 module.exports.get_Loan_installment = get_Loan_installment
 module.exports.Cust_Linked_Srevice_Org = Cust_Linked_Srevice_Org
 module.exports.get_org_cust_data_graph = get_org_cust_data_graph
+module.exports.Org_pendingCust = Org_pendingCust
+module.exports.Org_blockedIDS = Org_blockedIDS

@@ -3836,7 +3836,7 @@ const agent_login_new = async (req, res) => {
             let custID = find_customer._id
             let cust_email = find_customer.email
 
-            let token = jwt.sign({ custID, cust_email }, 'customer')
+            let token = jwt.sign({ custID, cust_email }, 'Customer')
 
             return res.status(200).send({ status: true, Login_status: "customer", msg: "Login sucessfully", token, custID })
 
@@ -3932,7 +3932,7 @@ const agent_login_new = async (req, res) => {
                 let custID = find_customer._id
                 let cust_email = find_customer.email
 
-                let token = jwt.sign({ custID, cust_email }, 'customer')
+                let token = jwt.sign({ custID, cust_email }, 'Customer')
 
                 return res.status(200).send({ status: true, Login_status: "customer", msg: "Login sucessfully", token, custID })
 
@@ -4026,7 +4026,7 @@ const agent_login_new = async (req, res) => {
                 let custID = find_customer._id
                 let cust_email = find_customer.email
 
-                let token = jwt.sign({ custID, cust_email }, 'customer')
+                let token = jwt.sign({ custID, cust_email }, 'Customer')
 
                 return res.status(200).send({ status: true, Login_status: "customer", msg: "Login sucessfully", token, custID })
 

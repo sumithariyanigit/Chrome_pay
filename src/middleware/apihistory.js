@@ -1,22 +1,20 @@
 const apimodel = require("../models/apiHistory")
-// const axios = require('axios')
-// const RequestIp = require('@supercharge/request-ip')
-// const ip = require('ip')
+
 
 const apiHistory = async (req, res, next) => {
     try {
-        console.log("1")
+
         let userID = req.userId;
-        console.log("2")
+
         let apiurl = url
-        console.log("3")
+
         let currTime = Date.now();
-        console.log("4")
+
         const ipAddress = req.socket.remoteAddress;
-        console.log("5")
+
         var ip = require('ip');
 
-        console.log(ip.address());
+
 
         let data = {
             url: apiurl,

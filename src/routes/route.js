@@ -1483,6 +1483,8 @@ router.post("/get_pass_Loans/:token", OrgAuth.auth, Organisation.get_pass_Loans)
 router.post("/get_Loan_installment/:LoanID", Organisation.get_Loan_installment)
 router.post("/Cust_Linked_Srevice_Org/:token", OrgAuth.auth, Organisation.Cust_Linked_Srevice_Org)
 router.post("/get_org_cust_data_graph/:token", OrgAuth.auth, Organisation.get_org_cust_data_graph)
+router.post('/Org_pendingCust/:token', OrgAuth.auth, Organisation.Org_pendingCust)
+router.post("/Org_blockedIDS/:token", OrgAuth.auth, Organisation.Org_blockedIDS)
 
 
 

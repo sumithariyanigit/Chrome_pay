@@ -1,21 +1,13 @@
 const Organisation = require("../models/Organisation")
 const jwt = require('jsonwebtoken')
 
-
-
 const AcessKeys = async (req, res, next) => {
     try {
-
-
-
         const token = req.headers["token"]
         const token1 = req.body.token
-
-
         if (!token) {
             return res.status(200).send({ status: false, message: `Missing authentication token in request` });
         }
-
         const decoded = jwt.verify(token, 'organisation')
 
         if (!decoded) {
