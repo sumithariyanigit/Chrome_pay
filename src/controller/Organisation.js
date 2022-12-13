@@ -36,6 +36,10 @@ const LoanInsatallMent = require("../models/LoanInsatallMent");
 const bcrypt = require("bcrypt")
 const cust_wallet_Model = require("../models/Cust_Wallet")
 const nodemailer = require('nodemailer')
+const Blocked_Notes = require("../models/Blocked_DID_Notes");
+const Delete_Notes = require("../models/Delete_DID_Notes");
+const AgentModel = require("../models/AgentModel");
+const Delete_DID_Notes = require("../models/Delete_DID_Notes");
 
 
 
@@ -615,6 +619,8 @@ const OrgDashSection = async (req, res) => {
             image: findName.logo
         }
 
+        console.log("data", data)
+
         return res.status(200).send({ status: true, data: data })
 
 
@@ -696,9 +702,9 @@ const OrganisationCustomerTest = async (req, res) => {
         let ID1 = req.body.ID
 
         if (Object.keys(req.body).length <= 1) {
-            let countpages1 = await cutomerModel.find({ organisation: OrganisationID, isDeleted: 0, blocked: 0 }).sort({ createdAt: 1 })
+            let countpages1 = await cutomerModel.find({ organisation: OrganisationID, isDeleted: 0, blocked: 0, status: "verified" }).sort({ createdAt: 1 })
             let totalRaow1 = countpages1.length;
-            let filter = await cutomerModel.find({ organisation: OrganisationID, isDeleted: 0, blocked: 0 }).sort({ createdAt: -1 })
+            let filter = await cutomerModel.find({ organisation: OrganisationID, isDeleted: 0, blocked: 0, status: "verified" }).sort({ createdAt: -1 })
                 .limit(limit * 1)
                 .skip((page - 1) * limit)
                 .exec();
@@ -707,9 +713,9 @@ const OrganisationCustomerTest = async (req, res) => {
         } else if (req.body.nationality) {
             let option = [{ nationality: req.body.nationality }]
 
-            let countpages2 = await cutomerModel.find({ $or: option, organisation: OrganisationID, isDeleted: 0, blocked: 0 })
+            let countpages2 = await cutomerModel.find({ $or: option, organisation: OrganisationID, isDeleted: 0, blocked: 0, status: "verified" })
             let contRow = countpages2.length
-            let filter = await cutomerModel.find({ $or: option, organisation: OrganisationID, isDeleted: 0, blocked: 0 }).sort({ createdAt: -1 })
+            let filter = await cutomerModel.find({ $or: option, organisation: OrganisationID, isDeleted: 0, blocked: 0, status: "verified" }).sort({ createdAt: -1 })
                 .limit(limit * 1)
                 .skip((page - 1) * limit)
                 .exec();
@@ -728,9 +734,9 @@ const OrganisationCustomerTest = async (req, res) => {
                 }
             }]
 
-            let countpages2 = await cutomerModel.find({ $or: option, organisation: OrganisationID, isDeleted: 0, blocked: 0 })
+            let countpages2 = await cutomerModel.find({ $or: option, organisation: OrganisationID, isDeleted: 0, blocked: 0, status: "verified" })
             let contRow = countpages2.length
-            let filter = await cutomerModel.find({ $or: option, organisation: OrganisationID, isDeleted: 0, blocked: 0 }).sort({ createdAt: -1 })
+            let filter = await cutomerModel.find({ $or: option, organisation: OrganisationID, isDeleted: 0, blocked: 0, status: "verified" }).sort({ createdAt: -1 })
                 .limit(limit * 1)
                 .skip((page - 1) * limit)
                 .exec();
@@ -743,9 +749,9 @@ const OrganisationCustomerTest = async (req, res) => {
 
         }
         else if (req.body.ID.length <= 0 && req.body.phone.length <= 0 && req.body.phone.length <= 0 && req.body.status.length <= 0 && req.body.nationality.length <= 0 && req.body.fromDate.length <= 0 && req.body.toDate.length <= 0) {
-            let countpages2 = await cutomerModel.find({ organisation: OrganisationID, isDeleted: 0, blocked: 0 })
+            let countpages2 = await cutomerModel.find({ organisation: OrganisationID, isDeleted: 0, blocked: 0, status: "verified" })
             let contRow = countpages2.length
-            let filter = await cutomerModel.find({ organisation: OrganisationID, isDeleted: 0, blocked: 0 }).sort({ createdAt: -1 })
+            let filter = await cutomerModel.find({ organisation: OrganisationID, isDeleted: 0, blocked: 0, status: "verified" }).sort({ createdAt: -1 })
                 .limit(limit * 1)
                 .skip((page - 1) * limit)
                 .exec();
@@ -757,9 +763,9 @@ const OrganisationCustomerTest = async (req, res) => {
 
         else if (req.body.ID && req.body.ID > 0) {
             let option = [{ digitalrefID: req.body.ID }, { phone: req.body.phone }, { status: req.body.status }, { nationality: req.body.nationality }]
-            let countpages2 = await cutomerModel.find({ $or: option, organisation: OrganisationID, isDeleted: 0, blocked: 0 })
+            let countpages2 = await cutomerModel.find({ $or: option, organisation: OrganisationID, isDeleted: 0, blocked: 0, status: "verified" })
             let contRow = countpages2.length
-            let filter = await cutomerModel.find({ $or: option, organisation: OrganisationID, isDeleted: 0, blocked: 0 }).sort({ createdAt: -1 })
+            let filter = await cutomerModel.find({ $or: option, organisation: OrganisationID, isDeleted: 0, blocked: 0, status: "verified" }).sort({ createdAt: -1 })
                 .limit(limit * 1)
                 .skip((page - 1) * limit)
                 .exec();
@@ -774,9 +780,9 @@ const OrganisationCustomerTest = async (req, res) => {
 
 
             let option = [{ digitalrefID: req.body.ID }, { phone: req.body.phone }, { status: req.body.status }, { nationality: req.body.nationality }]
-            let countpages2 = await cutomerModel.find({ $or: option, organisation: OrganisationID, isDeleted: 0, blocked: 0 })
+            let countpages2 = await cutomerModel.find({ $or: option, organisation: OrganisationID, isDeleted: 0, blocked: 0, status: "verified" })
             let contRow = countpages2.length
-            let filter = await cutomerModel.find({ $or: option, organisation: OrganisationID, isDeleted: 0, blocked: 0 }).sort({ createdAt: -1 })
+            let filter = await cutomerModel.find({ $or: option, organisation: OrganisationID, isDeleted: 0, blocked: 0, status: "verified" }).sort({ createdAt: -1 })
                 .limit(limit * 1)
                 .skip((page - 1) * limit)
                 .exec();
@@ -792,7 +798,7 @@ const OrganisationCustomerTest = async (req, res) => {
             let countpages3 = await cutomerModel.find({ $or: option, organisation: OrganisationID })
             let contRow3 = countpages3.length
 
-            let filter = await cutomerModel.find({ $or: option, organisation: OrganisationID, isDeleted: 0, blocked: 0 }).sort({ createdAt: -1 })
+            let filter = await cutomerModel.find({ $or: option, organisation: OrganisationID, isDeleted: 0, blocked: 0, status: "verified" }).sort({ createdAt: -1 })
                 .limit(limit * 1)
                 .skip((page - 1) * limit)
                 .exec();
@@ -813,6 +819,9 @@ const DeleteCustomer = async (req, res) => {
     try {
 
         const customerID = req.params.ID
+        const Note = req.body.note
+
+        console.log("1231231231231")
 
         if (!customerID.length) {
             return res.status(200).send({ status: false, msg: "Customer Id is required" })
@@ -826,6 +835,15 @@ const DeleteCustomer = async (req, res) => {
         if (findCUstomer.isDeleted == 1) {
             return res.status(200).send({ Status: false, msg: "Customer already deleted" })
         }
+
+        let obj = {
+            customerID: req.params.ID,
+            deletd: true,
+            Notes: Note
+
+        }
+
+        let add_note = await Delete_DID_Notes.create(obj)
 
         let update = await cutomerModel.findOneAndUpdate({ _id: customerID }, { isDeleted: 1 }, { new: true })
 
@@ -1553,6 +1571,7 @@ const createCustomerByOrg = async (req, res, next) => {
         let ladregistration = req.files
         let ID = req.orgID;
 
+        console.log("org")
 
         if (!ID) {
             return res.status(200).send({ status: false, msg: "Please enter Adding ID" })
@@ -1613,7 +1632,7 @@ const createCustomerByOrg = async (req, res, next) => {
         let trim = phone.replaceAll(' ', '')
         let remove_character = trim.replace('-', '')
         let convert_Number = parseInt(remove_character)
-        const cheack_cus = await temp_Cust.findOne({ phone: convert_Number })
+        const cheack_cus = await customerModel.findOne({ phone: convert_Number })
         if (cheack_cus) {
 
             return res.status(200).send({ status: false, service: "Linked", msg: "Customer already register, you want to linked service" })
@@ -2666,7 +2685,6 @@ const get_org_cust_data_graph = async (req, res) => {
             }
         }
 
-
         let obj = {
             January: January,
             February: February,
@@ -2765,12 +2783,214 @@ const Org_blockedIDS = async (req, res) => {
 }
 
 
-//org_update
-//const saltRounds = 10
-//const encryptedPassword = await bcrypt.hash(Orgpassword, saltRounds)
+//---------------------------------------------Blocked-customers-------------------------------------------------------------------------------
+
+
+const blockCustomer = async (req, res) => {
+    try {
+
+        const userID = req.params.ID;
+        const Note = req.body.note
+
+        console.log("blocked", userID)
 
 
 
+        if (!userID) {
+            return res.status(200).send({ status: false, msg: "Please enter CustomerID" })
+        }
+
+        if (userID.length !== 24) {
+            return res.status(200).send({ status: false, msg: "Please enter valid customer ID" })
+        }
+
+        if (!Note) {
+            return res.status(200).send({ status: false, msg: "Please write the reason of blocking" })
+        }
+
+        let checkUser = await cutomerModel.findOne({ _id: userID })
+        if (!checkUser) {
+            return res.status(200).send({ status: false, msg: "No User Found" })
+        }
+        if (checkUser.blocked == 1) {
+            return res.status(200).send({ status: 1, msg: "Customer Already Bolcked" })
+        }
+
+        let obj = {
+            customerID: req.params.ID,
+            blocked: true,
+            Notes: Note
+
+        }
+
+        let add_note = await Blocked_Notes.create(obj)
+
+        let BlockUser = await cutomerModel.findOneAndUpdate({ _id: userID }, { blocked: 1 }, { new: true })
+
+        return res.status(200).send({ status: 1, msg: "Customer Block Sucessfully" })
+
+    } catch (error) {
+        console.log(error)
+        return res.status(200).send({ status: false, msg: error })
+    }
+}
+
+//----------------------------------------------No_of_agents----------------------------------------------------------------------------------
+
+const get_num_of_Agnet = async (req, res) => {
+    try {
+        const OrgID = req.orgID;
+
+
+        let pageNO = req.body.page;
+        if (pageNO == 0) {
+            pageNO = 1
+        }
+        const { page = pageNO, limit = 10 } = req.query;
+        let find_Agent1 = await AgentModel.find({ organisationID: OrgID, blocked: 0, isDeleted: 0 })
+        let totlaRow = find_Agent1.length
+        let find_Agent = await AgentModel.find({ organisationID: OrgID, blocked: 0, isDeleted: 0 }).limit(limit * 1)
+            .skip((page - 1) * limit)
+            .exec();
+        let find_Numbers = find_Agent.length
+
+        return res.status(200).send({ status: true, totlaRow: totlaRow, currenPage: parseInt(pageNO), Agents: find_Numbers, data: find_Agent })
+
+    } catch (error) {
+        console.log(error)
+        return res.status(200).send({ status: false, msg: error.message })
+    }
+}
+
+//----------------------------------------------Blocking_Notes-----------------------------------------------------------------------------------
+
+const Blocking_DID_Note = async (req, res) => {
+    try {
+
+        let pageNO = req.body.page;
+        if (pageNO == 0) {
+            pageNO = 1
+        }
+        const { page = pageNO, limit = 10 } = req.query;
+
+        let find_notes1 = await Blocked_Notes.find()
+        let totlaRow = find_notes1.length
+
+        let find_notes = await Blocked_Notes.find().populate('customerID', { 'fullname': 1, 'IDphoto': 1, 'digitalID': 1, 'phone': 1 }).limit(limit * 1)
+            .skip((page - 1) * limit)
+            .exec();
+
+        return res.status(200).send({ status: true, totlaRow: totlaRow, currenPage: parseInt(pageNO), data: find_notes })
+
+
+    } catch (error) {
+        console.log(error)
+        return res.status(200).send({ status: false, msg: error.message })
+    }
+}
+
+
+//--------------------------------------------get-elete-notes-------------------------------------------------------------------------------
+
+const Delete_DID_Note = async (req, res) => {
+    try {
+
+        let pageNO = req.body.page;
+        if (pageNO == 0) {
+            pageNO = 1
+        }
+        const { page = pageNO, limit = 10 } = req.query;
+
+        let find_notes1 = await Blocked_Notes.find()
+        let totlaRow = find_notes1.length
+
+        let find_notes = await Delete_DID_Notes.find().populate('customerID', { 'fullname': 1, 'IDphoto': 1, 'digitalID': 1, 'phone': 1 }).limit(limit * 1)
+            .skip((page - 1) * limit)
+            .exec();
+
+        return res.status(200).send({ status: true, totlaRow: totlaRow, currenPage: parseInt(pageNO), data: find_notes })
+
+
+    } catch (error) {
+        console.log(error)
+        return res.status(200).send({ status: false, msg: error.message })
+    }
+}
+
+//-------------------------------------------------------org-agent-reports-------------------------------------------------------------------
+
+const Org_get_agent_cut_month = async (req, res) => {
+    try {
+
+        let agentID = req.params.agentID
+        let date = new Date()
+        let date1 = new Date
+
+        console.log("jkl", agentID)
+
+
+
+        var fromDate = new Date(Date.now() - 334 * 24 * 60 * 60 * 1000);
+
+        let find_cust = await cutomerModel.find({ createdBY: agentID, $or: [{ "createdAt": { $gt: fromDate } }, { "createdAt": { $eq: '' } }] })
+
+        January = 0, February = 0, March = 0, April = 0, May = 0, June = 0, July = 0, August = 0, September = 0, October = 0, November = 0, December = 0
+
+
+
+        for (let i of find_cust) {
+
+
+            if (i.createdAt.getMonth() + 1 == 1) {
+                January++
+            } else if (i.createdAt.getMonth() + 1 == 2) {
+                February++
+            } else if (i.createdAt.getMonth() + 1 == 3) {
+                March++
+            } else if (i.createdAt.getMonth() + 1 == 4) {
+                April++
+            } else if (i.createdAt.getMonth() + 1 == 5) {
+                May++
+            } else if (i.createdAt.getMonth() + 1 == 6) {
+                June++
+            } else if (i.createdAt.getMonth() + 1 == 7) {
+                July++
+            } else if (i.createdAt.getMonth() + 1 == 8) {
+                August++
+            } else if (i.createdAt.getMonth() + 1 == 9) {
+                September++
+            } else if (i.createdAt.getMonth() + 1 == 10) {
+                October++
+            } else if (i.createdAt.getMonth() + 1 == 11) {
+                November++
+            } else if (i.createdAt.getMonth() + 1 == 12) {
+                December++
+            }
+        }
+
+
+        let obj = {
+            January: January,
+            February: February,
+            March: March,
+            April: April,
+            May: May,
+            June: June,
+            July: July,
+            August: August,
+            September: September,
+            October: October,
+            November: November,
+            December: December
+        }
+
+        return res.status(200).send({ status: true, obj })
+
+    } catch (error) {
+        console.log(error)
+        return res.status(200).send({ status: false, msg: error.message })
+    }
+}
 
 
 
@@ -2811,3 +3031,8 @@ module.exports.Cust_Linked_Srevice_Org = Cust_Linked_Srevice_Org
 module.exports.get_org_cust_data_graph = get_org_cust_data_graph
 module.exports.Org_pendingCust = Org_pendingCust
 module.exports.Org_blockedIDS = Org_blockedIDS
+module.exports.blockCustomer = blockCustomer
+module.exports.get_num_of_Agnet = get_num_of_Agnet
+module.exports.Blocking_DID_Note = Blocking_DID_Note
+module.exports.Delete_DID_Note = Delete_DID_Note
+module.exports.Org_get_agent_cut_month = Org_get_agent_cut_month

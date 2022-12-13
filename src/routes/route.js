@@ -1485,6 +1485,13 @@ router.post("/Cust_Linked_Srevice_Org/:token", OrgAuth.auth, Organisation.Cust_L
 router.post("/get_org_cust_data_graph/:token", OrgAuth.auth, Organisation.get_org_cust_data_graph)
 router.post('/Org_pendingCust/:token', OrgAuth.auth, Organisation.Org_pendingCust)
 router.post("/Org_blockedIDS/:token", OrgAuth.auth, Organisation.Org_blockedIDS)
+router.put("/BlockCustomer/:ID", MatchIPc.findBlockIPs, Organisation.blockCustomer)
+router.post("/get_num_of_Agnet/:token", OrgAuth.auth, Organisation.get_num_of_Agnet)
+router.post("/Blocking_DID_Note", Organisation.Blocking_DID_Note)
+router.post("/Delete_DID_Note", Organisation.Delete_DID_Note)
+router.post("/Org_get_agent_cut_month/:agentID", Organisation.Org_get_agent_cut_month)
+
+
 
 
 

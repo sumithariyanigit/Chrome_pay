@@ -1865,6 +1865,8 @@ const AgentAwaiting = async (req, res) => {
         const CustomerName = req.body.customerName;
         const status = req.body.Status
 
+        console.log("agentID", agentID)
+
 
         let countpages = await cutomerModel.find({ createdBY: agentID, isDeleted: 0 }).sort({ createdAt: -1 })
         let totlaRow = countpages.length

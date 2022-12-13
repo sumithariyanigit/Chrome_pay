@@ -1706,7 +1706,7 @@ const updateAgentTransection = async (req, res) => {
 
 
 //--------------------------------------------admin-dashboard-list-------------------------------------------------------------------------------
-
+let licenses_Model = require("../models/OrgLicenses")
 const admindash = async (req, res) => {
     try {
 
@@ -1725,10 +1725,11 @@ const admindash = async (req, res) => {
 
 
         let findorg = await Organisation.find()
+        let find_licenses = await licenses_Model.find()
 
         let sum1 = 0;
-        for (let i of findorg) {
-            sum1 += i.totlaLicense
+        for (let i of find_licenses) {
+            sum1 += i.totalLicenses
         }
 
         let dashData = {
@@ -1992,7 +1993,7 @@ const getAllDIDs = async (req, res) => {
 const recentUser = async (req, res) => {
     try {
 
-        let findUser = await customerModel.find().select({ fullname: 1, phone: 1, email: 1, dateOfBirth: 1, status: 1 })
+        let findUser = await customerModel.find({ isDeleted: 0, blocked: 0 }).sort({ createdAt: "-1" }).select({ fullname: 1, phone: 1, email: 1, dateOfBirth: 1, status: 1 })
 
         let totalCustomer = findUser.length
 
@@ -3440,6 +3441,7 @@ const find_Org_RemainingLicenses = async (req, res) => {
         let findorg = await org_Licenses.findOne({ OrganisationID: orgID })
 
         let totalLicense = findorg.totalLicenses
+        console.log("totalLicense", totalLicense)
         let name = findorg.name;
         let remaning_Licenses = totalLicense - totalCust
 
