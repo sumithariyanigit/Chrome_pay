@@ -515,9 +515,9 @@ const Organisationdashboard = async (req, res) => {
         const { page = pageNO, limit = 5 } = req.query;
         if (!Object.keys(req.body).length) {
 
-            let countpages2 = await cutomerModel.find({ organisation: OrganisationID }).sort({ createdAt: -1 })
+            let countpages2 = await cutomerModel.find({ organisation: OrganisationID, blocked: 0, isDeleted: 0 }).sort({ createdAt: -1 })
             let contRow = countpages2.length
-            let filter = await cutomerModel.find({ organisation: OrganisationID }).sort({ createdAt: -1 }).sort({ createdAt: -1 }).limit(limit * 1)
+            let filter = await cutomerModel.find({ organisation: OrganisationID, blocked: 0, isDeleted: 0 }).sort({ createdAt: -1 }).sort({ createdAt: -1 }).limit(limit * 1)
                 .skip((page - 1) * limit)
                 .exec();;
 
@@ -525,9 +525,9 @@ const Organisationdashboard = async (req, res) => {
         } else if (req.body.name || req.body.category) {
             let option = [{ fullname: req.body.name }, { status: req.body.category }]
 
-            let countpages2 = await cutomerModel.find({ organisation: OrganisationID, $or: option }).sort({ createdAt: -1 })
+            let countpages2 = await cutomerModel.find({ organisation: OrganisationID, $or: option, blocked: 0, isDeleted: 0 }).sort({ createdAt: -1 })
             let contRow = countpages2.length
-            let filter = await cutomerModel.find({ organisation: OrganisationID, $or: option }).sort({ createdAt: -1 })
+            let filter = await cutomerModel.find({ organisation: OrganisationID, $or: option, blocked: 0, isDeleted: 0 }).sort({ createdAt: -1 })
                 .limit(limit * 1)
                 .skip((page - 1) * limit)
                 .exec();
