@@ -3433,7 +3433,7 @@ const find_Org_RemainingLicenses = async (req, res) => {
             return res.status(200).send({ status: false, msg: "not getting valid orgID" })
         }
 
-        let findCust = await customerModel.find({ organisation: orgID })
+        let findCust = await customerModel.find({ organisation: orgID, isDeleted: 0 })
         let total_DIDs = findCust.length
 
         let totalCust = findCust.length;

@@ -2992,6 +2992,39 @@ const Org_get_agent_cut_month = async (req, res) => {
     }
 }
 
+//-----------------------------------------------------org-blocked-cutomers---------------------------------------------------------------
+
+const org_blocked_custmers = async (req, res) => {
+    try {
+
+        let orgID = req.orgID
+        if (req.body.fromDate) {
+
+            let option = [
+                {
+                    createdAt: {
+                        $gte: new Date(req.body.fromDate).toISOString(),
+                        $lte: new Date(req.body.toDate).toISOString()
+                    }
+                }
+            ]
+
+            let findCust = await cust_Model.find({ organisation: orgID, $or: option, blocked: 1 })
+
+            return res.status(200).send({ status: true, findCust })
+        } else {
+
+            let findCust = await customerModel.find({ blocked: 1 })
+
+            return res.status(200).send({ status: true, findCust })
+
+        }
+    } catch (error) {
+        console.log(error)
+        return res.status(200).send({ status: false, msg: error.messege })
+    }
+}
+
 
 
 module.exports.createOrganisation = createOrganisation;
@@ -3036,3 +3069,4 @@ module.exports.get_num_of_Agnet = get_num_of_Agnet
 module.exports.Blocking_DID_Note = Blocking_DID_Note
 module.exports.Delete_DID_Note = Delete_DID_Note
 module.exports.Org_get_agent_cut_month = Org_get_agent_cut_month
+module.exports.org_blocked_custmers = org_blocked_custmers
