@@ -3291,95 +3291,113 @@ const new_verify_customer = async (req, res) => {
 
         let create_cust = await cutomerModel.create(newCust)
 
-
-        let OrganisationList = await org_Licenses.findOne({ OrganisationID: findCust.organisation })
-
-        
-        let totalLicenses = OrganisationList.totalLicenses
-
-       
-
-        let findreaminig = await cutomerModel.find({ organisation: findCust.organisation })
-
-        
-
-        let calculateRemainig = totalLicenses - findreaminig.length;
-
-        let Remainig = calculateRemainig
-
-        let updateLicenses = await org_Licenses.findOneAndUpdate({ OrganisationID: findCust.organisation }, { RemainingLicenses: Remainig }, { new: true })
-
-        
-        let cust_wallet = `00x${generateString1(43)}`
-        let obj = {
-            customer_ID: create_cust._id,
-            phone: create_cust.phone,
-            wallet_Address: cust_wallet
-        }
-
-
-        let create_Wallet = await cust_wallet_Model.create(obj)
-       
-        let delete_cust = await temp_Cust.findOneAndDelete({ phone: phoneNo1 })
-
-
-
-
-
-        //----------------------------------------------------------------------------------------
-
-        const sentEmail = async (req, res) => {
-
-
-            var transporter = nodemailer.createTransport({
-                host: 'smtp.gmail.com',
-                port: 465,
-                secure: true,
-                auth: {
-                    user: 'chrmepay123@gmail.com',
-                    pass: 'jgiplcgrbddvktkl',
-                }
-            });
-
-
-            var mailOptions = {
-                from: 'chrmepay123@gmail.com',
-                to: 'sumit.hariyani2@gmail.com',
-                subject: 'Sending Email using Node.js',
-                text: `Hello! welcome to chrome pay your login password is ${cust_password}`
-
-            };
-
-            transporter.sendMail(mailOptions, function (error, info) {
-                if (error) {
-                    console.log('email error line 34 ===  ', error);
-                    return false;
-                } else {
-                    console.log('Email sent: ' + info.messageId);
-                    return info.messageId;
-                }
-            });
-        }
-        await sentEmail();
-
-        //---------------------------------------------------------------------------------------------------------------
-
-
-
         if (create_cust) {
 
-            return res.status(200).send({ status: true, msg: "customer register sucessfullyy" })
+            let OrganisationList = await org_Licenses.findOne({ OrganisationID: findCust.organisation })
+
+            let totalLicenses = OrganisationList.totalLicenses
+
+            let findreaminig = await cutomerModel.find({ organisation: findCust.organisation })
+
+            let calculateRemainig = totalLicenses - findreaminig.length;
+
+            let Remainig = calculateRemainig
+
+            let updateLicenses = await org_Licenses.findOneAndUpdate({ OrganisationID: findCust.organisation }, { RemainingLicenses: Remainig }, { new: true })
+
+
+            let cust_wallet = `00x${generateString1(43)}`
+            let obj = {
+                customer_ID: create_cust._id,
+                phone: create_cust.phone,
+                wallet_Address: cust_wallet
+            }
+
+            let create_Wallet = await cust_wallet_Model.create(obj)
+
+            const sentEmail = async (req, res) => {
+
+
+                var transporter = nodemailer.createTransport({
+                    host: 'smtp.gmail.com',
+                    port: 465,
+                    secure: true,
+                    auth: {
+                        user: 'chrmepay123@gmail.com',
+                        pass: 'jgiplcgrbddvktkl',
+                    }
+                });
+
+
+                var mailOptions = {
+                    from: 'chrmepay123@gmail.com',
+                    to: 'sumit.hariyani2@gmail.com',
+                    subject: 'Sending Email using Node.js',
+                    text: `Hello! welcome to chrome pay your login password is ${cust_password}`
+
+                };
+
+                transporter.sendMail(mailOptions, function (error, info) {
+                    if (error) {
+                        console.log('email error line 34 ===  ', error);
+                        return false;
+                    } else {
+                        console.log('Email sent: ' + info.messageId);
+                        return info.messageId;
+                    }
+                });
+            }
+            await sentEmail();
+
+            return res.status(200).send({ status: true, msg: "customer register " })
+
         }
 
+
+
+        let find = await cutomerModel.findOne({ phone: phoneNo1 })
+        console.log("find", find)
+        if (!find) {
+            let find1 = await cutomerModel.findOne({ phone: phoneNo1 })
+            if (!find1) {
+                let find2 = await cutomerModel.findOne({ phone: phoneNo1 })
+                if (!find2) {
+                    let find3 = await cutomerModel.findOne({ phone: phoneNo1 })
+                    if (!find3) {
+                        return res.status(200).send({ status: false, msg: "Failed " })
+                    }
+                }
+            }
+        }
+
+        //---------------------------------------------------------------------------------------------------------------
+        if (create_cust) {
+            let delete_cust = await temp_Cust.findOneAndDelete({ phone: phoneNo1 })
+            return res.status(200).send({ status: false, msg: "customer register " })
+        }
     } catch (error) {
 
-        const phoneNo1 = req.body.phoneNo
-        let find = await cutomerModel.findOne({ phone: phoneNo1 })
-        if (find) {
-            return res.status(200).send({ status: true, msg: "customer register  succesfully" })
-        } else {
-            return res.status(200).send({ status: false, msg: "Failed Please try again" })
-        }
+        setTimeout(async function () {
+            const phoneNo1 = req.body.phoneNo
+            let find = await cutomerModel.findOne({ phone: phoneNo1 })
+            console.log("find", find)
+            if (find) {
+                let find1 = await cutomerModel.findOne({ phone: phoneNo1 })
+                if (find1) {
+                    let find2 = await cutomerModel.findOne({ phone: phoneNo1 })
+                    if (find2) {
+                        let find3 = await cutomerModel.findOne({ phone: phoneNo1 })
+                        if (find3) {
+                            return res.status(200).send({ status: true, msg: "customer register  succesfully" })
+                        }
+                    }
+                }
+            } else {
+                return res.status(200).send({ status: false, msg: "Failed Please Try Again" })
+
+            }
+        }, 3 * 1000);
+
 
     }
 }
@@ -3511,7 +3529,7 @@ const createCustomerByAgnet_web = async (req, res, next) => {
 
         if (!data)
             return res.status(200).send({ status: false, msg: "please enter data" })
-        //next();
+
 
         if (!fullname) {
             return res.status(200).send({ status: false, msg: "Please enter Full Name" })

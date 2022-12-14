@@ -9,8 +9,6 @@ const auth = async (req, res, next) => {
             return res.status(200).send({ status: false, message: `Missing authentication token in request` });
         }
 
-
-
         const decoded = jwt.verify(token, 'Customer')
 
         if (!decoded) {
@@ -20,9 +18,6 @@ const auth = async (req, res, next) => {
         req.userId = decoded.custID
         req.email = decoded.email
         req.agentID = decoded.agentID
-
-
-
 
         next()
     } catch (error) {

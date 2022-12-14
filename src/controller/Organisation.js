@@ -3025,6 +3025,15 @@ const org_blocked_custmers = async (req, res) => {
     }
 }
 
+const org_blocked = async (req, res) => {
+    try {
+
+    } catch (error) {
+        console.log(error)
+        return res.status(200).send({ status: false, msg: error.message })
+    }
+}
+
 
 
 module.exports.createOrganisation = createOrganisation;

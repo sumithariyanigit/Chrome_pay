@@ -1285,6 +1285,30 @@ const calculate_final_activities = async (req, res) => {
     }
 }
 
+//------------------------------------------get_customer_linked_services------------------------------------------------------------------------
+
+
+const get_cust_orgs = async (req, res) => {
+    try {
+
+        const custID = req.userId
+
+        let find_orgs = await customer_Model.findOne({ _id: custID })
+        let orgs = find_orgs.organisation
+        let fuse_wallet_address = find_orgs.walletAddress
+        let find_chrome_pay_wallet = await Chrome_pay_wallet.findOne({ customer_ID: custID })
+        let wallet_address = find_chrome_pay_wallet.wallet_Address
+        let find_orgs_data = await organisation_Model.find({ _id: orgs }).select({ logo: 1, name: 1, phoneNo: 1 })
+
+        return res.status(200).send({ status: true, Chrome_wallet: wallet_address, fuse_wallet_address, find_orgs_data })
+
+
+    } catch (error) {
+        conosle.log(error)
+        return res.status(200).send({ status: false, msg: error.message })
+    }
+}
+
 
 module.exports.cust_login = cust_login;
 module.exports.cust_opt_verify = cust_opt_verify;
@@ -1302,3 +1326,4 @@ module.exports.get_cust_logs = get_cust_logs
 module.exports.Pay_bills = Pay_bills
 module.exports.cust_Recaharge = cust_Recaharge
 module.exports.calculate_final_activities = calculate_final_activities
+module.exports.get_cust_orgs = get_cust_orgs
