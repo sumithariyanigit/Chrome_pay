@@ -3388,11 +3388,13 @@ const new_verify_customer = async (req, res) => {
                     if (find2) {
                         let find3 = await cutomerModel.findOne({ phone: phoneNo1 })
                         if (find3) {
+                            let delete_cust = await temp_Cust.findOneAndDelete({ phone: phoneNo1 })
                             return res.status(200).send({ status: true, msg: "customer register  succesfully" })
                         }
                     }
                 }
             } else {
+                let delete_cust = await temp_Cust.findOneAndDelete({ phone: phoneNo1 })
                 return res.status(200).send({ status: false, msg: "Failed Please Try Again" })
 
             }
@@ -4063,12 +4065,9 @@ const viewAgent = async (req, res) => {
     try {
 
         const orgID = req.params.orgID
-
         console.log("orgID===>", orgID)
-
         let pageNO = req.body.page;
-        //let countpages1 = await agentModel.find({ organisationID: '6311a0de778efce58f2336db' })
-        // console.log(countpages1)
+
         if (pageNO == 0) {
             pageNO = 1;
         }
@@ -4105,19 +4104,8 @@ const viewAgent = async (req, res) => {
                 .skip((page - 1) * limit)
                 .exec();
             let totlaRow = filter.length;
-            // if (filter.length == 0) {
-            //     return res.status(200).send({ status: false, msg: "No Customer Found" })
-            // }
             return res.status(200).send({ status: true, totlaRow: contRow, currenPage: parseInt(pageNO), filter })
-
-
-
-
-
-
         }
-
-
     } catch (error) {
         console.log(error)
         return res.status(200).send({ status: false, msg: error })
