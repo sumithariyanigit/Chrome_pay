@@ -1349,10 +1349,6 @@ const orgforgotpassword = async (req, res) => {
 
         return res.status(200).send({ status: true, msg: "Otp send Sucessfully" })
 
-
-
-
-
     } catch (error) {
         console.log(error)
         return res.status(200).send({ status: false, msg: error })
@@ -1517,7 +1513,6 @@ const org_update = async (req, res) => {
             return res.status(200).send({ status: true, msg: "profile updated sucessfully" })
 
         } else {
-
 
 
             let data = req.body;
@@ -2816,14 +2811,18 @@ const blockCustomer = async (req, res) => {
             return res.status(200).send({ status: 1, msg: "Customer Already Bolcked" })
         }
 
-        let obj = {
-            customerID: req.params.ID,
-            blocked: true,
-            Notes: Note
 
-        }
+        let upadte_notes = await customerModel.findByIdAndUpdate({ _id: userID }, { Block_notes: Note })
+        console.log("upadte_notes", upadte_notes)
 
-        let add_note = await Blocked_Notes.create(obj)
+        // let obj = {
+        //     customerID: req.params.ID,
+        //     blocked: true,
+        //     Notes: Note
+
+        // }
+
+        // let add_note = await Blocked_Notes.create(obj)
 
         let BlockUser = await cutomerModel.findOneAndUpdate({ _id: userID }, { blocked: 1 }, { new: true })
 

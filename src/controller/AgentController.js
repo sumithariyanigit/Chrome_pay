@@ -3754,7 +3754,7 @@ const createCustomerByOrg2 = async (req, res) => {
 
 
         if (req.files.length < 3) {
-            return res.status(200).send({ status: false, msg: "Please fill all fields" })
+            return res.status(200).send({ status: false, msg: "Please upload all documents" })
         }
 
 
@@ -3876,18 +3876,14 @@ const agent_login_new = async (req, res) => {
                 if (!decryptedPassword) {
                     let UserIP = ip.address()
                     let AgentID = find_agent._id
-
                     let findLoginTime = Date.now();
-
                     let logData = {
                         email: find_agent.email,
                         UserID: find_agent._id,
                         loginTime: findLoginTime,
                         IP: UserIP,
                         status: "Please enter valid password",
-
                     }
-
                     let admindata = await adminModel.findOne();
                     let currStatus = await agentModel.findOne({ email: username })
                     let wrongCount = currStatus.WrongPassword + 1;
@@ -3920,15 +3916,11 @@ const agent_login_new = async (req, res) => {
                 let agentID = find_agent._id;
                 let name = find_agent.name
                 let orgID = find_agent.organisationID
-
                 let token = jwt.sign({ name, agentID, orgID, username, }, 'Agent')
-
                 let setTooken = await agentModel.findOneAndUpdate({ email: find_agent.email }, { token: token })
                 let UserIP = ip.address()
                 let AgentID = find_agent._id;
-
                 let findLoginTime = Date.now();
-
                 let logData = {
                     email: find_agent.email,
                     UserID: find_agent._id,
@@ -3937,7 +3929,6 @@ const agent_login_new = async (req, res) => {
                     status: "Login Sucessfull",
 
                 }
-
                 let MakeLogHIstory = await logHistory.create(logData);
                 let update = await agentModel.findOneAndUpdate({ email: find_agent.email }, { WrongPassword: 0 })
                 return res.status(200).send({ status: true, Login_status: "agent", msg: "Login Sucessfull", token: token, ID: agentID, orgID: orgID })
@@ -4067,7 +4058,6 @@ const viewAgent = async (req, res) => {
         const orgID = req.params.orgID
         console.log("orgID===>", orgID)
         let pageNO = req.body.page;
-
         if (pageNO == 0) {
             pageNO = 1;
         }

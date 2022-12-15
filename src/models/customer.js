@@ -195,6 +195,9 @@ const customerSchema = new mongoose.Schema({
     },
     login_otp: {
         type: Number
+    },
+    Block_notes: {
+        type: String
     }
 
 }, { timestamps: true })
