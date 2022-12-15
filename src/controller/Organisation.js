@@ -686,7 +686,7 @@ const OrganisationCustomerTest = async (req, res) => {
 
 
 
-        let countpages = await cutomerModel.find({ organisation: OrganisationID, isDeleted: 0, blocked: 0 }).sort({ createdAt: -1 })
+        let countpages = await cutomerModel.find({ organisation: OrganisationID, isDeleted: 0, blocked: 0, status: "verified" }).sort({ createdAt: -1 })
         let totlaRow = countpages.length
 
 
@@ -702,9 +702,9 @@ const OrganisationCustomerTest = async (req, res) => {
         let ID1 = req.body.ID
 
         if (Object.keys(req.body).length <= 1) {
-            let countpages1 = await cutomerModel.find({ organisation: OrganisationID, isDeleted: 0, blocked: 0, }).sort({ createdAt: 1 })
+            let countpages1 = await cutomerModel.find({ organisation: OrganisationID, isDeleted: 0, blocked: 0, status: "verified" }).sort({ createdAt: 1 })
             let totalRaow1 = countpages1.length;
-            let filter = await cutomerModel.find({ organisation: OrganisationID, isDeleted: 0, blocked: 0, }).sort({ createdAt: -1 })
+            let filter = await cutomerModel.find({ organisation: OrganisationID, isDeleted: 0, blocked: 0, status: "verified" }).sort({ createdAt: -1 })
                 .limit(limit * 1)
                 .skip((page - 1) * limit)
                 .exec();
@@ -713,9 +713,9 @@ const OrganisationCustomerTest = async (req, res) => {
         } else if (req.body.nationality) {
             let option = [{ nationality: req.body.nationality }]
 
-            let countpages2 = await cutomerModel.find({ $or: option, organisation: OrganisationID, isDeleted: 0, blocked: 0, })
+            let countpages2 = await cutomerModel.find({ $or: option, organisation: OrganisationID, isDeleted: 0, blocked: 0, status: "verified" })
             let contRow = countpages2.length
-            let filter = await cutomerModel.find({ $or: option, organisation: OrganisationID, isDeleted: 0, blocked: 0, }).sort({ createdAt: -1 })
+            let filter = await cutomerModel.find({ $or: option, organisation: OrganisationID, isDeleted: 0, blocked: 0, status: "verified" }).sort({ createdAt: -1 })
                 .limit(limit * 1)
                 .skip((page - 1) * limit)
                 .exec();
@@ -734,9 +734,9 @@ const OrganisationCustomerTest = async (req, res) => {
                 }
             }]
 
-            let countpages2 = await cutomerModel.find({ $or: option, organisation: OrganisationID, isDeleted: 0, blocked: 0, })
+            let countpages2 = await cutomerModel.find({ $or: option, organisation: OrganisationID, isDeleted: 0, blocked: 0, status: "verified" })
             let contRow = countpages2.length
-            let filter = await cutomerModel.find({ $or: option, organisation: OrganisationID, isDeleted: 0, blocked: 0, }).sort({ createdAt: -1 })
+            let filter = await cutomerModel.find({ $or: option, organisation: OrganisationID, isDeleted: 0, blocked: 0, status: "verified" }).sort({ createdAt: -1 })
                 .limit(limit * 1)
                 .skip((page - 1) * limit)
                 .exec();
@@ -749,9 +749,9 @@ const OrganisationCustomerTest = async (req, res) => {
 
         }
         else if (req.body.ID.length <= 0 && req.body.phone.length <= 0 && req.body.phone.length <= 0 && req.body.status.length <= 0 && req.body.nationality.length <= 0 && req.body.fromDate.length <= 0 && req.body.toDate.length <= 0) {
-            let countpages2 = await cutomerModel.find({ organisation: OrganisationID, isDeleted: 0, blocked: 0, })
+            let countpages2 = await cutomerModel.find({ organisation: OrganisationID, isDeleted: 0, blocked: 0, status: "verified" })
             let contRow = countpages2.length
-            let filter = await cutomerModel.find({ organisation: OrganisationID, isDeleted: 0, blocked: 0, }).sort({ createdAt: -1 })
+            let filter = await cutomerModel.find({ organisation: OrganisationID, isDeleted: 0, blocked: 0, status: "verified" }).sort({ createdAt: -1 })
                 .limit(limit * 1)
                 .skip((page - 1) * limit)
                 .exec();
@@ -763,9 +763,9 @@ const OrganisationCustomerTest = async (req, res) => {
 
         else if (req.body.ID && req.body.ID > 0) {
             let option = [{ digitalrefID: req.body.ID }, { phone: req.body.phone }, { status: req.body.status }, { nationality: req.body.nationality }]
-            let countpages2 = await cutomerModel.find({ $or: option, organisation: OrganisationID, isDeleted: 0, blocked: 0, })
+            let countpages2 = await cutomerModel.find({ $or: option, organisation: OrganisationID, isDeleted: 0, blocked: 0, status: "verified" })
             let contRow = countpages2.length
-            let filter = await cutomerModel.find({ $or: option, organisation: OrganisationID, isDeleted: 0, blocked: 0, }).sort({ createdAt: -1 })
+            let filter = await cutomerModel.find({ $or: option, organisation: OrganisationID, isDeleted: 0, blocked: 0, status: "verified" }).sort({ createdAt: -1 })
                 .limit(limit * 1)
                 .skip((page - 1) * limit)
                 .exec();
@@ -780,9 +780,9 @@ const OrganisationCustomerTest = async (req, res) => {
 
 
             let option = [{ digitalrefID: req.body.ID }, { phone: req.body.phone }, { status: req.body.status }, { nationality: req.body.nationality }]
-            let countpages2 = await cutomerModel.find({ $or: option, organisation: OrganisationID, isDeleted: 0, blocked: 0, })
+            let countpages2 = await cutomerModel.find({ $or: option, organisation: OrganisationID, isDeleted: 0, blocked: 0, status: "verified" })
             let contRow = countpages2.length
-            let filter = await cutomerModel.find({ $or: option, organisation: OrganisationID, isDeleted: 0, blocked: 0, }).sort({ createdAt: -1 })
+            let filter = await cutomerModel.find({ $or: option, organisation: OrganisationID, isDeleted: 0, blocked: 0, status: "verified" }).sort({ createdAt: -1 })
                 .limit(limit * 1)
                 .skip((page - 1) * limit)
                 .exec();
@@ -798,7 +798,7 @@ const OrganisationCustomerTest = async (req, res) => {
             let countpages3 = await cutomerModel.find({ $or: option, organisation: OrganisationID })
             let contRow3 = countpages3.length
 
-            let filter = await cutomerModel.find({ $or: option, organisation: OrganisationID, isDeleted: 0, blocked: 0, }).sort({ createdAt: -1 })
+            let filter = await cutomerModel.find({ $or: option, organisation: OrganisationID, isDeleted: 0, blocked: 0, status: "verified" }).sort({ createdAt: -1 })
                 .limit(limit * 1)
                 .skip((page - 1) * limit)
                 .exec();

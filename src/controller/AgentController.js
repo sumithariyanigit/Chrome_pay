@@ -4141,7 +4141,6 @@ module.exports.createCustomerByOrg1 = createCustomerByOrg1;
 module.exports.commissionlist = commissionlist;
 module.exports.AgentAwaiting = AgentAwaiting;
 module.exports.agent_blocked = agent_blocked;
-
 module.exports.customerVerifyByAgent = customerVerifyByAgent;
 module.exports.Customer_Loan_app = Customer_Loan_app;
 module.exports.getOrgForLoan = getOrgForLoan;
