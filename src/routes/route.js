@@ -1624,7 +1624,7 @@ router.post("/get_cust_logs/:custID", customer_controller.get_cust_logs)
 router.post("/Pay_bills", customer_controller.Pay_bills)
 router.post("/cust_Recaharge", customer_controller.cust_Recaharge)
 router.post("/calculate_final_activities/:custID", customer_controller.calculate_final_activities)
-router.get("/get_cust_orgs/:token", cust_auth.auth, customer_controller.get_cust_orgs)
+router.get("/get_cust_orgs/:custID", customer_controller.get_cust_orgs)
 
 
 

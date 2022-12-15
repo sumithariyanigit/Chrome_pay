@@ -1291,7 +1291,7 @@ const calculate_final_activities = async (req, res) => {
 const get_cust_orgs = async (req, res) => {
     try {
 
-        const custID = req.userId
+        const custID = req.params.custID
 
         let find_orgs = await customer_Model.findOne({ _id: custID })
         let orgs = find_orgs.organisation
@@ -1304,7 +1304,7 @@ const get_cust_orgs = async (req, res) => {
 
 
     } catch (error) {
-        conosle.log(error)
+        console.log(error)
         return res.status(200).send({ status: false, msg: error.message })
     }
 }
