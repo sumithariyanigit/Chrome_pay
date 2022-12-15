@@ -1827,12 +1827,20 @@ const commissionlist = async (req, res) => {
             return res.status(200).send({ statussss: true, totlaRow: totalRaow1, currenPage: parseInt(pageNO), filter })
         } else if (req.body.fromDate) {
 
+            let toDate = new Date(req.body.toDate).toISOString()
+            let new_per = new Date()
+            new_per.setDate(new_per.getDate() + 1);
+
+
+            let date_num = Number(toDate)
+            console.log("check permisioin", new_per)
+
             let option = [
 
                 {
                     createdAt: {
                         $gte: new Date(req.body.fromDate).toISOString(),
-                        $lte: new Date(req.body.toDate).toISOString()
+                        $lte: new_per.toISOString() 
                     }
                 }
 

@@ -1299,9 +1299,7 @@ const get_cust_orgs = async (req, res) => {
         let find_chrome_pay_wallet = await Chrome_pay_wallet.findOne({ customer_ID: custID })
         let wallet_address = find_chrome_pay_wallet.wallet_Address
         let find_orgs_data = await organisation_Model.find({ _id: orgs }).select({ logo: 1, name: 1, phoneNo: 1 })
-
         return res.status(200).send({ status: true, Chrome_wallet: wallet_address, fuse_wallet_address, find_orgs_data })
-
 
     } catch (error) {
         console.log(error)
