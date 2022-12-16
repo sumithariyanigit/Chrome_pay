@@ -1236,7 +1236,6 @@ const calculate_final_activities = async (req, res) => {
             recharge_amount += i.amount
         }
 
-
         let find_Loan_amoount = await customer_loan_installment.find({ customerID: custID })
 
         let result = []

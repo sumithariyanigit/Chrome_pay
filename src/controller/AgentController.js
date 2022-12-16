@@ -1697,6 +1697,12 @@ const createCustomerByOrg1 = async (req, res, next) => {
         }
 
 
+        if (phone.length < 5) {
+            return res.status(200).send({ status: false, msg: "Please enter valid phone" })
+
+        }
+
+
         let checkPhone = await cutomerModel.findOne({ phone: data.phone })
 
 
@@ -1937,13 +1943,7 @@ const AgentAwaiting = async (req, res) => {
             let totlaRow = filter.length;
 
             return res.status(200).send({ status: true, totlaRow: contRow, currenPage: parseInt(pageNO), filter })
-
-
-
-
         }
-
-
 
         else if (req.body.ID && req.body.ID > 0) {
             let option = [{ _id: req.body.ID }, { phone: req.body.phone }, { status: req.body.status }, { nationality: req.body.nationality }]
@@ -1995,10 +1995,7 @@ const AgentAwaiting = async (req, res) => {
 
             return res.status(200).send({ status: true, totlaRow: contRow3, currenPage: parseInt(pageNO), filter })
 
-
-
         }
-
 
     } catch (error) {
         console.log(error)
@@ -2267,7 +2264,6 @@ const getOrgForLoan = async (req, res) => {
 
 
         let findOrg = await Organisation.find({ isDeleted: 0, blocked: 0 })
-
         return res.status(200).send({ status: true, final })
 
 
@@ -2358,10 +2354,7 @@ const get_document = async (req, res) => {
             return res.status(200).send({ status: true, DOC: false, findDocuments })
         }
 
-
-
         return res.status(200).send({ status: true, DOC: true, findDocuments })
-
 
     } catch (error) {
         console.log(error)
