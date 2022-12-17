@@ -962,7 +962,6 @@ const agenttransectionfillter = async (req, res) => {
                 }
 
                 //return res.status(200).send({ status: true, totlaRow: contRow, currenPage: parseInt(pageNO), filter })
-
             }
 
             return res.status(200).send({ status: true, totlaRow: contRow, currenPage: parseInt(pageNO), result })
@@ -1515,6 +1514,7 @@ const agentDash = async (req, res) => {
 
         let findagent = await agentModel.findOne({ _id: agentID })
 
+        let image = findagent.image
         let agentName = findagent.name;
         let email = findagent.email
         let mobile = findagent.phone
@@ -1562,7 +1562,7 @@ const agentDash = async (req, res) => {
 
         //====================================================================================================
 
-        return res.status(200).send({ status: true, NumberOFUser: NumberOFUser, agentName: agentName, email: email, country: country, mobile: mobile, totalTransection: totalAmount })
+        return res.status(200).send({ status: true, NumberOFUser: NumberOFUser, image: image, agentName: agentName, email: email, country: country, mobile: mobile, totalTransection: totalAmount })
 
     } catch (error) {
         console.log(error)
@@ -4102,8 +4102,6 @@ const viewAgent = async (req, res) => {
         return res.status(200).send({ status: false, msg: error })
     }
 }
-
-
 
 
 
