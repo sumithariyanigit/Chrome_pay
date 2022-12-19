@@ -7,15 +7,20 @@ const orgDoc = new mongoose.Schema({
     organisation_id:{
         type: Schema.Types.ObjectId, ref: 'Organisation'
     },
-    name:{
-        type:String
+    Certificate_of_Incorporation: {
+        type: String
     },
-    type:{
-        type:String
+
+    Proof_of_Company_Address: {
+        type: String
+
     },
-    document:{
-        type:String,
-        default:""
+    Company_Profile_Brochure: {
+        type: String
+
+    },
+    Customer_Agreement: {
+        type: String
     }
 
 },{timestamps:true})

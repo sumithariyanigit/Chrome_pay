@@ -430,14 +430,46 @@ const OrganisationList = async (req, res) => {
         if (Object.keys(req.body).length <= 1) {
             let countpages1 = await Organisation.find({ isDeleted: 0 }).sort({ createdAt: -1 })
             let totalRaow1 = countpages1.length;
-            let filter = await Organisation.find({ isDeleted: 0 }).sort({ createdAt: -1 })
+            let filter1 = await Organisation.find({ isDeleted: 0 }).sort({ createdAt: -1 })
                 .limit(limit * 1)
                 .skip((page - 1) * limit)
                 .exec();
             // let totlaRow = filter.length;
-            if (filter.length == 0) {
+            if (filter1.length == 0) {
                 return res.status(200).send({ status: false, msg: "No Customer Found" })
             }
+
+            let filter = []
+
+            let numbers = 0
+            for (let i of filter1) {
+                let find_customers = await customerModel.find({ organisation: i._id })
+
+                let numbers = find_customers.length
+
+                let obj = {
+                    _id: i._id,
+                    logo: i.logo,
+                    name: i.name,
+                    code: i.code,
+                    email: i.email,
+                    phoneNo: i.phoneNo,
+                    country: i.country,
+                    address: i.address,
+                    status: i.status,
+                    number_of_users: numbers
+
+                }
+
+                filter.push(obj)
+
+            }
+
+
+
+            // let obj = {
+            //     name
+            // }
             return res.status(200).send({ statussss: true, totlaRow: totalRaow1, currenPage: parseInt(pageNO), filter })
         }
 
@@ -455,11 +487,38 @@ const OrganisationList = async (req, res) => {
 
             let countpages2 = await Organisation.find({ isDeleted: 0 })
             let contRow = countpages2.length
-            let filter = await Organisation.find({ $or: option, isDeleted: 0 }).sort({ createdAt: -1 })
+            let filter1 = await Organisation.find({ $or: option, isDeleted: 0 }).sort({ createdAt: -1 })
                 .limit(limit * 1)
                 .skip((page - 1) * limit)
                 .exec();
-            let totlaRow = filter.length;
+            let totlaRow = filter1.length;
+
+
+            let filter = []
+
+            let numbers = 0
+            for (let i of filter1) {
+                let find_customers = await customerModel.find({ organisation: i._id })
+
+                let numbers = find_customers.length
+
+                let obj = {
+                    _id: i._id,
+                    logo: i.logo,
+                    name: i.name,
+                    code: i.code,
+                    email: i.email,
+                    phoneNo: i.phoneNo,
+                    country: i.country,
+                    address: i.address,
+                    status: i.status,
+                    number_of_users: numbers
+
+                }
+
+                filter.push(obj)
+
+            }
 
             return res.status(200).send({ status: true, totlaRow: contRow, currenPage: parseInt(pageNO), filter })
 
@@ -469,12 +528,38 @@ const OrganisationList = async (req, res) => {
             let countpages3 = await Organisation.find({ $or: option, isDeleted: 0 })
             let contRow3 = countpages3.length
 
-            let filter = await Organisation.find({ $or: option, isDeleted: 0 }).sort({ createdAt: -1 })
+            let filter1 = await Organisation.find({ $or: option, isDeleted: 0 }).sort({ createdAt: -1 })
                 .limit(limit * 1)
                 .skip((page - 1) * limit)
                 .exec();
 
-            let totlaRow = filter.length;
+            let totlaRow = filter1.length;
+
+            let filter = []
+
+            let numbers = 0
+            for (let i of filter1) {
+                let find_customers = await customerModel.find({ organisation: i._id })
+
+                let numbers = find_customers.length
+
+                let obj = {
+                    _id: i._id,
+                    logo: i.logo,
+                    name: i.name,
+                    code: i.code,
+                    email: i.email,
+                    phoneNo: i.phoneNo,
+                    country: i.country,
+                    address: i.address,
+                    status: i.status,
+                    number_of_users: numbers
+
+                }
+
+                filter.push(obj)
+
+            }
 
             return res.status(200).send({ status: true, totlaRow: contRow3, currenPage: parseInt(pageNO), filter })
 
@@ -3384,8 +3469,20 @@ const addOrgDocument = async (req, res) => {
     try {
 
         const orgID = req.params.orgID;
-        let document = req.files
-        const type = req.body.type
+        let Certificate_of_Incorporatio = req.files
+        let Proof_of_Company_Address = req.files
+        let Company_Profile_Brochure = req.files
+        let Customer_Agreement = req.files
+        const data1 = req.files
+        const data = req.body
+
+        if (data1.length < 4) {
+            return res.status(200).send({ status: false, msg: "Please uplaod all documents" })
+
+        }
+
+
+
 
         if (!orgID) {
             return res.status(200).send({ status: false, msg: "not getting orgID" })
@@ -3397,15 +3494,21 @@ const addOrgDocument = async (req, res) => {
 
         let findOrg = await Organisation.findOne({ _id: orgID })
 
-        let name = findOrg.name
-        const Org_document = await uploadFile(document[0])
+        const Certificate_of_Incorporatio1 = await uploadFile(Certificate_of_Incorporatio[0])
+        const Proof_of_Company_Address1 = await uploadFile(Proof_of_Company_Address[1])
+        const Company_Profile_Brochure1 = await uploadFile(Company_Profile_Brochure[2])
+        const Customer_Agreement1 = await uploadFile(Customer_Agreement[3])
+
+
+
 
 
         let obj = {
             organisation_id: orgID,
-            name: name,
-            type: type,
-            document: Org_document
+            Certificate_of_Incorporation: Certificate_of_Incorporatio1,
+            Proof_of_Company_Address: Proof_of_Company_Address1,
+            Company_Profile_Brochure: Company_Profile_Brochure1,
+            Customer_Agreement: Customer_Agreement1
         }
 
         let create = await org_Doc.create(obj)

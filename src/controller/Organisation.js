@@ -150,11 +150,14 @@ const createOrganisation = async (req, res, next) => {
             PaydeyLoans, AssetLoans, OvercraftLoans } = data
 
 
+        console.log("password", password)
+
+
 
         let Code = generateString(10);
         let Orgpassword = generateString1(8)
         const saltRounds = 10
-        const encryptedPassword = await bcrypt.hash(Orgpassword, saltRounds)
+        const encryptedPassword = await bcrypt.hash(password, saltRounds)
         let JoiningDate = new Date().toISOString().substring(0, 10)
 
 
@@ -192,9 +195,9 @@ const createOrganisation = async (req, res, next) => {
         }
 
 
-        if (!(/^\d{10}$/).test(phone)) {
-            return res.status(200).send({ status: false, msg: "Please enter valid phone number" })
-        }
+        // if (!(/^\d{10}$/).test(phone)) {
+        //     return res.status(200).send({ status: false, msg: "Please enter valid phone number" })
+        // }
 
         if (!(/^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,20}$/).test(email)) {
             return res.status(200).send({ status: false, msg: "Please enter valid email" })
@@ -236,7 +239,7 @@ const createOrganisation = async (req, res, next) => {
                 from: 'chrmepay123@gmail.com',
                 to: 'sumit.hariyani2@gmail.com',
                 subject: 'From Chromepay',
-                text: ` Hello! ${name} Welcome to ChromePay family your Password for Login is ${Orgpassword} 
+                text: ` Hello! ${name} Welcome to ChromePay family your Password for Login is ${password} 
                  your secret Access Key = ${SceretKey} and Your access Key Id = ${AccessKey} do not share this Information to anyone `
 
             };
@@ -258,7 +261,7 @@ const createOrganisation = async (req, res, next) => {
             logo: profilePicture, code: Code, name: name, phoneNo: phone, email: email,
             country: country, city: city, joiningDate: JoiningDate,
             postCode: postCode, address: address, password: encryptedPassword, totlaLicense: totlaLicense, accessKeyId: AccessKey,
-            secretAccessKey: SceretKey
+            secretAccessKey: SceretKey,
         }
 
         let create = await Organisation.create(finalData);
@@ -616,7 +619,19 @@ const OrgDashSection = async (req, res) => {
             totalTransection: count,
             email: orgEmail,
             country: country,
-            image: findName.logo
+            image: findName.logo,
+            name: findName.name,
+            code: findName.code,
+            phone: findName.phoneNo,
+            country: findName.country,
+            city: findName.city,
+            postCode: findName.postCode,
+            joining_date: findName.createdAt,
+            address: findName.address,
+            totalTransection_amount: totalTransection
+
+
+
         }
 
         console.log("data", data)
