@@ -561,7 +561,7 @@ const organisationsTransection = async (req, res) => {
         let filter = await transectionModel.find({ OrganisationID: organisationID }).sort({ createdAt: -1 }).limit(limit * 1)
             .skip((page - 1) * limit)
             .exec()
-            //.sort({ createdAt: -1 })
+        //.sort({ createdAt: -1 })
 
         return res.status(200).send({ status: true, data: filter })
 
@@ -1637,7 +1637,7 @@ const createCustomerByOrg = async (req, res, next) => {
 
 
 
-       // ------------------------------------Manage - Linked - service----------------------------------------------------------------------
+        // ------------------------------------Manage - Linked - service----------------------------------------------------------------------
 
         let trim = phone.replaceAll(' ', '')
         let remove_character = trim.replace('-', '')
@@ -1649,7 +1649,7 @@ const createCustomerByOrg = async (req, res, next) => {
 
         }
 
-       // ---------------------------------------------------------------------------------------------------------------------------------
+        // ---------------------------------------------------------------------------------------------------------------------------------
 
 
 
@@ -1812,41 +1812,41 @@ let verifyCustomer = async (req, res) => {
         }).then(async respons => {
 
 
-                let data1 = respons.data
+            let data1 = respons.data
             let cust_password = generateString1(10)
 
 
 
             let findCust = await temp_Cust.findOne({ phone: convert_Number })
 
-                let newCust = {
-                    IDphoto: findCust.IDphoto, fullname: findCust.fullname,
-                    dateOfBirth: findCust.dateOfBirth, phone: findCust.phone, city: findCust.city, age: findCust.age,
-                    email: findCust.email, gender: findCust.gender, nationality: findCust.nationality, hash: data1.hash,
-                    owner: data1.response.owner, privateKey: data1.response.privateKey, walletAddress: data1.response.walletAddress,
-                    professoin: findCust.professoin, address: findCust.address, organisation: findCust.organisation,
-                    createdBY: findCust.createdBY, imageDescriptions: findCust.imageDescriptions, Latitude: findCust.Latitude,
-                    Longitude: findCust.Longitude, digitalrefID: findCust.digitalrefID, residance: findCust.residance,
-                    locaDocument: findCust.locaDocument, landRegistration: findCust.landRegistration, landSize: findCust.landSize,
-                    digitalID: findCust.digitalID, nextFOKniPhone: findCust.nextFOKniPhone, nextFOKinName: findCust.nextFOKinName,
-                    assetType: findCust.assetType, assetID: findCust.assetID,
-                    assetAddress: findCust.assetAddress, assetLongitude: findCust.assetLongitude,
-                    assetLatitude: findCust.assetLatitude, password: cust_password, facialIdentification: 1
-                }
+            let newCust = {
+                IDphoto: findCust.IDphoto, fullname: findCust.fullname,
+                dateOfBirth: findCust.dateOfBirth, phone: findCust.phone, city: findCust.city, age: findCust.age,
+                email: findCust.email, gender: findCust.gender, nationality: findCust.nationality, hash: data1.hash,
+                owner: data1.response.owner, privateKey: data1.response.privateKey, walletAddress: data1.response.walletAddress,
+                professoin: findCust.professoin, address: findCust.address, organisation: findCust.organisation,
+                createdBY: findCust.createdBY, imageDescriptions: findCust.imageDescriptions, Latitude: findCust.Latitude,
+                Longitude: findCust.Longitude, digitalrefID: findCust.digitalrefID, residance: findCust.residance,
+                locaDocument: findCust.locaDocument, landRegistration: findCust.landRegistration, landSize: findCust.landSize,
+                digitalID: findCust.digitalID, nextFOKniPhone: findCust.nextFOKniPhone, nextFOKinName: findCust.nextFOKinName,
+                assetType: findCust.assetType, assetID: findCust.assetID,
+                assetAddress: findCust.assetAddress, assetLongitude: findCust.assetLongitude,
+                assetLatitude: findCust.assetLatitude, password: cust_password, facialIdentification: 1
+            }
 
 
 
-                let create = await cutomerModel.create(newCust)
+            let create = await cutomerModel.create(newCust)
 
-                let OrganisationList = await org_Licenses.findOne({ OrganisationID: findCust.organisation })
+            let OrganisationList = await org_Licenses.findOne({ OrganisationID: findCust.organisation })
 
-                let totalLicenses = OrganisationList.totalLicenses
+            let totalLicenses = OrganisationList.totalLicenses
 
-                let findreaminig = await customerModel.find({ organisation: findCust.organisation })
+            let findreaminig = await customerModel.find({ organisation: findCust.organisation })
 
-                let calculateRemainig = totalLicenses - findreaminig.length;
+            let calculateRemainig = totalLicenses - findreaminig.length;
 
-                let Remainig = calculateRemainig
+            let Remainig = calculateRemainig
 
 
 
@@ -1893,12 +1893,12 @@ let verifyCustomer = async (req, res) => {
 
 
             let updateLicenses = await org_Licenses.findOneAndUpdate({ OrganisationID: findCust.organisation }, { RemainingLicenses: Remainig }, { new: true })
-                let cust_wallet = `00x${generateString1(43)}`
-                let obj = {
-                    customer_ID: create._id,
-                    phone: create.phone,
-                    wallet_Address: cust_wallet
-                }
+            let cust_wallet = `00x${generateString1(43)}`
+            let obj = {
+                customer_ID: create._id,
+                phone: create.phone,
+                wallet_Address: cust_wallet
+            }
             let create_Wallet = await cust_wallet_Model.create(obj)
             let delete_cust = await temp_Cust.findOneAndDelete({ phone: convert_Number })
             return res.status(200).send({ status: true, msg: "customer register sucessfully" })
@@ -1909,7 +1909,7 @@ let verifyCustomer = async (req, res) => {
             let delete_cust = await temp_Cust.findOneAndDelete({ phone: convert_Number })
 
             return res.status(200).send({ status: false, error: error.message, msg: "failed please try again" })
-            });
+        });
 
     } catch (error) {
         console.log(error)
@@ -3048,6 +3048,150 @@ const org_blocked = async (req, res) => {
     }
 }
 
+const get_org_cust_data = async (req, res) => {
+    try {
+
+
+        let orgID = req.params.orgID
+
+
+
+        var fromDate = new Date(Date.now() - 334 * 24 * 60 * 60 * 1000);
+
+        let find_cust = await customerModel.find({ organisation: orgID, $or: [{ "createdAt": { $gt: fromDate } }, { "createdAt": { $eq: '' } }] })
+
+        January = 0, February = 0, March = 0, April = 0, May = 0, June = 0, July = 0, August = 0, September = 0, October = 0, November = 0, December = 0
+
+
+
+        for (let i of find_cust) {
+
+            if (i.createdAt.getMonth() + 1 == 1) {
+                January++
+            } else if (i.createdAt.getMonth() + 1 == 2) {
+                February++
+            } else if (i.createdAt.getMonth() + 1 == 3) {
+                March++
+            } else if (i.createdAt.getMonth() + 1 == 4) {
+                April++
+            } else if (i.createdAt.getMonth() + 1 == 5) {
+                May++
+            } else if (i.createdAt.getMonth() + 1 == 6) {
+                June++
+            } else if (i.createdAt.getMonth() + 1 == 7) {
+                July++
+            } else if (i.createdAt.getMonth() + 1 == 8) {
+                August++
+            } else if (i.createdAt.getMonth() + 1 == 9) {
+                September++
+            } else if (i.createdAt.getMonth() + 1 == 10) {
+                October++
+            } else if (i.createdAt.getMonth() + 1 == 11) {
+                November++
+            } else if (i.createdAt.getMonth() + 1 == 12) {
+                December++
+            }
+        }
+
+        let obj = {
+            January: January,
+            February: February,
+            March: March,
+            April: April,
+            May: May,
+            June: June,
+            July: July,
+            August: August,
+            September: September,
+            October: October,
+            November: November,
+            December: December
+        }
+
+        return res.status(200).send({ status: true, obj })
+
+    } catch (error) {
+        console.log(error)
+        return res.status(200).send({ status: false, msg: error.message })
+    }
+}
+
+//--------------------------------get-org-transections------------------------------------------------------------------------------------------
+
+const get_org_transections = async (req, res) => {
+    try {
+
+        const OrgID = req.params.orgID
+
+        console.log(OrgID, "YTYUTY")
+
+        if (!OrgID) {
+            return res.status(200).send({ status: false, msg: "Please enter Organization ID" })
+        }
+
+        var fromDate = new Date(Date.now() - 334 * 24 * 60 * 60 * 1000);
+
+        January = 4585, February = 0, March = 0, April = 0, May = 0, June = 0, July = 0, August = 0, September = 0, October = 0, November = 0, December = 0
+
+
+        let find_Transac = await transectionModel.find({ OrganisationID: OrgID, $or: [{ "createdAt": { $gt: fromDate } }, { "createdAt": { $eq: '' } }] })
+
+        for (let i of find_Transac) {
+
+
+
+            if (i.createdAt.getMonth() + 1 == 1) {
+                January += i.sendingAmount
+            } else if (i.createdAt.getMonth() + 1 == 2) {
+                February += i.sendingAmount
+            } else if (i.createdAt.getMonth() + 1 == 3) {
+                March += i.sendingAmount
+            } else if (i.createdAt.getMonth() + 1 == 4) {
+                April += i.sendingAmount
+            } else if (i.createdAt.getMonth() + 1 == 5) {
+                May += i.sendingAmount
+            } else if (i.createdAt.getMonth() + 1 == 6) {
+                June += i.sendingAmount
+            } else if (i.createdAt.getMonth() + 1 == 7) {
+                July += i.sendingAmount
+            } else if (i.createdAt.getMonth() + 1 == 8) {
+                August += i.sendingAmount
+            } else if (i.createdAt.getMonth() + 1 == 9) {
+                September += i.sendingAmount
+            } else if (i.createdAt.getMonth() + 1 == 10) {
+                October += i.sendingAmount
+            } else if (i.createdAt.getMonth() + 1 == 11) {
+                November += i.sendingAmount
+            } else if (i.createdAt.getMonth() + 1 == 12) {
+                December += i.sendingAmount
+            }
+        }
+
+
+        let obj = {
+            January: January,
+            February: February,
+            March: March,
+            April: April,
+            May: May,
+            June: June,
+            July: July,
+            August: August,
+            September: September,
+            October: October,
+            November: November,
+            December: December
+        }
+
+        return res.status(200).send({ status: true, obj })
+
+
+    } catch (error) {
+        console.log(error)
+        return res.status(200).send({ status: false, msg: error.message })
+    }
+}
+
 
 
 module.exports.createOrganisation = createOrganisation;
@@ -3093,3 +3237,5 @@ module.exports.Blocking_DID_Note = Blocking_DID_Note
 module.exports.Delete_DID_Note = Delete_DID_Note
 module.exports.Org_get_agent_cut_month = Org_get_agent_cut_month
 module.exports.org_blocked_custmers = org_blocked_custmers
+module.exports.get_org_cust_data = get_org_cust_data
+module.exports.get_org_transections = get_org_transections

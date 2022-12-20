@@ -3773,6 +3773,21 @@ const createCustomerByOrg2 = async (req, res) => {
 
         const { landSize, assetType, assetID, } = data
 
+        if (!landSize) {
+            return res.status(200).send({ status: false, service: "Linked", msg: "Please enter land size" })
+
+        }
+
+        if (!assetType) {
+            return res.status(200).send({ status: false, service: "Linked", msg: "Please enter asset type" })
+
+        }
+
+        if (!assetID) {
+            return res.status(200).send({ status: false, service: "Linked", msg: "Please enter asset ID" })
+
+        }
+
      
 
 
