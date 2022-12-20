@@ -2817,16 +2817,63 @@ const OrgCust = async (req, res) => {
             return res.status(200).send({ status: false, msg: "Please enter cust ID" })
         }
 
-        let findORg = await Organisation.findOne({ _id: custID })
+        if (Object.keys(req.body).length <= 1) {
 
-        let name = findORg.name
+            let findORg = await Organisation.findOne({ _id: custID })
 
-        let findCust11 = await customerModel.find({ organisation: custID, isDeleted: 0, blocked: 0 })
-        let findCust = await customerModel.find({ organisation: custID, isDeleted: 0, blocked: 0 }).select({ fullname: 1, dateOfBirth: 1, phone: 1, email: 1, status: 1, walletAddress: 1, digitalID: 1 }).limit(limit * 1)
-            .skip((page - 1) * limit)
-            .exec();
-        let contRow = findCust11.length
-        return res.status(200).send({ status: true, totlaRow: contRow, currenPage: parseInt(pageNO), OrganisationName: name, findCust })
+            let name = findORg.name
+
+            let findCust11 = await customerModel.find({ organisation: custID, isDeleted: 0, blocked: 0 })
+            let findCust = await customerModel.find({ organisation: custID, isDeleted: 0, blocked: 0 }).limit(limit * 1)
+                .skip((page - 1) * limit)
+                .exec();
+            let contRow = findCust11.length
+            return res.status(200).send({ status: true, totlaRow: contRow, currenPage: parseInt(pageNO), OrganisationName: name, findCust })
+
+        }
+
+        else if (req.body.fromDate) {
+
+            let option = [
+
+                {
+                    createdAt: {
+                        $gte: new Date(req.body.fromDate).toISOString(),
+                        $lte: new Date(req.body.toDate).toISOString()
+                    }
+                }
+            ]
+
+
+
+
+            let findORg = await Organisation.findOne({ _id: custID })
+
+            let name = findORg.name
+
+            let findCust11 = await customerModel.find({ $or: option, organisation: custID, isDeleted: 0, blocked: 0 })
+            let findCust = await customerModel.find({ $or: option, organisation: custID, isDeleted: 0, blocked: 0 }).limit(limit * 1)
+                .skip((page - 1) * limit)
+                .exec();
+            let contRow = findCust11.length
+            return res.status(200).send({ status: true, totlaRow: contRow, currenPage: parseInt(pageNO), OrganisationName: name, findCust })
+
+        } else {
+            let option = [{ status: req.body.status }, { fullname: req.body.name }]
+            let findORg = await Organisation.findOne({ _id: custID })
+
+            let name = findORg.name
+
+            let findCust11 = await customerModel.find({ $or: option, organisation: custID, isDeleted: 0, blocked: 0 })
+            let findCust = await customerModel.find({ $or: option, organisation: custID, isDeleted: 0, blocked: 0 }).limit(limit * 1)
+                .skip((page - 1) * limit)
+                .exec();
+            let contRow = findCust11.length
+            return res.status(200).send({ status: true, totlaRow: contRow, currenPage: parseInt(pageNO), OrganisationName: name, findCust })
+
+        }
+
+
 
     } catch (error) {
         console.log(error)
@@ -3492,7 +3539,15 @@ const addOrgDocument = async (req, res) => {
             return res.status(200).send({ status: false, msg: "not getting valid orgID" })
         }
 
+        let check_org = await org_Doc.findOne({ organisation_id: orgID })
+
+        if (check_org) {
+            return res.status(200).send({ status: false, msg: "Documents already Uploaded! go to update documents sections" })
+        }
+
         let findOrg = await Organisation.findOne({ _id: orgID })
+
+
 
         const Certificate_of_Incorporatio1 = await uploadFile(Certificate_of_Incorporatio[0])
         const Proof_of_Company_Address1 = await uploadFile(Proof_of_Company_Address[1])
@@ -4222,6 +4277,33 @@ const get_admin_cust_data_graph = async (req, res) => {
     }
 }
 
+//---------------------------------------view-sub-admin----------------------------------------------------------------------------------------------------
+
+const Sub_admin_profil = async (req, res) => {
+    try {
+
+        const sub_adminID = req.params.sub_adminID
+
+        if (!sub_adminID) {
+            return res.status(200).send({ status: false, msg: error.message })
+        }
+
+        let find = await adminModel.findOne({ _id: sub_adminID })
+
+        return res.status(200).send({ status: true, find })
+
+    } catch (error) {
+        console.log(error)
+        return res.status(200).send({ status: false, msg: error.message })
+    }
+}
+
+
+
+
+
+
+
 module.exports.createAdmin = createAdmin;
 module.exports.AdminLogin = AdminLogin;
 module.exports.getHistory = getHistory;
@@ -4297,5 +4379,6 @@ module.exports.Block_sub_admin = Block_sub_admin
 module.exports.Unblock_sub_admin = Unblock_sub_admin
 module.exports.admin_read_notification = admin_read_notification
 module.exports.get_admin_cust_data_graph = get_admin_cust_data_graph
+module.exports.Sub_admin_profil = Sub_admin_profil
 
 

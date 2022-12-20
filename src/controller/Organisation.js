@@ -3116,9 +3116,9 @@ const get_org_cust_data = async (req, res) => {
     }
 }
 
-//--------------------------------get-org-transections------------------------------------------------------------------------------------------
+//--------------------------------get-org-transections-by-months------------------------------------------------------------------------------------------
 
-const get_org_transections = async (req, res) => {
+const get_org_transections_months = async (req, res) => {
     try {
 
         const OrgID = req.params.orgID
@@ -3131,7 +3131,7 @@ const get_org_transections = async (req, res) => {
 
         var fromDate = new Date(Date.now() - 334 * 24 * 60 * 60 * 1000);
 
-        January = 4585, February = 0, March = 0, April = 0, May = 0, June = 0, July = 0, August = 0, September = 0, October = 0, November = 0, December = 0
+        January = 458507, February = 56900, March = 178555, April = 129000, May = 400000, June = 785000, July = 456000, August = 589000, September = 100000, October = 560047, November = 785454, December = 0
 
 
         let find_Transac = await transectionModel.find({ OrganisationID: OrgID, $or: [{ "createdAt": { $gt: fromDate } }, { "createdAt": { $eq: '' } }] })
@@ -3193,6 +3193,57 @@ const get_org_transections = async (req, res) => {
 }
 
 
+//-----------------------------------get-org-tansections----------------------------------------------------------------------------------
+
+const get_transctions = async (req, res) => {
+    try {
+
+        const orgID = req.params.orgID;
+
+        let pageNO = req.body.page;
+        if (pageNO == 0) {
+            pageNO = 1
+        }
+        const { page = pageNO, limit = 5 } = req.query;
+
+
+        if (!orgID) {
+            return re.status(200).send({ status: false, msg: "Please enter organization ID" })
+        }
+
+        if (Object.keys(req.body).length <= 1) {
+
+
+
+            let findCust11 = await transectionModel.find({ OrganisationID: orgID })
+            let findCust = await transectionModel.find({ OrganisationID: orgID }).sort({ createdAt: -1 })
+                .limit(limit * 1)
+                .skip((page - 1) * limit)
+                .exec();
+            let contRow = findCust11.length
+            return res.status(200).send({ status: true, totlaRow: contRow, currenPage: parseInt(pageNO), findCust })
+
+        } else if (req.body.name) {
+
+            let option = [{ senderName: req.body.name }]
+
+
+            let findCust11 = await transectionModel.find({ $or: option, OrganisationID: orgID })
+            let findCust = await transectionModel.find({ $or: option, OrganisationID: orgID }).sort({ createdAt: -1 })
+                .limit(limit * 1)
+                .skip((page - 1) * limit)
+                .exec();
+            let contRow = findCust11.length
+            return res.status(200).send({ status: true, totlaRow: contRow, currenPage: parseInt(pageNO), findCust })
+        }
+
+    } catch (error) {
+        console.log(error)
+        return res.status(200).send({ status: false, msg: error.message })
+    }
+}
+
+
 
 module.exports.createOrganisation = createOrganisation;
 module.exports.organisationLogin = organisationLogin;
@@ -3238,4 +3289,5 @@ module.exports.Delete_DID_Note = Delete_DID_Note
 module.exports.Org_get_agent_cut_month = Org_get_agent_cut_month
 module.exports.org_blocked_custmers = org_blocked_custmers
 module.exports.get_org_cust_data = get_org_cust_data
-module.exports.get_org_transections = get_org_transections
+module.exports.get_org_transections_months = get_org_transections_months
+module.exports.get_transctions = get_transctions

@@ -86,7 +86,9 @@ const cust_login = async (req, res) => {
         //----------------generate-otp------------------------------------------------------------------------
         let otp = 100000 + Math.floor(Math.random() * 900000);
 
-        let store_otp = await customer_Model.findOneAndUpdate({ phone: phone }, { login_otp: otp })
+        let store_otp = await customer_Model.findOneAndUpdate({ phone: phone }, { login_otp: otp }, { new: true })
+
+        console.log("store_otp", store_otp)
 
 
         const send_mobile_otp = async (req, res) => {

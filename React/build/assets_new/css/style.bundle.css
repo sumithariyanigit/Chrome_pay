@@ -46075,6 +46075,11 @@ html:not([data-theme=dark]) {
   font-size: 18px;
     color: #121111;
 }
+.Acolor
+{
+  font-size: 18px;
+    color: #3c7f8c!important;
+}
 .mr-4
 {
   margin-right: 8px !important;
@@ -47270,4 +47275,8 @@ box-shadow: 0 2.5rem 2rem -2rem hsl(200 50% 20% / 40%);
 /* border: 0.5px dotted gray; */
 
 
+}
+.filter_bg {
+    background: #e3e3e3;
+    box-shadow: 0px 5px 12px 0px rgb(0 0 0 / 38%) !important;
 }

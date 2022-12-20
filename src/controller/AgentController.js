@@ -4119,8 +4119,6 @@ const viewAgent = async (req, res) => {
 }
 
 
-
-
 module.exports.createAgent = createAgent;
 module.exports.agentLogin = agentLogin;
 module.exports.updateAgent = updateAgent;
