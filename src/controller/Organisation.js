@@ -40,7 +40,7 @@ const Blocked_Notes = require("../models/Blocked_DID_Notes");
 const Delete_Notes = require("../models/Delete_DID_Notes");
 const AgentModel = require("../models/AgentModel");
 const Delete_DID_Notes = require("../models/Delete_DID_Notes");
-
+const org_employee = require("../models/org_employees")
 
 
 
@@ -2606,6 +2606,10 @@ const Cust_Linked_Srevice_Org = async (req, res) => {
     try {
 
         const cust_phone = req.body.Phone;
+        let trim = cust_phone.replaceAll(' ', '')
+        let remove_character = trim.replace('-', '')
+        let convert_Number = parseInt(remove_character)
+
         const orgID = req.orgID
         const otp = req.body.otp;
 
@@ -2625,7 +2629,7 @@ const Cust_Linked_Srevice_Org = async (req, res) => {
             return res.status(200).send({ statsu: false, msg: "Please enter OTP " })
         }
 
-        let verify_OTP = await cutomerModel.findOne({ phone: cust_phone })
+        let verify_OTP = await cutomerModel.findOne({ phone: convert_Number })
 
         let all_organisations = verify_OTP.organisation
 
@@ -2637,9 +2641,11 @@ const Cust_Linked_Srevice_Org = async (req, res) => {
             return res.status(200).send({ status: false, msg: "Please enter Valid otp" })
         }
 
-        let update_OTP = await cutomerModel.findOneAndUpdate({ phone: cust_phone }, { $push: { "organisation": orgID } }, { new: true })
+        let update_OTP = await cutomerModel.findOneAndUpdate({ phone: convert_Number }, { $push: { "organisation": orgID } }, { new: true })
 
-        let update_OTP_Again = await cutomerModel.findOneAndUpdate({ phone: cust_phone }, { Linekd_Service_OTP: "000@$#&*" })
+        console.log("update_OTP", update_OTP)
+
+        let update_OTP_Again = await cutomerModel.findOneAndUpdate({ phone: convert_Number }, { Linekd_Service_OTP: "000@$#&*" })
 
         return res.status(200).send({ status: true, msg: `Congratulation now you are also part of ${org_name}`, update_OTP })
 
@@ -3244,6 +3250,146 @@ const get_transctions = async (req, res) => {
 }
 
 
+//-------------------------------------------------create-org_employe------------------------------------------------------------------------------------------------
+
+const create_employe = async (req, res) => {
+    try {
+
+        let orgID = req.orgID
+
+        if (!orgID) {
+            return res.status(200).send({ status: false, msg: "Please enter organization ID" })
+        }
+
+        let data = req.body;
+
+        const { first_name, last_name, phone, email, status, organisation_id,
+            add_customer, approve_customer, block_customer, delete_customer, password, createdigitalID } = data
+
+        let check_phone = await org_employee.findOne({ phone: phone })
+
+        if (check_phone) {
+            return res.status(200).send({ status: false, msg: "Employee already register" })
+
+        }
+
+
+        let check_email = await org_employee.findOne({ email: email })
+        if (check_email) {
+            return res.status(200).send({ status: false, msg: "Employee alrady register" })
+
+        }
+
+        if (!first_name) {
+            return res.status(200).send({ status: false, msg: "Please enter first name" })
+        }
+
+        if (!last_name) {
+            return res.status(200).send({ status: false, msg: "Please enter last name" })
+        }
+
+        if (!phone) {
+            return res.status(200).send({ status: false, msg: "Please enter phone number" })
+        }
+
+        if (!email) {
+            return res.status(200).send({ status: false, msg: "Please enter email" })
+        }
+
+        if (!password) {
+            return res.status(200).send({ status: false, msg: "Please enter password" })
+        }
+
+        let obj = {
+            first_name: first_name,
+            last_name: last_name,
+            phone: phone,
+            email: email,
+            organisation_id: orgID,
+            password: password,
+            employee_roles: {
+                add_customer: add_customer,
+                approve_customer: approve_customer,
+                block_customer: block_customer,
+                delete_customer: delete_customer,
+                createdigitalID: createdigitalID
+            }
+        }
+
+        let create = await org_employee.create(obj)
+
+        if (create) {
+
+            return res.status(200).send({ status: true, msg: "Employee Create Successfully" })
+        }
+
+
+
+
+    } catch (error) {
+        console.log(error)
+        return res.status(200).send({ status: false, msg: error.message })
+    }
+}
+
+//-------------------------------------------------get-employees-------------------------------------------------------------------------------------------
+
+const get_emaployees = async (req, res) => {
+    try {
+
+        let orgID = req.orgID;
+
+
+        let pageNO = req.body.page;
+        if (pageNO == 0) {
+            pageNO = 1
+        }
+        const { page = pageNO, limit = 5 } = req.query;
+
+        if (!orgID) {
+            return res.status(200).send({ status: false, msg: "Server error" })
+        }
+
+        let find1 = await org_employee.find({ organisation_id: orgID })
+        let contRow = find1.length
+        let find = await org_employee.find({ organisation_id: orgID }).sort({ createdAt: -1 })
+            .limit(limit * 1)
+            .skip((page - 1) * limit)
+            .exec();
+
+        return res.status(200).send({ status: true, totlaRow: contRow, currenPage: parseInt(pageNO), find })
+
+    } catch (error) {
+        console.log(error)
+        return res.status(200).send({ status: false, mg: error.message })
+    }
+}
+
+//----------------------------------------get-employee-roles--------------------------------------------------------------------------------------------
+
+const get_employee_roles = async (req, res) => {
+    try {
+
+        const employee_id = req.params.employeeID
+
+        if (!employee_id) {
+            return res.status(200).sen({ status: false, msg: "Please enter employee ID" })
+        }
+
+        let find = await org_employee.findOne({ _id: employee_id })
+
+        return res.status(200).send({ status: true, find })
+
+    } catch (error) {
+        console.log(error)
+        return res.status(200).send({ status: false, msg: error.message })
+    }
+}
+
+
+
+
+
 
 module.exports.createOrganisation = createOrganisation;
 module.exports.organisationLogin = organisationLogin;
@@ -3291,3 +3437,6 @@ module.exports.org_blocked_custmers = org_blocked_custmers
 module.exports.get_org_cust_data = get_org_cust_data
 module.exports.get_org_transections_months = get_org_transections_months
 module.exports.get_transctions = get_transctions
+module.exports.create_employe = create_employe
+module.exports.get_emaployees = get_emaployees
+module.exports.get_employee_roles = get_employee_roles

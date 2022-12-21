@@ -3002,12 +3002,16 @@ const Cust_Linked_Srevice_send_OTP = async (req, res) => {
     try {
 
         const cust_phone = req.body.Phone;
+        console.log("cust_phone", cust_phone)
+        let trim = cust_phone.replaceAll(' ', '')
+        let remove_character = trim.replace('-', '')
+        let convert_Number = parseInt(remove_character)
 
         if (!cust_phone) {
             return res.status(200).send({ status: false, msg: "Please enter user phone number" })
         }
 
-        let check_cust = await cutomerModel.findOne({ phone: cust_phone })
+        let check_cust = await cutomerModel.findOne({ phone: convert_Number })
 
         if (!check_cust) {
             return res.status(200).send({ status: false, msg: "customer not regiater please register first" })
@@ -3019,7 +3023,7 @@ const Cust_Linked_Srevice_send_OTP = async (req, res) => {
 
         const send_mobile_otp = async (req, res) => {
 
-            let mobile = cust_phone;
+            let mobile = convert_Number;
             let otp = OTP;
 
             let url = `http://sms.bulksmsind.in/v2/sendSMS?username=d49games&message=Dear+user+your+registration+OTP+for+D49+is+${otp}+GLDCRW&sendername=GLDCRW&smstype=TRANS&numbers=${mobile}&apikey=b1b6190c-c609-4add-b03d-ab3a22e9d635&peid=1701165034632151350&%20templateid=1707165155715063574`;
@@ -3036,7 +3040,7 @@ const Cust_Linked_Srevice_send_OTP = async (req, res) => {
 
         send_mobile_otp();
 
-        let update_OTP = await cutomerModel.findOneAndUpdate({ phone: cust_phone }, { Linekd_Service_OTP: OTP })
+        let update_OTP = await cutomerModel.findOneAndUpdate({ phone: convert_Number }, { Linekd_Service_OTP: OTP })
 
         return res.status(200).send({ status: true, msg: "OTP send succesfully" })
 

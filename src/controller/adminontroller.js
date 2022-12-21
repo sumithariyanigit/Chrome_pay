@@ -457,6 +457,7 @@ const OrganisationList = async (req, res) => {
                     country: i.country,
                     address: i.address,
                     status: i.status,
+                    createdAt: i.createdAt,
                     number_of_users: numbers
 
                 }
@@ -600,10 +601,68 @@ const AdminCustomerList = async (req, res) => {
         if (Object.keys(req.body).length <= 1) {
             let countpages1 = await customerModel.find({ isDeleted: 0, blocked: 0, status: "verified" }).sort({ createdAt: 1 })
             let totalRaow1 = countpages1.length;
-            let filter = await customerModel.find({ isDeleted: 0, blocked: 0, status: "verified" }).sort({ createdAt: -1 })
+            let filter1 = await customerModel.find({ isDeleted: 0, blocked: 0, status: "verified" }).sort({ createdAt: -1 })
                 .limit(limit * 1)
                 .skip((page - 1) * limit)
                 .exec();
+
+
+            let filter = []
+            for (let i of filter1) {
+
+
+                let org_id = i.organisation.shift()
+                let find_org = await Organisation.findOne({ _id: org_id })
+                let org_name = find_org.name
+
+
+
+
+                let filter2 = {
+                    _id: i._id,
+                    IDphoto: i.IDphoto,
+                    fullname: i.fullname,
+                    dateOfBirth: i.dateOfBirth,
+                    phone: i.phone,
+                    city: i.city,
+                    age: i.age,
+                    email: i.email,
+                    gender: i.gender,
+                    nationality: i.nationality,
+                    hash: i.hash,
+                    owner: i.owner,
+                    privateKey: i.privateKey,
+                    walletAddress: i.walletAddress,
+                    professoin: i.professoin,
+                    address: i.address,
+                    organisation: i.organisation,
+                    createdBY: i.createdBY,
+                    imageDescriptions: i.imageDescriptions,
+                    Latitude: i.Latitude,
+                    Longitude: i.Longitude,
+                    digitalrefID: i.digitalrefID,
+                    residance: i.residance,
+                    locaDocument: i.locaDocument,
+                    landRegistration: i.landRegistration,
+                    landSize: i.landSize,
+                    digitalID: i.digitalID,
+                    nextFOKniPhone: i.nextFOKniPhone,
+                    nextFOKinName: i.nextFOKinName,
+                    assetType: i.assetType,
+                    assetID: i.assetID,
+                    assetAddress: i.assetAddress,
+                    assetLongitude: i.assetLongitude,
+                    assetLatitude: i.assetLatitude,
+                    password: i.password,
+                    facialIdentification: i.facialIdentification,
+                    biometric: i.biometric,
+                    organisation_name: org_name,
+                    status: i.status
+
+                }
+                filter.push(filter2)
+
+            }
 
             return res.status(200).send({ statussss: true, totlaRow: totalRaow1, currenPage: parseInt(pageNO), filter })
         } else if (req.body.nationality || req.body.status) {
@@ -611,11 +670,70 @@ const AdminCustomerList = async (req, res) => {
 
             let countpages2 = await customerModel.find({ $or: option, isDeleted: 0, blocked: 0, status: "verified" })
             let contRow = countpages2.length
-            let filter = await customerModel.find({ $or: option, isDeleted: 0, blocked: 0, status: "verified" }).sort({ createdAt: -1 })
+            let filter1 = await customerModel.find({ $or: option, isDeleted: 0, blocked: 0, status: "verified" }).sort({ createdAt: -1 })
                 .limit(limit * 1)
                 .skip((page - 1) * limit)
                 .exec();
-            let totlaRow = filter.length;
+            let totlaRow = filter1.length;
+
+
+            let filter = []
+            for (let i of filter1) {
+
+
+                let org_id = i.organisation.shift()
+                let find_org = await Organisation.findOne({ _id: org_id })
+                let org_name = find_org.name
+
+
+
+
+                let filter2 = {
+                    _id: i._id,
+                    IDphoto: i.IDphoto,
+                    fullname: i.fullname,
+                    dateOfBirth: i.dateOfBirth,
+                    phone: i.phone,
+                    city: i.city,
+                    age: i.age,
+                    email: i.email,
+                    gender: i.gender,
+                    nationality: i.nationality,
+                    hash: i.hash,
+                    owner: i.owner,
+                    privateKey: i.privateKey,
+                    walletAddress: i.walletAddress,
+                    professoin: i.professoin,
+                    address: i.address,
+                    organisation: i.organisation,
+                    createdBY: i.createdBY,
+                    imageDescriptions: i.imageDescriptions,
+                    Latitude: i.Latitude,
+                    Longitude: i.Longitude,
+                    digitalrefID: i.digitalrefID,
+                    residance: i.residance,
+                    locaDocument: i.locaDocument,
+                    landRegistration: i.landRegistration,
+                    landSize: i.landSize,
+                    digitalID: i.digitalID,
+                    nextFOKniPhone: i.nextFOKniPhone,
+                    nextFOKinName: i.nextFOKinName,
+                    assetType: i.assetType,
+                    assetID: i.assetID,
+                    assetAddress: i.assetAddress,
+                    assetLongitude: i.assetLongitude,
+                    assetLatitude: i.assetLatitude,
+                    password: i.password,
+                    facialIdentification: i.facialIdentification,
+                    biometric: i.biometric,
+                    organisation_name: org_name,
+                    status: i.status
+
+                }
+                filter.push(filter2)
+
+            }
+
 
             return res.status(200).send({ status: true, totlaRow: contRow, currenPage: parseInt(pageNO), filter })
 
@@ -632,11 +750,69 @@ const AdminCustomerList = async (req, res) => {
 
             let countpages2 = await customerModel.find({ $or: option, isDeleted: 0, blocked: 0, status: "verified" })
             let contRow = countpages2.length
-            let filter = await customerModel.find({ $or: option, isDeleted: 0, blocked: 0, status: "verified" }).sort({ createdAt: -1 })
+            let filter1 = await customerModel.find({ $or: option, isDeleted: 0, blocked: 0, status: "verified" }).sort({ createdAt: -1 })
                 .limit(limit * 1)
                 .skip((page - 1) * limit)
                 .exec();
-            let totlaRow = filter.length;
+            let totlaRow = filter1.length;
+
+            let filter = []
+            for (let i of filter1) {
+
+
+                let org_id = i.organisation.shift()
+                let find_org = await Organisation.findOne({ _id: org_id })
+                let org_name = find_org.name
+
+
+
+
+                let filter2 = {
+                    _id: i._id,
+                    IDphoto: i.IDphoto,
+                    fullname: i.fullname,
+                    dateOfBirth: i.dateOfBirth,
+                    phone: i.phone,
+                    city: i.city,
+                    age: i.age,
+                    email: i.email,
+                    gender: i.gender,
+                    nationality: i.nationality,
+                    hash: i.hash,
+                    owner: i.owner,
+                    privateKey: i.privateKey,
+                    walletAddress: i.walletAddress,
+                    professoin: i.professoin,
+                    address: i.address,
+                    organisation: i.organisation,
+                    createdBY: i.createdBY,
+                    imageDescriptions: i.imageDescriptions,
+                    Latitude: i.Latitude,
+                    Longitude: i.Longitude,
+                    digitalrefID: i.digitalrefID,
+                    residance: i.residance,
+                    locaDocument: i.locaDocument,
+                    landRegistration: i.landRegistration,
+                    landSize: i.landSize,
+                    digitalID: i.digitalID,
+                    nextFOKniPhone: i.nextFOKniPhone,
+                    nextFOKinName: i.nextFOKinName,
+                    assetType: i.assetType,
+                    assetID: i.assetID,
+                    assetAddress: i.assetAddress,
+                    assetLongitude: i.assetLongitude,
+                    assetLatitude: i.assetLatitude,
+                    password: i.password,
+                    facialIdentification: i.facialIdentification,
+                    biometric: i.biometric,
+                    organisation_name: org_name,
+                    status: i.status
+
+                }
+                filter.push(filter2)
+
+            }
+
 
             return res.status(200).send({ status: true, totlaRow: contRow, currenPage: parseInt(pageNO), filter })
 
@@ -648,11 +824,69 @@ const AdminCustomerList = async (req, res) => {
         else if (req.body.ID.length <= 0 && req.body.phone.length <= 0 && req.body.phone.length <= 0 && req.body.status.length <= 0 && req.body.nationality.length <= 0 && req.body.fromDate.length <= 0 && req.body.toDate.length <= 0) {
             let countpages2 = await customerModel.find({ isDeleted: 0, blocked: 0, status: "verified" })
             let contRow = countpages2.length
-            let filter = await customerModel.find({ isDeleted: 0, blocked: 0, status: "verified" }).sort({ createdAt: -1 })
+            let filter1 = await customerModel.find({ isDeleted: 0, blocked: 0, status: "verified" }).sort({ createdAt: -1 })
                 .limit(limit * 1)
                 .skip((page - 1) * limit)
                 .exec();
-            let totlaRow = filter.length;
+            let totlaRow = filter1.length;
+
+            let filter = []
+            for (let i of filter1) {
+
+
+                let org_id = i.organisation.shift()
+                let find_org = await Organisation.findOne({ _id: org_id })
+                let org_name = find_org.name
+
+
+
+
+                let filter2 = {
+                    _id: i._id,
+                    IDphoto: i.IDphoto,
+                    fullname: i.fullname,
+                    dateOfBirth: i.dateOfBirth,
+                    phone: i.phone,
+                    city: i.city,
+                    age: i.age,
+                    email: i.email,
+                    gender: i.gender,
+                    nationality: i.nationality,
+                    hash: i.hash,
+                    owner: i.owner,
+                    privateKey: i.privateKey,
+                    walletAddress: i.walletAddress,
+                    professoin: i.professoin,
+                    address: i.address,
+                    organisation: i.organisation,
+                    createdBY: i.createdBY,
+                    imageDescriptions: i.imageDescriptions,
+                    Latitude: i.Latitude,
+                    Longitude: i.Longitude,
+                    digitalrefID: i.digitalrefID,
+                    residance: i.residance,
+                    locaDocument: i.locaDocument,
+                    landRegistration: i.landRegistration,
+                    landSize: i.landSize,
+                    digitalID: i.digitalID,
+                    nextFOKniPhone: i.nextFOKniPhone,
+                    nextFOKinName: i.nextFOKinName,
+                    assetType: i.assetType,
+                    assetID: i.assetID,
+                    assetAddress: i.assetAddress,
+                    assetLongitude: i.assetLongitude,
+                    assetLatitude: i.assetLatitude,
+                    password: i.password,
+                    facialIdentification: i.facialIdentification,
+                    biometric: i.biometric,
+                    organisation_name: org_name,
+                    status: i.status
+
+                }
+                filter.push(filter2)
+
+            }
+
 
             return res.status(200).send({ status: true, totlaRow: contRow, currenPage: parseInt(pageNO), filter })
         }
@@ -663,11 +897,69 @@ const AdminCustomerList = async (req, res) => {
 
             let countpages2 = await customerModel.find({ $or: option, isDeleted: 0, blocked: 0, status: "verified" })
             let contRow = countpages2.length
-            let filter = await customerModel.find({ $or: option, isDeleted: 0, blocked: 0, status: "verified" }).sort({ createdAt: -1 })
+            let filter1 = await customerModel.find({ $or: option, isDeleted: 0, blocked: 0, status: "verified" }).sort({ createdAt: -1 })
                 .limit(limit * 1)
                 .skip((page - 1) * limit)
                 .exec();
-            let totlaRow = filter.length;
+            let totlaRow = filter1.length;
+
+            let filter = []
+            for (let i of filter1) {
+
+
+                let org_id = i.organisation.shift()
+                let find_org = await Organisation.findOne({ _id: org_id })
+                let org_name = find_org.name
+
+
+
+
+                let filter2 = {
+                    _id: i._id,
+                    IDphoto: i.IDphoto,
+                    fullname: i.fullname,
+                    dateOfBirth: i.dateOfBirth,
+                    phone: i.phone,
+                    city: i.city,
+                    age: i.age,
+                    email: i.email,
+                    gender: i.gender,
+                    nationality: i.nationality,
+                    hash: i.hash,
+                    owner: i.owner,
+                    privateKey: i.privateKey,
+                    walletAddress: i.walletAddress,
+                    professoin: i.professoin,
+                    address: i.address,
+                    organisation: i.organisation,
+                    createdBY: i.createdBY,
+                    imageDescriptions: i.imageDescriptions,
+                    Latitude: i.Latitude,
+                    Longitude: i.Longitude,
+                    digitalrefID: i.digitalrefID,
+                    residance: i.residance,
+                    locaDocument: i.locaDocument,
+                    landRegistration: i.landRegistration,
+                    landSize: i.landSize,
+                    digitalID: i.digitalID,
+                    nextFOKniPhone: i.nextFOKniPhone,
+                    nextFOKinName: i.nextFOKinName,
+                    assetType: i.assetType,
+                    assetID: i.assetID,
+                    assetAddress: i.assetAddress,
+                    assetLongitude: i.assetLongitude,
+                    assetLatitude: i.assetLatitude,
+                    password: i.password,
+                    facialIdentification: i.facialIdentification,
+                    biometric: i.biometric,
+                    organisation_name: org_name,
+                    status: i.status
+
+                }
+                filter.push(filter2)
+
+            }
+
 
             return res.status(200).send({ status: true, totlaRow: contRow, currenPage: parseInt(pageNO), filter })
 
@@ -681,11 +973,70 @@ const AdminCustomerList = async (req, res) => {
 
             let countpages2 = await customerModel.find({ $or: option, isDeleted: 0, blocked: 0, status: "verified" })
             let contRow = countpages2.length
-            let filter = await customerModel.find({ $or: option, isDeleted: 0, blocked: 0, status: "verified" }).sort({ createdAt: -1 })
+            let filter1 = await customerModel.find({ $or: option, isDeleted: 0, blocked: 0, status: "verified" }).sort({ createdAt: -1 })
                 .limit(limit * 1)
                 .skip((page - 1) * limit)
                 .exec();
-            let totlaRow = filter.length;
+            let totlaRow = filter1.length;
+
+
+            let filter = []
+            for (let i of filter1) {
+
+
+                let org_id = i.organisation.shift()
+                let find_org = await Organisation.findOne({ _id: org_id })
+                let org_name = find_org.name
+
+
+
+
+                let filter2 = {
+                    _id: i._id,
+                    IDphoto: i.IDphoto,
+                    fullname: i.fullname,
+                    dateOfBirth: i.dateOfBirth,
+                    phone: i.phone,
+                    city: i.city,
+                    age: i.age,
+                    email: i.email,
+                    gender: i.gender,
+                    nationality: i.nationality,
+                    hash: i.hash,
+                    owner: i.owner,
+                    privateKey: i.privateKey,
+                    walletAddress: i.walletAddress,
+                    professoin: i.professoin,
+                    address: i.address,
+                    organisation: i.organisation,
+                    createdBY: i.createdBY,
+                    imageDescriptions: i.imageDescriptions,
+                    Latitude: i.Latitude,
+                    Longitude: i.Longitude,
+                    digitalrefID: i.digitalrefID,
+                    residance: i.residance,
+                    locaDocument: i.locaDocument,
+                    landRegistration: i.landRegistration,
+                    landSize: i.landSize,
+                    digitalID: i.digitalID,
+                    nextFOKniPhone: i.nextFOKniPhone,
+                    nextFOKinName: i.nextFOKinName,
+                    assetType: i.assetType,
+                    assetID: i.assetID,
+                    assetAddress: i.assetAddress,
+                    assetLongitude: i.assetLongitude,
+                    assetLatitude: i.assetLatitude,
+                    password: i.password,
+                    facialIdentification: i.facialIdentification,
+                    biometric: i.biometric,
+                    organisation_name: org_name,
+                    status: i.status
+
+                }
+                filter.push(filter2)
+
+            }
+
 
             return res.status(200).send({ status: true, totlaRow: contRow, currenPage: parseInt(pageNO), filter })
 
@@ -701,12 +1052,69 @@ const AdminCustomerList = async (req, res) => {
             let countpages3 = await customerModel.find({ $or: option, blocked: 0, status: "verified" })
             let contRow3 = countpages3.length
 
-            let filter = await customerModel.find({ $or: option, isDeleted: 0, blocked: 0, status: "verified" }).sort({ createdAt: -1 })
+            let filter1 = await customerModel.find({ $or: option, isDeleted: 0, blocked: 0, status: "verified" }).sort({ createdAt: -1 })
                 .limit(limit * 1)
                 .skip((page - 1) * limit)
                 .exec();
 
-            let totlaRow = filter.length;
+            let totlaRow = filter1.length;
+
+            let filter = []
+            for (let i of filter1) {
+
+
+                let org_id = i.organisation.shift()
+                let find_org = await Organisation.findOne({ _id: org_id })
+                let org_name = find_org.name
+
+
+
+
+                let filter2 = {
+                    _id: i._id,
+                    IDphoto: i.IDphoto,
+                    fullname: i.fullname,
+                    dateOfBirth: i.dateOfBirth,
+                    phone: i.phone,
+                    city: i.city,
+                    age: i.age,
+                    email: i.email,
+                    gender: i.gender,
+                    nationality: i.nationality,
+                    hash: i.hash,
+                    owner: i.owner,
+                    privateKey: i.privateKey,
+                    walletAddress: i.walletAddress,
+                    professoin: i.professoin,
+                    address: i.address,
+                    organisation: i.organisation,
+                    createdBY: i.createdBY,
+                    imageDescriptions: i.imageDescriptions,
+                    Latitude: i.Latitude,
+                    Longitude: i.Longitude,
+                    digitalrefID: i.digitalrefID,
+                    residance: i.residance,
+                    locaDocument: i.locaDocument,
+                    landRegistration: i.landRegistration,
+                    landSize: i.landSize,
+                    digitalID: i.digitalID,
+                    nextFOKniPhone: i.nextFOKniPhone,
+                    nextFOKinName: i.nextFOKinName,
+                    assetType: i.assetType,
+                    assetID: i.assetID,
+                    assetAddress: i.assetAddress,
+                    assetLongitude: i.assetLongitude,
+                    assetLatitude: i.assetLatitude,
+                    password: i.password,
+                    facialIdentification: i.facialIdentification,
+                    biometric: i.biometric,
+                    organisation_name: org_name,
+                    status: i.status
+                }
+                filter.push(filter2)
+
+            }
+
 
             return res.status(200).send({ status: true, totlaRow: contRow3, currenPage: parseInt(pageNO), filter })
 
@@ -1602,7 +2010,7 @@ const updatelimits = async (req, res) => {
             return res.status(200).send({ status: false, msg: "Please enter admin password limit" })
         }
 
-        
+
 
         if (!agentpasswordlimit) {
             return res.status(200).send({ status: false, msg: "Please enter agent password limit" })
@@ -2811,7 +3219,7 @@ const OrgCust = async (req, res) => {
         if (pageNO == 0) {
             pageNO = 1
         }
-        const { page = pageNO, limit = 10 } = req.query;
+        const { page = pageNO, limit = 5 } = req.query;
 
         if (!custID) {
             return res.status(200).send({ status: false, msg: "Please enter cust ID" })
@@ -4298,6 +4706,46 @@ const Sub_admin_profil = async (req, res) => {
     }
 }
 
+//---------------------------------------all-agents---------------------------------------------------------------------------------------------------------
+
+const view_all_agents = async (req, res) => {
+    try {
+
+        let pageNO = req.body.page;
+        if (pageNO == 0) {
+            pageNO = 1
+        }
+        const { page = pageNO, limit = 10 } = req.query;
+
+
+        if (Object.keys(req.body).length <= 1) {
+            let find_length = await agentModel.find({ isDeleted: 0, blocked: 0 })
+            let contRow = find_length.length
+            let find = await agentModel.find({ isDeleted: 0, blocked: 0 }).sort({ time: -1 })
+                .limit(limit * 1)
+                .skip((page - 1) * limit)
+                .exec();
+            return res.status(200).send({ status: true, totlaRow: contRow, currenPage: parseInt(pageNO), find })
+        } else {
+            let options = [{ name: req.body.name }, { phone: req.body.phone }]
+
+            let find_length = await agentModel.find({ isDeleted: 0, blocked: 0 })
+            let contRow = find_length.length
+            let find = await agentModel.find({ $or: options, isDeleted: 0, blocked: 0 }).sort({ time: -1 })
+                .limit(limit * 1)
+                .skip((page - 1) * limit)
+                .exec();
+            return res.status(200).send({ status: true, totlaRow: contRow, currenPage: parseInt(pageNO), find })
+        }
+
+
+
+    } catch (error) {
+        console.log(error)
+        return res.status(200).send({ status: false, msg: error.message })
+    }
+}
+
 
 
 
@@ -4380,5 +4828,6 @@ module.exports.Unblock_sub_admin = Unblock_sub_admin
 module.exports.admin_read_notification = admin_read_notification
 module.exports.get_admin_cust_data_graph = get_admin_cust_data_graph
 module.exports.Sub_admin_profil = Sub_admin_profil
+module.exports.view_all_agents = view_all_agents
 
 

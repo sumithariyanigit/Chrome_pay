@@ -1442,6 +1442,7 @@ router.post("/Unblock_sub_admin/:sub_admin_ID", adminController.Unblock_sub_admi
 router.post("/admin_read_notification/:ID", adminController.admin_read_notification)
 router.post("/get_admin_cust_data_graph", adminController.get_admin_cust_data_graph)
 router.get("/Sub_admin_profil/:sub_adminID", adminController.Sub_admin_profil)
+router.post("/view_all_agents", adminController.view_all_agents)
 
 //---------------Transaction----------------------------------
 
@@ -1496,6 +1497,10 @@ router.post("/org_blocked_custmers/:token", OrgAuth.auth, Organisation.org_block
 router.post("/get_org_cust_data/:orgID", Organisation.get_org_cust_data)
 router.get("/get_org_transections_months/:orgID", Organisation.get_org_transections_months)
 router.post("/get_transctions/:orgID", Organisation.get_transctions)
+router.post("/create_employe/:token", OrgAuth.auth, Organisation.create_employe)
+router.get("/get_emaployees/:token", OrgAuth.auth, Organisation.get_emaployees)
+router.get("/get_employee_roles/:employeeID", Organisation.get_employee_roles)
+
 
 
 
