@@ -3784,15 +3784,15 @@ const createCustomerByOrg2 = async (req, res) => {
 
         }
 
-        if (!assetType) {
-            return res.status(200).send({ status: false, msg: "Please enter asset type" })
+        // if (!assetType) {
+        //     return res.status(200).send({ status: false, msg: "Please enter asset type" })
 
-        }
+        // }
 
-        if (!assetID) {
-            return res.status(200).send({ status: false, msg: "Please enter asset ID" })
+        // if (!assetID) {
+        //     return res.status(200).send({ status: false, msg: "Please enter asset ID" })
 
-        }
+        // }
 
      
 
@@ -3841,7 +3841,7 @@ const createCustomerByOrg2 = async (req, res) => {
 
     } catch (error) {
         console.log(error)
-        return res.status(200).send({ status: false, msg: error.message })
+        return res.status(200).send({ status: false, msg: "server error" })
     }
 }
 
