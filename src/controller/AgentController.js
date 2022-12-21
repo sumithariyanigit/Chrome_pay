@@ -3784,15 +3784,15 @@ const createCustomerByOrg2 = async (req, res) => {
 
         }
 
-        // if (!assetType) {
-        //     return res.status(200).send({ status: false, msg: "Please enter asset type" })
+        if (!assetType) {
+            return res.status(200).send({ status: false, msg: "Please enter asset type" })
 
-        // }
+        }
 
-        // if (!assetID) {
-        //     return res.status(200).send({ status: false, msg: "Please enter asset ID" })
+        if (!assetID) {
+            return res.status(200).send({ status: false, msg: "Please enter asset ID" })
 
-        // }
+        }
 
      
 
@@ -3825,6 +3825,7 @@ const createCustomerByOrg2 = async (req, res) => {
                 
 
                 let res = await axios.post('http://13.127.64.68:7008/api/mainnet/getUserData', payload);
+                //console.log(res, "123123")
                 let data1 = res.data;
 
             }
