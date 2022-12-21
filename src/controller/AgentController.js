@@ -3768,6 +3768,8 @@ const createCustomerByOrg2 = async (req, res) => {
 
         const cheack_cus = await cutomerModel.findOne({ phone: phone_number })
 
+        console.log("cheack_cus", cheack_cus)
+
         if (cheack_cus) {
             return res.status(200).send({ status: false, service: "Linked", msg: "Customer already register, you want to linked service" })
         }
@@ -3778,17 +3780,17 @@ const createCustomerByOrg2 = async (req, res) => {
         const { landSize, assetType, assetID, } = data
 
         if (!landSize) {
-            return res.status(200).send({ status: false, service: "Linked", msg: "Please enter land size" })
+            return res.status(200).send({ status: false, msg: "Please enter land size" })
 
         }
 
         if (!assetType) {
-            return res.status(200).send({ status: false, service: "Linked", msg: "Please enter asset type" })
+            return res.status(200).send({ status: false, msg: "Please enter asset type" })
 
         }
 
         if (!assetID) {
-            return res.status(200).send({ status: false, service: "Linked", msg: "Please enter asset ID" })
+            return res.status(200).send({ status: false, msg: "Please enter asset ID" })
 
         }
 
