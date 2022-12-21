@@ -150,13 +150,13 @@ const pre_cust_Face_ditect = async (req, res) => {
         const resizedDetections = faceapi.resizeResults(detections, displaySize);
         const results = resizedDetections.map((d) => faceMatcher.findBestMatch(d.descriptor));
         if (results.length == 0) {
-            return res.status(200).send({ status: false, msg: "Please enter valid Image" })
+            return res.status(200).send({ status: true, msg: "Face identify Successfully" })
         }
         for (let items of results) {
             if (items._label === "unknown") {
                 return res.status(200).send({ status: true, msg: "Face identify Successfully" })
             } else {
-                return res.status(200).send({ status: false, msg: "Face already register ", results })
+                return res.status(200).send({ status: true, msg: "Face identify Successfully ", results })
             }
 
         }
