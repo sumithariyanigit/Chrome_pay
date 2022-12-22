@@ -4625,14 +4625,23 @@ const get_admin_cust_data_graph = async (req, res) => {
 
 
         var fromDate = new Date(Date.now() - 334 * 24 * 60 * 60 * 1000);
+        var date = new Date();
+        let curr_year = date.getFullYear();
+        console.log("curr_Year", curr_year - 1)
 
-        let find_cust = await customerModel.find({ $or: [{ "createdAt": { $gt: fromDate } }, { "createdAt": { $eq: '' } }] })
+
+        let find_cust_Months = await customerModel.find({ $or: [{ "createdAt": { $gt: fromDate } }, { "createdAt": { $eq: '' } }] })
+        let find_cust_Years = await customerModel.find();
 
         January = 0, February = 0, March = 0, April = 0, May = 0, June = 0, July = 0, August = 0, September = 0, October = 0, November = 0, December = 0
+        // 2018 = 0, 2019 = 0, 2020 = 0, 2021 = 0, 2022 = 0, 2023 = 0, 2024 = 0, 2025 = 0, 2026 = 0
+
+        let years = [{ id: 2018, eightneen: 0 }, { id: 2019, ninteen: 0 }, { id: 2020, twenty: 0 }, { id: 2021, twentyone: 0 },
+        { id: 2022, twentwo: 0 }, { id: 2023, twentythree: 0 }, { id: 2024, twentyfour: 0 }, { id: 2025, twentyfive: 0 }, { id: 2026, twentysix: 0 }]
 
 
 
-        for (let i of find_cust) {
+        for (let i of find_cust_Months) {
 
             if (i.createdAt.getMonth() + 1 == 1) {
                 January++
@@ -4661,6 +4670,49 @@ const get_admin_cust_data_graph = async (req, res) => {
             }
         }
 
+        for (let i of find_cust_Years) {
+
+            if (i.createdAt.getFullYear() == 2018) {
+                objIndex = years.findIndex((obj => obj.id == 2018));
+                years[objIndex].eightneen += 1
+            }
+            else if (i.createdAt.getFullYear() == 2019) {
+
+                objIndex = years.findIndex((obj => obj.id == 2019));
+                years[objIndex].ninteen += 1
+            } else if (i.createdAt.getFullYear() == 2020) {
+
+                objIndex = years.findIndex((obj => obj.id == 2020));
+                years[objIndex].twenty += 1
+
+            } else if (i.createdAt.getFullYear() == 2021) {
+                objIndex = years.findIndex((obj => obj.id == 2021));
+                years[objIndex].twentyone += 1
+
+            } else if (i.createdAt.getFullYear() == 2022) {
+                objIndex = years.findIndex((obj => obj.id == 2022));
+                years[objIndex].twentwo += 1
+
+            } else if (i.createdAt.getFullYear() == 2023) {
+                objIndex = years.findIndex((obj => obj.id == 2023));
+                years[objIndex].twentythree += 1
+
+            } else if (i.createdAt.getFullYear() == 2024) {
+                objIndex = years.findIndex((obj => obj.id == 2024));
+                years[objIndex].twentyfour += 1
+
+            } else if (i.createdAt.getFullYear() == 2025) {
+                objIndex = years.findIndex((obj => obj.id == 2025));
+                years[objIndex].twentyfive += 1
+
+            } else if (i.createdAt.getFullYear() == 2026) {
+                objIndex = years.findIndex((obj => obj.id == 2026));
+                years[objIndex].twentysix += 1
+
+            }
+        }
+
+        console.log("years", years)
 
         let obj = {
             January: January,
@@ -4676,6 +4728,41 @@ const get_admin_cust_data_graph = async (req, res) => {
             November: November,
             December: December
         }
+
+
+        let result = []
+        for (let i of years) {
+            let obj = {
+                2018: i.eightneen,
+                2019: i.ninteen,
+                2020: i.twenty,
+                2021: i.twentyone,
+                2022: i.twentwo,
+                2023: i.twentythree,
+                2024: i.twentyfour,
+                2025: i.twentyfive,
+                2026: i.twentysix
+            }
+
+            result.push(obj)
+        }
+
+        console.log(result)
+
+
+        // let Year_obj = {
+        //     2018: 2018,
+        //     2019: 2019,
+        //     2020: 2020,
+        //     2021: 2021,
+        //     2022: 2022,
+        //     2023: 2023,
+        //     2024: 2024,
+        //     2025: 2025,
+        //     2026: 2026
+        // }
+
+        // conosle.log(Year_obj)
 
         return res.status(200).send({ status: true, obj })
 
