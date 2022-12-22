@@ -3137,7 +3137,7 @@ const get_org_transections_months = async (req, res) => {
 
         var fromDate = new Date(Date.now() - 334 * 24 * 60 * 60 * 1000);
 
-        January = 458507, February = 56900, March = 178555, April = 129000, May = 400000, June = 785000, July = 456000, August = 589000, September = 100000, October = 560047, November = 785454, December = 0
+        January = 458507, February = 56900, March = 178555, April = 129000, May = 400000, June = 785000, July = 456000, August = 589000, September = 100000, October = 560047, November = 7854, December = 0
 
 
         let find_Transac = await transectionModel.find({ OrganisationID: OrgID, $or: [{ "createdAt": { $gt: fromDate } }, { "createdAt": { $eq: '' } }] })
