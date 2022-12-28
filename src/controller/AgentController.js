@@ -1717,10 +1717,8 @@ const createCustomerByOrg1 = async (req, res, next) => {
             return res.status(200).send({ status: false, msg: "Email is already register" })
         }
 
-
         if (!gender) {
             return res.status(200).send({ status: false, msg: "Please enter gender" })
-
         }
 
         const profilePicture = await uploadFile(files[0])
@@ -1830,7 +1828,7 @@ const commissionlist = async (req, res) => {
                 .skip((page - 1) * limit)
                 .exec();
 
-            return res.status(200).send({ statussss: true, totlaRow: totalRaow1, currenPage: parseInt(pageNO), filter })
+            return res.status(200).send({ status: true, totlaRow: totalRaow1, currenPage: parseInt(pageNO), filter })
         } else if (req.body.fromDate) {
 
             let toDate = new Date(req.body.toDate).toISOString()
