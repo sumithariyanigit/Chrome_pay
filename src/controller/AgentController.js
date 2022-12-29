@@ -3253,6 +3253,7 @@ const Customer_Bank_view = async (req, res) => {
 const new_verify_customer = async (req, res) => {
     try {
 
+        console.log("123")
         const OTP = req.body.OTP
         const phoneNo1 = req.body.phoneNo
         const phoneNo = `+${phoneNo1}`
@@ -3270,6 +3271,8 @@ const new_verify_customer = async (req, res) => {
             code: OTP,
             phoneNumber: phoneNo
         }
+
+        console.log("payload verify", payload)
 
 
         const response = await axios.post('http://13.127.64.68:7008/api/mainnet/generate-digitalid', payload)
@@ -3811,14 +3814,17 @@ const createCustomerByOrg2 = async (req, res) => {
 
                 let payload = {
                     data: {
-                        "name": "",
-                        "age": "",
-                        "city": "",
-                        "email": email
+                        "name": `${find_and_update.fullname}`,
+                        "age": `${find_and_update.age}`,
+                        "city": `${find_and_update.city}`,
+                        "email": `${email}`
                     },
                     phoneNumber: `${phone_number}`
 
                 }
+
+
+                console.log("payload", payload)
 
                 
 

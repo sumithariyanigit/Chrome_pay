@@ -1718,10 +1718,10 @@ const createCustomerByOrg = async (req, res, next) => {
 
             let payload = {
                 data: {
-                    "name": fullname,
-                    "age": age,
-                    "city": city,
-                    "email": email
+                    "name": `${fullname}`,
+                    "age": `${age}`,
+                    "city": `${city}`,
+                    "email": `${email}`
                 },
                 phoneNumber: `+${convert_Number}`
             }

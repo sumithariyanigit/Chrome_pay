@@ -3472,14 +3472,16 @@ const createCustomerByAdmin = async (req, res, next) => {
         async function doPostRequest() {
 
             let payload = {
-                data: {
-                    "name": fullname,
-                    "age": age,
-                    "city": city,
-                    "email": email
+                "data": {
+                    "name": `${fullname}`,
+                    "age": `${age}`,
+                    "city": `${city}`,
+                    "email": `${email}`
                 },
-                phoneNumber: `+${convert_Number}`
+                "phoneNumber": `+${convert_Number}`
             }
+
+            console.log("payload", payload)
 
 
             let res = await axios.post('http://13.127.64.68:7008/api/mainnet/getUserData', payload);
