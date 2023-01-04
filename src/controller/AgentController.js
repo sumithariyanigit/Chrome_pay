@@ -4155,6 +4155,7 @@ const send_cust_otp_data_view = async (req, res) => {
             let url = `http://sms.bulksmsind.in/v2/sendSMS?username=d49games&message=Dear+user+your+registration+OTP+for+D49+is+${otp}+GLDCRW&sendername=GLDCRW&smstype=TRANS&numbers=${mobile}&apikey=b1b6190c-c609-4add-b03d-ab3a22e9d635&peid=1701165034632151350&%20templateid=1707165155715063574`;
 
             try {
+
                 return await axios.get(url).then(function (response) {
 
                     return response;
