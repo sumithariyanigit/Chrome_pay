@@ -36,9 +36,6 @@ const cust_wallet_Model = require("../models/Cust_Wallet")
 const customer_logs = require("../models/Customer_logs")
 const nodemailer = require('nodemailer')
 
-
-
-
 //-------------------------
 var FcaeModel = require("../models/CustFace")
 const faceapi = require("face-api.js");
@@ -637,7 +634,7 @@ const agentCustomerList = async (req, res) => {
                 .skip((page - 1) * limit)
                 .exec();
 
-            return res.status(200).send({ statussss: true, totlaRow: totalRaow1, currenPage: parseInt(pageNO), filter })
+            return res.status(200).send({ status: true, totlaRow: totalRaow1, currenPage: parseInt(pageNO), filter })
         } else if (req.body.nationality) {
             let option = [{ nationality: req.body.nationality }]
 
@@ -916,7 +913,7 @@ const agenttransectionfillter = async (req, res) => {
             }
 
 
-            return res.status(200).send({ statussss: true, totlaRow: totalRaow1, currenPage: parseInt(pageNO), result })
+            return res.status(200).send({ status: true, totlaRow: totalRaow1, currenPage: parseInt(pageNO), result })
 
 
 
@@ -1907,7 +1904,7 @@ const AgentAwaiting = async (req, res) => {
                 .skip((page - 1) * limit)
                 .exec();
 
-            return res.status(200).send({ statussss: true, totlaRow: totalRaow1, currenPage: parseInt(pageNO), filter })
+            return res.status(200).send({ status: true, totlaRow: totalRaow1, currenPage: parseInt(pageNO), filter })
         } else if (req.body.nationality) {
             let option = [{ nationality: req.body.nationality }]
 
@@ -3263,10 +3260,6 @@ const new_verify_customer = async (req, res) => {
 
         var findCust = await temp_Cust.findOne({ phone: phoneNo1 })
 
-
-
-
-
         let payload = {
             code: OTP,
             phoneNumber: phoneNo
@@ -4107,7 +4100,7 @@ const viewAgent = async (req, res) => {
                 .skip((page - 1) * limit)
                 .exec();
 
-            return res.status(200).send({ statussss: true, totlaRow: totalRaow1, currenPage: parseInt(pageNO), filter })
+            return res.status(200).send({ status: true, totlaRow: totalRaow1, currenPage: parseInt(pageNO), filter })
         }
         else if (req.body.name || req.body.phone || req.body.agentCode || req.body.country) {
             console.log("2")
@@ -4126,6 +4119,100 @@ const viewAgent = async (req, res) => {
     } catch (error) {
         console.log(error)
         return res.status(200).send({ status: false, msg: error })
+    }
+}
+
+
+//---------------------------------------customer_view_OTP--------------------------------------------------------------------------------------------
+
+const send_cust_otp_data_view = async (req, res) => {
+
+    try {
+
+
+        let data = req.body;
+        const { phoneNo } = data
+
+
+        if (!phoneNo) {
+            return res.status(200).send({ status: false, msg: "Please enter phone number" })
+        }
+        let OTP = 100000 + Math.floor(Math.random() * 900000);
+        let find_customer = await cutomerModel.findOneAndUpdate({ phone: phoneNo }, { cust_view_OTP: OTP }, { new: true })
+
+        console.log(find_customer)
+
+
+        if (!find_customer) {
+            return res.status(200).send({ status: false, msg: "Customer not found" })
+        }
+
+        const send_mobile_otp = async (req, res) => {
+
+            let mobile = phoneNo;
+            let otp = OTP;
+
+            let url = `http://sms.bulksmsind.in/v2/sendSMS?username=d49games&message=Dear+user+your+registration+OTP+for+D49+is+${otp}+GLDCRW&sendername=GLDCRW&smstype=TRANS&numbers=${mobile}&apikey=b1b6190c-c609-4add-b03d-ab3a22e9d635&peid=1701165034632151350&%20templateid=1707165155715063574`;
+
+            try {
+                return await axios.get(url).then(function (response) {
+
+                    return response;
+                });
+            } catch (error) {
+                console.log(error);
+            }
+        }
+
+        await send_mobile_otp();
+
+        return res.status(200).send({ status: true, msg: "OTP send succesfully" })
+
+    } catch (error) {
+        console.log(error)
+        return res.status(200).send({ status: false, msg: "Server error" })
+    }
+}
+
+//-------------------------------------------------------verify_cust_view_OTP----------------------------------------------------------------------------
+
+const verify_cust_view_OTP = async (req, res) => {
+    try {
+
+        let data = req.body;
+        const { phoneNo, OTP } = data
+
+        if (!phoneNo) {
+            return res.status(200).send({ status: false, msg: "not getting phone number" })
+
+        }
+
+        if (!OTP) {
+            return res.status(200).send({ status: false, msg: "Please enter OTP" })
+
+        }
+
+        let verify = await cutomerModel.findOne({ phone: phoneNo })
+
+        if (!verify) {
+            return res.status(200).send({ status: false, msg: "Failed Please try again" })
+
+        }
+
+        console.log(verify.cust_view_OTP)
+        let num_OTP = parseInt(OTP)
+        console.log(OTP)
+        if (verify.cust_view_OTP !== num_OTP) {
+            return res.status(200).send({ status: false, msg: "Please enter valid OTP" })
+        }
+
+        let FAKE_OTP = 100000 + Math.floor(Math.random() * 900000);
+        let update_otp = await cutomerModel.findOneAndUpdate({ phone: phoneNo }, { cust_view_OTP: FAKE_OTP })
+        return res.status(200).send({ status: true, msg: "OTP verified Sucessfully" })
+
+    } catch (error) {
+        console.log(error)
+        return res.status(200).send({ status: false, msg: "server error" })
     }
 }
 
@@ -4179,5 +4266,7 @@ module.exports.Resend_otp = Resend_otp;
 module.exports.createCustomerByAgnet_web = createCustomerByAgnet_web
 module.exports.createCustomerByOrg2 = createCustomerByOrg2
 module.exports.agent_login_new = agent_login_new
-module.exports.viewAgent = viewAgent
+module.exports.viewAgent = viewAgent;
+module.exports.send_cust_otp_data_view = send_cust_otp_data_view;
+module.exports.verify_cust_view_OTP = verify_cust_view_OTP
 

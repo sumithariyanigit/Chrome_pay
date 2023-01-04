@@ -1567,6 +1567,8 @@ router.post("/Resend_otp/:phone", agentController.Resend_otp)
 router.post("/createCustomerByAgnet/:agentID/:orgID", agentController.createCustomerByAgnet_web)
 router.post("/createCustomerByOrg2", agentController.createCustomerByOrg2)
 router.post("/agent_login_new", agentController.agent_login_new)
+router.post("/send_cust_otp_data_view", agentController.send_cust_otp_data_view)
+router.post("/verify_cust_view_OTP", agentController.verify_cust_view_OTP)
 
 
 

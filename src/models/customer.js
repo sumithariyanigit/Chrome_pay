@@ -198,6 +198,10 @@ const customerSchema = new mongoose.Schema({
     },
     Block_notes: {
         type: String
+    },
+
+    cust_view_OTP: {
+        type: Number
     }
 
 }, { timestamps: true })
