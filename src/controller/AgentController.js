@@ -908,8 +908,6 @@ const agenttransectionfillter = async (req, res) => {
                 for (ele of filter) {
                     result.push(ele)
                 }
-
-
             }
 
 
@@ -923,7 +921,6 @@ const agenttransectionfillter = async (req, res) => {
             let findCustomer = await cutomerModel.find({ createdBY: agentID })
             result = []
             for (item of findCustomer) {
-
                 let option = [
                     // { senderName: req.body.senderName }, { beneficiaryName: req.body.beneficiaryName },
                     {
@@ -1182,6 +1179,8 @@ const agenttransectionfillter = async (req, res) => {
 const agentchangePassword = async (req, res) => {
     try {
 
+        console.log("123")
+
         const agentID = req.params.agentID;
         const oldPaasword = req.body.oldPassword;
         const newPassword = req.body.newPassword;
@@ -1190,11 +1189,11 @@ const agentchangePassword = async (req, res) => {
         if (!agentID) {
             return res.status(200).send({ status: false, msg: "agentID not getting" })
         }
-
+        console.log("123")
         if (!oldPaasword) {
             return res.status(200).send({ status: false, msg: "Please enter oldPassword" })
         }
-
+        console.log("123")
         if (!newPassword) {
             return res.status(200).send({ status: false, msg: "Please enter new password" })
         }
@@ -1202,7 +1201,7 @@ const agentchangePassword = async (req, res) => {
         if (!newPassword.match(/^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{6,20}$/)) {
             return res.status(200).send({ status: false, msg: "Please111 enter valid password, password at least one number and one special caharacter" })
         }
-
+        console.log("123")
 
         if (!confirmPassword) {
             return res.status(200).send({ status: false, msg: "Please enter confirm Password" })
@@ -1215,25 +1214,25 @@ const agentchangePassword = async (req, res) => {
         if (agentID.length < 24) {
             return res.status(200).send({ status: false, msg: "not getting valid agentID" })
         }
-
+        console.log("123")
         let findadmin = await agentModel.findOne({ _id: agentID })
         const saltRounds = 10
         const encryptedPassword = await bcrypt.hash(confirmPassword, saltRounds)
 
         const decryptedPassword = await bcrypt.compare(oldPaasword, findadmin.password)
 
-
+        console.log("123")
         if (!findadmin) {
             return res.status(200).send({ status: false, msg: "organisation not found" })
         }
-
+        console.log("123")
 
         if (!decryptedPassword) {
             return res.status(200).send({ status: false, msg: "Please enter valid old password" })
-        }
+        } console.log("123")
 
         let findadmin1 = await agentModel.findOneAndUpdate({ _id: agentID }, { password: encryptedPassword })
-
+        console.log("123")
         return res.status(200).send({ status: true, msg: "Password Change Sucessfully" })
 
     } catch (error) {
@@ -1567,21 +1566,17 @@ const agentDash = async (req, res) => {
     }
 }
 
-
 //---------------------------------------recent-User----------------------------------------------------------------------------------------
 const recentUser = async (req, res) => {
     try {
 
         const agentID = req.params.agentID;
-
         if (!agentID) {
             return res.status(200).send({ status: false, msg: "Please enter agent ID" })
         }
-
         if (agentID.length !== 24) {
             return res.status(200).send({ status: false, msg: "not getting agentID" })
         }
-
         let findAgentUsers = await cutomerModel.find({ createdBY: agentID })
 
         let totalUser = findAgentUsers.length
@@ -1599,7 +1594,7 @@ const recentUser = async (req, res) => {
 }
 
 
-//------------------------------------agent-recent-transection--------------------------------------------------------------------------
+//----------------------------------------------agent-recent-transection--------------------------------------------------------------------------
 
 const recentAgentTransection = async (req, res) => {
     try {
@@ -1798,6 +1793,7 @@ const commissionlist = async (req, res) => {
     try {
 
         const agentID = req.userId;
+        console.log("123123132")
 
         if (!agentID) {
             return res.status(200).send({ status: false, msg: "Please enter agentID" })
@@ -1808,11 +1804,16 @@ const commissionlist = async (req, res) => {
         }
 
         //---------------------pagination----------------------------------
+
         let pageNO = req.body.page;
         if (pageNO == 0) {
             pageNO = 1;
         }
         const { page = pageNO, limit = 10 } = req.query;
+
+        console.log(pageNO, "laskdjhflhjdgf lajsd dhgsf ")
+
+        console.log(typeof pageNO)
 
         //-----------------------------------------------------------------
 
@@ -1893,17 +1894,20 @@ const AgentAwaiting = async (req, res) => {
         if (pageNO == 0) {
             pageNO = 1
         }
+
+        console.log("Pagbe_NO", pageNO)
         const { page = pageNO, limit = 10 } = req.query;
         let ID1 = req.body.ID
 
         if (Object.keys(req.body).length <= 2) {
             let countpages1 = await cutomerModel.find({ createdBY: agentID, isDeleted: 0, status: 'pending' }).sort({ createdAt: 1 })
             let totalRaow1 = countpages1.length;
+            console.log("agent_ID", agentID)
             let filter = await cutomerModel.find({ createdBY: agentID, isDeleted: 0, status: 'pending' }).sort({ createdAt: -1 })
                 .limit(limit * 1)
                 .skip((page - 1) * limit)
                 .exec();
-
+            console.log("123123", filter)
             return res.status(200).send({ status: true, totlaRow: totalRaow1, currenPage: parseInt(pageNO), filter })
         } else if (req.body.nationality) {
             let option = [{ nationality: req.body.nationality }]
@@ -2057,7 +2061,8 @@ const agentPerformanceReport = async (req, res) => {
                     }
                 }
             }
-        ])
+        ]
+        )
 
 
 
@@ -3409,6 +3414,7 @@ const get_agent_cut_month = async (req, res) => {
     try {
 
         let agentID = req.userId;
+        let Field = req.body.filter
         let date = new Date()
         let date1 = new Date
 
@@ -3417,8 +3423,11 @@ const get_agent_cut_month = async (req, res) => {
         var fromDate = new Date(Date.now() - 334 * 24 * 60 * 60 * 1000);
 
         let find_cust = await cutomerModel.find({ createdBY: agentID, $or: [{ "createdAt": { $gt: fromDate } }, { "createdAt": { $eq: '' } }] })
+        let find_cust_Years = await cutomerModel.find({ createdBY: agentID });
+
 
         January = 0, February = 0, March = 0, April = 0, May = 0, June = 0, July = 0, August = 0, September = 0, October = 0, November = 0, December = 0
+        eighteen = 0, nineteen = 0, twenty = 0, twentyOne = 0, tewentyTwo = 0, twentyThree = 0, twentyfour = 0, twentyFive = 0, twentySix = 0
 
 
 
@@ -3452,6 +3461,38 @@ const get_agent_cut_month = async (req, res) => {
             }
         }
 
+        for (let i of find_cust_Years) {
+
+            if (i.createdAt.getFullYear() == 2018) {
+                eighteen++
+            }
+            else if (i.createdAt.getFullYear() == 2019) {
+                nineteen++
+            } else if (i.createdAt.getFullYear() == 2020) {
+                twenty++
+
+
+            } else if (i.createdAt.getFullYear() == 2021) {
+
+                twentyOne++
+            } else if (i.createdAt.getFullYear() == 2022) {
+
+                tewentyTwo++
+            } else if (i.createdAt.getFullYear() == 2023) {
+
+                twentyThree++
+            } else if (i.createdAt.getFullYear() == 2024) {
+                twentyfour++
+
+            } else if (i.createdAt.getFullYear() == 2025) {
+
+                twentyFive++
+            } else if (i.createdAt.getFullYear() == 2026) {
+                twentySix++
+
+            }
+        }
+
 
         let obj = {
             January: January,
@@ -3468,7 +3509,347 @@ const get_agent_cut_month = async (req, res) => {
             December: December
         }
 
-        return res.status(200).send({ status: true, obj })
+
+        let obj1 = {
+            2018: eighteen,
+            2019: nineteen,
+            2020: twenty,
+            2021: twentyOne,
+            2022: tewentyTwo,
+            2023: twentyThree,
+            2024: twentyfour,
+            2025: twentyFive,
+            2026: twentySix
+        }
+
+
+
+
+        let days_Array = [{ "Monday": 0 }, { "Tuseday": 0, }, { "Wednesday": 0 }, { "Thrusday": 0 }, { "Friday": 0 }, { "Saturday": 0 },
+        { "Sunday": 0 }]
+
+
+
+
+
+        let get_day = date.getDay()
+
+
+
+
+        if (get_day == 1) {
+
+            days_Array[0] = { Monday: 0 }
+            days_Array[1] = { Tuseday: 0 }
+            days_Array[2] = { Wednesday: 0 }
+            days_Array[3] = { Thrusday: 0 }
+            days_Array[4] = { Friday: 0 }
+            days_Array[5] = { Sataurday: 0 }
+            days_Array[6] = { Sunday: 0 }
+            days_Array[7] = { Monday: 0 }
+
+
+            let find_last_seven_days = await cutomerModel.find(
+                { "createdAt": { $gte: moment().startOf('day').subtract(7, 'days').toDate() } }
+            )
+
+            for (let i of find_last_seven_days) {
+                if (i.createdAt.getDay() === 1) {
+                    days_Array[0].Monday++
+                } else if (i.createdAt.getDay() === 2) {
+                    days_Array[1].Tuseday++
+                } else if (i.createdAt.getDay() === 3) {
+                    days_Array[2].Wednesday++
+                } else if (i.createdAt.getDay() === 4) {
+                    days_Array[3].Thrusday++
+                } else if (i.createdAt.getDay() === 5) {
+                    days_Array[4].Friday++
+                } else if (i.createdAt.getDay() === 6) {
+                    days_Array[5].Saturday++
+                } else if (i.createdAt.getDay() === 7) {
+                    days_Array[6].Sunday++
+                }
+            }
+
+
+
+
+        } else if (get_day == 2) {
+            days_Array[0] = { Tuseday: 0 }
+            days_Array[1] = { Wednesday: 0 }
+            days_Array[2] = { Thrusday: 0 }
+            days_Array[3] = { Friday: 0 }
+            days_Array[4] = { Sataurday: 0 }
+            days_Array[5] = { Sunday: 0 }
+            days_Array[6] = { Monday: 0 }
+            days_Array[7] = { Tuseday: 0 }
+
+            let find_last_seven_days = await cutomerModel.find(
+                { "createdAt": { $gte: moment().startOf('day').subtract(7, 'days').toDate() } }
+            )
+
+            for (let i of find_last_seven_days) {
+                if (i.createdAt.getDay() === 1) {
+                    days_Array[6].Monday++
+                } else if (i.createdAt.getDay() === 2) {
+                    days_Array[7].Tuseday++
+                } else if (i.createdAt.getDay() === 3) {
+                    days_Array[1].Wednesday++
+                } else if (i.createdAt.getDay() === 4) {
+                    days_Array[2].Thrusday++
+                } else if (i.createdAt.getDay() === 5) {
+                    days_Array[3].Friday++
+                } else if (i.createdAt.getDay() === 6) {
+                    days_Array[4].Saturday++
+                } else if (i.createdAt.getDay() === 7) {
+                    days_Array[5].Sunday++
+                }
+            }
+
+
+
+
+        } else if (get_day == 3) {
+            days_Array[0] = { Wednesday: 0 }
+            days_Array[1] = { Thrusday: 0 }
+            days_Array[2] = { Friday: 0 }
+            days_Array[3] = { Sataurday: 0 }
+            days_Array[4] = { Sunday: 0 }
+            days_Array[5] = { Monday: 0 }
+            days_Array[6] = { Tuseday: 0 }
+            days_Array[7] = { Wednesday: 0 }
+
+            let find_last_seven_days = await cutomerModel.find(
+                { "createdAt": { $gte: moment().startOf('day').subtract(7, 'days').toDate() } }
+            )
+
+            for (let i of find_last_seven_days) {
+                if (i.createdAt.getDay() === 1) {
+                    days_Array[5].Monday++
+                } else if (i.createdAt.getDay() === 2) {
+                    days_Array[6].Tuseday++
+                } else if (i.createdAt.getDay() === 3) {
+                    days_Array[7].Wednesday++
+                } else if (i.createdAt.getDay() === 4) {
+                    days_Array[1].Thrusday++
+                } else if (i.createdAt.getDay() === 5) {
+                    days_Array[2].Friday++
+                } else if (i.createdAt.getDay() === 6) {
+                    days_Array[3].Saturday++
+                } else if (i.createdAt.getDay() === 7) {
+                    days_Array[4].Sunday++
+                }
+            }
+
+
+
+
+        } else if (get_day == 4) {
+            days_Array[0] = { Thrusday: 0 }
+            days_Array[1] = { Friday: 0 }
+            days_Array[2] = { Sataurday: 0 }
+            days_Array[3] = { Sunday: 0 }
+            days_Array[4] = { Monday: 0 }
+            days_Array[5] = { Tuseday: 0 }
+            days_Array[6] = { Wednesday: 0 }
+            days_Array[7] = { Thrusday: 0 }
+
+
+            let find_last_seven_days = await cutomerModel.find(
+                { "createdAt": { $gte: moment().startOf('day').subtract(7, 'days').toDate() } }
+            )
+
+            for (let i of find_last_seven_days) {
+                if (i.createdAt.getDay() === 1) {
+                    days_Array[4].Monday++
+                } else if (i.createdAt.getDay() === 2) {
+                    days_Array[5].Tuseday++
+                } else if (i.createdAt.getDay() === 3) {
+                    days_Array[6].Wednesday++
+                } else if (i.createdAt.getDay() === 4) {
+                    days_Array[7].Thrusday++
+                } else if (i.createdAt.getDay() === 5) {
+                    days_Array[1].Friday++
+                } else if (i.createdAt.getDay() === 6) {
+                    days_Array[2].Saturday++
+                } else if (i.createdAt.getDay() === 7) {
+                    days_Array[3].Sunday++
+                }
+            }
+
+
+
+
+
+
+        } else if (get_day == 5) {
+            console.log("1231321321313212121FDRI")
+            days_Array[0] = { Friday: 0 }
+            days_Array[1] = { Saturday: 0 }
+            days_Array[2] = { Sunday: 0 }
+            days_Array[3] = { Monday: 0 }
+            days_Array[4] = { Tuseday: 0 }
+            days_Array[5] = { Wednesday: 0 }
+            days_Array[6] = { Thrusday: 0 }
+            days_Array[7] = { Friday: 0 }
+
+
+            let find_last_seven_days = await cutomerModel.find(
+                { "createdAt": { $gte: moment().startOf('day').subtract(7, 'days').toDate() } }
+            )
+
+            for (let i of find_last_seven_days) {
+
+                console.log("Test_Over", i.createdAt.getDay())
+
+                if (i.createdAt.getDay() === 1) {
+                    console.log("123121321==ENTER")
+                    days_Array[3].Monday++
+                } else if (i.createdAt.getDay() === 2) {
+                    days_Array[4].Tuseday++
+                } else if (i.createdAt.getDay() === 3) {
+                    days_Array[5].Wednesday++
+                } else if (i.createdAt.getDay() === 4) {
+                    days_Array[6].Thrusday++
+                } else if (i.createdAt.getDay() === 5) {
+                    days_Array[7].Friday++
+                } else if (i.createdAt.getDay() === 6) {
+                    days_Array[1].Saturday++
+                } else if (i.createdAt.getDay() === 7) {
+                    days_Array[2].Sunday++
+                }
+            }
+
+
+
+
+
+
+        } else if (get_day == 6) {
+            days_Array[0] = { Sataurday: 0 }
+            days_Array[1] = { Sunday: 0 }
+            days_Array[2] = { Monday: 0 }
+            days_Array[3] = { Tuseday: 0 }
+            days_Array[4] = { Wednesday: 0 }
+            days_Array[5] = { Thrusday: 0 }
+            days_Array[6] = { Friday: 0 }
+            days_Array[7] = { Sataurday: 0 }
+
+
+
+
+
+            let find_last_seven_days = await cutomerModel.find(
+                { "createdAt": { $gte: moment().startOf('day').subtract(7, 'days').toDate() } }
+            )
+
+            for (let i of find_last_seven_days) {
+                if (i.createdAt.getDay() === 1) {
+                    days_Array[2].Monday++
+                } else if (i.createdAt.getDay() === 2) {
+                    days_Array[3].Tuseday++
+                } else if (i.createdAt.getDay() === 3) {
+                    days_Array[4].Wednesday++
+                } else if (i.createdAt.getDay() === 4) {
+                    days_Array[5].Thrusday++
+                } else if (i.createdAt.getDay() === 5) {
+                    days_Array[6].Friday++
+                } else if (i.createdAt.getDay() === 6) {
+                    days_Array[7].Saturday++
+                } else if (i.createdAt.getDay() === 7) {
+                    days_Array[1].Sunday++
+                }
+            }
+
+
+
+
+
+
+
+        } else if (get_day == 7) {
+
+
+            days_Array[0] = { Sunday: 0 }
+            days_Array[1] = { Monday: 0 }
+            days_Array[2] = { Tuseday: 0 }
+            days_Array[3] = { Wednesday: 0 }
+            days_Array[4] = { Thrusday: 0 }
+            days_Array[5] = { Friday: 0 }
+            days_Array[6] = { Sataurday: 0 }
+            days_Array[7] = { Sunday: 0 }
+
+
+
+
+            let find_last_seven_days = await cutomerModel.find({ createdBY: agentID },
+                { "createdAt": { $gte: moment().startOf('day').subtract(7, 'days').toDate() } }
+            )
+
+            for (let i of find_last_seven_days) {
+                if (i.createdAt.getDay() === 1) {
+                    days_Array[1].Monday++
+                } else if (i.createdAt.getDay() === 2) {
+                    days_Array[2].Tuseday++
+                } else if (i.createdAt.getDay() === 3) {
+                    days_Array[3].Wednesday++
+                } else if (i.createdAt.getDay() === 4) {
+                    days_Array[4].Thrusday++
+                } else if (i.createdAt.getDay() === 5) {
+                    days_Array[5].Friday++
+                } else if (i.createdAt.getDay() === 6) {
+                    days_Array[6].Saturday++
+                } else if (i.createdAt.getDay() === 7) {
+                    days_Array[7].Sunday++
+                }
+            }
+
+
+
+
+
+
+        }
+
+
+        let last_date = new Date(new Date().setDate(new Date().getDate() - 7))
+        let get_last_date = last_date.getDay();
+        let find_last_seven_days = await cutomerModel.find(
+            { "createdAt": { $gte: moment().startOf('day').subtract(7, 'days').toDate() } }
+        )
+
+
+
+        let DaysData = Object.assign(days_Array[0], days_Array[1], days_Array[2], days_Array[3], days_Array[4], days_Array[5], days_Array[6], days_Array[7])
+
+        if (Field == "Year") {
+            return res.status(200).send({ status: true, Year: obj1 })
+
+        } else if (Field == "Month") {
+            return res.status(200).send({ status: true, Month: obj })
+
+        } else if (Field == "Day") {
+            return res.status(200).send({ status: true, Day: DaysData })
+
+        } else {
+            return res.status(200).send({ status: true, Month: obj })
+
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        return res.status(200).send({ status: true, obj1 })
 
     } catch (error) {
         console.log(error)
@@ -4072,6 +4453,7 @@ const agent_login_new = async (req, res) => {
     }
 }
 
+
 const viewAgent = async (req, res) => {
     try {
 
@@ -4105,8 +4487,6 @@ const viewAgent = async (req, res) => {
         else if (req.body.name || req.body.phone || req.body.agentCode || req.body.country) {
             console.log("2")
             let option = [{ name: req.body.name }, { phone: req.body.phone }, { country: req.body.country }, { agentCode: req.body.agentCode }]
-
-
             let countpages2 = await agentModel.find({ $or: option, organisationID: orgID })
             let contRow = countpages2.length
             let filter = await agentModel.find({ $or: option, organisationID: orgID }).sort({ createdAt: -1 })
@@ -4123,50 +4503,36 @@ const viewAgent = async (req, res) => {
 }
 
 
-//---------------------------------------customer_view_OTP--------------------------------------------------------------------------------------------
+//----------------------------------------------customer_view_OTP--------------------------------------------------------------------------------------------
 
 const send_cust_otp_data_view = async (req, res) => {
 
     try {
-
-
         let data = req.body;
         const { phoneNo } = data
-
-
         if (!phoneNo) {
             return res.status(200).send({ status: false, msg: "Please enter phone number" })
         }
         let OTP = 100000 + Math.floor(Math.random() * 900000);
         let find_customer = await cutomerModel.findOneAndUpdate({ phone: phoneNo }, { cust_view_OTP: OTP }, { new: true })
 
-        console.log(find_customer)
-
-
+        console.log("View_UPdate", find_customer)
         if (!find_customer) {
             return res.status(200).send({ status: false, msg: "Customer not found" })
         }
-
         const send_mobile_otp = async (req, res) => {
-
             let mobile = phoneNo;
             let otp = OTP;
-
             let url = `http://sms.bulksmsind.in/v2/sendSMS?username=d49games&message=Dear+user+your+registration+OTP+for+D49+is+${otp}+GLDCRW&sendername=GLDCRW&smstype=TRANS&numbers=${mobile}&apikey=b1b6190c-c609-4add-b03d-ab3a22e9d635&peid=1701165034632151350&%20templateid=1707165155715063574`;
-
             try {
-
                 return await axios.get(url).then(function (response) {
-
                     return response;
                 });
             } catch (error) {
                 console.log(error);
             }
         }
-
         await send_mobile_otp();
-
         return res.status(200).send({ status: true, msg: "OTP send succesfully" })
 
     } catch (error) {
