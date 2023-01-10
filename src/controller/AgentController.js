@@ -3579,7 +3579,7 @@ const get_agent_cut_month = async (req, res) => {
             days_Array[1] = { Wednesday: 0 }
             days_Array[2] = { Thrusday: 0 }
             days_Array[3] = { Friday: 0 }
-            days_Array[4] = { Sataurday: 0 }
+            days_Array[4] = { Saturday: 0 }
             days_Array[5] = { Sunday: 0 }
             days_Array[6] = { Monday: 0 }
             days_Array[7] = { Tuseday: 0 }
