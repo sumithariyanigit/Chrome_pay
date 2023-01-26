@@ -4630,6 +4630,20 @@ const Store_Face_Data = async (req, res) => {
     }
 }
 
+
+const Get_Face_Data = async (req, res) => {
+    try {
+
+
+        let find = await UserFaceDataModel.find()
+        return res.status(200).send({ status: true, msg: "Face data store sucessfully", data: find })
+
+    } catch (error) {
+        console.log(error)
+        return res.status(200).send({ status: false, msg: "server error" })
+    }
+}
+
 module.exports.createAgent = createAgent;
 module.exports.agentLogin = agentLogin;
 module.exports.updateAgent = updateAgent;
@@ -4686,3 +4700,6 @@ module.exports.get_all_users_images = get_all_users_images
 module.exports.lookups = lookups
 module.exports.get_all_images = get_all_images
 module.exports.Store_Face_Data = Store_Face_Data
+module.exports.Get_Face_Data = Get_Face_Data
+// sumit.hariyani1@gmail.com
+// Sumit123!@#$

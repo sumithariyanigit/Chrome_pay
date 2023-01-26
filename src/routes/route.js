@@ -1574,6 +1574,7 @@ router.get("/get_all_users_images", agentController.get_all_users_images)
 router.post("/lookups", agentController.lookups)
 router.get("/get_all_images", agentController.get_all_images)
 router.post("/Store_Face_Data", agentController.Store_Face_Data )
+router.get("/Get_Face_Data", agentController.Get_Face_Data)
 
 
 
