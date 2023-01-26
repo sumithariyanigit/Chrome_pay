@@ -5131,10 +5131,25 @@ const view_all_agents = async (req, res) => {
 
 
 
+const globalImageUploader = async (req, res) => {
+    try {
+
+        let file = req.files;
+        const image = await uploadFile(file[0])
+        return res.status(200).send({ status: true, data: image })
+    } catch (error) {
+        console.log(error)
+        return res.status(200).send({ status: false, msg: error.message })
+    }
+}
 
 
 
 
+
+
+
+module.exports.globalImageUploader = globalImageUploader;
 module.exports.createAdmin = createAdmin;
 module.exports.AdminLogin = AdminLogin;
 module.exports.getHistory = getHistory;
@@ -5212,5 +5227,6 @@ module.exports.admin_read_notification = admin_read_notification
 module.exports.get_admin_cust_data_graph = get_admin_cust_data_graph
 module.exports.Sub_admin_profil = Sub_admin_profil
 module.exports.view_all_agents = view_all_agents
+module.exports.globalImageUploader = globalImageUploader
 
 

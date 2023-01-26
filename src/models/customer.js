@@ -72,7 +72,6 @@ const customerSchema = new mongoose.Schema({
     status: {
         type: String,
         default: "pending"
-
     },
     hash: {
         type: String,

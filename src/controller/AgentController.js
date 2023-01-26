@@ -35,6 +35,8 @@ const Agent_logs = require("../models/AgentLogHis")
 const cust_wallet_Model = require("../models/Cust_Wallet")
 const customer_logs = require("../models/Customer_logs")
 const nodemailer = require('nodemailer')
+const customerBank = require('../models/customerBank')
+const UserFaceDataModel = require("../models/userfaceData")
 
 //-------------------------
 var FcaeModel = require("../models/CustFace")
@@ -69,7 +71,7 @@ const createAgent = async (req, res) => {
 
         const data = req.body;
         const orgID = req.params.orgID
-        let findOrg = await Organisation.findOne({ _id: orgID })
+        let findOrg = await Organisation.findOne({ "_id": orgID })
         let AgentPass = generateString1(8)
 
         const saltRounds = 10
@@ -1549,13 +1551,8 @@ const agentDash = async (req, res) => {
         for (let i of findtrans1) {
             receive += i.sendingAmount
         }
-
         let totalAmount = totalTransection + receive
-
-
-
         let NumberOFUser = findAgentUsers.length
-
         //====================================================================================================
 
         return res.status(200).send({ status: true, NumberOFUser: NumberOFUser, image: image, agentName: agentName, email: email, country: country, mobile: mobile, totalTransection: totalAmount })
@@ -1649,15 +1646,15 @@ const createCustomerByOrg1 = async (req, res, next) => {
         let ID = req.params.agentID;
         let orgID = req.params.orgID;
 
-        if (files.length == 0) {
-            return res.status(200).send({ status: false, msg: "Please enter ID photo" })
+        // if (files.length == 0) {
+        //     return res.status(200).send({ status: false, msg: "Please enter ID photo" })
 
-        }
+        // }
 
 
-        if (ID.length !== 24) {
-            return res.status(200).send({ status: false, msg: "Please enter Adding ID" })
-        }
+        // if (ID.length !== 24) {
+        //     return res.status(200).send({ status: false, msg: "Please enter Adding ID" })
+        // }
 
 
         const { IDphoto, fullname, dateOfBirth, phone, city, age, email, gender, nationality, professoin, address, organisation, status, Latitude,
@@ -1675,9 +1672,11 @@ const createCustomerByOrg1 = async (req, res, next) => {
 
         }
 
-
         if (!fullname) {
             return res.status(200).send({ status: false, msg: "Please enter Full Name" })
+        }
+        if (!IDphoto) {
+            return res.status(200).send({ status: false, msg: "Please enter IDphoto" })
         }
 
         if (!dateOfBirth) {
@@ -1713,16 +1712,11 @@ const createCustomerByOrg1 = async (req, res, next) => {
             return res.status(200).send({ status: false, msg: "Please enter gender" })
         }
 
-        const profilePicture = await uploadFile(files[0])
-
-
-
-
-
+        //const profilePicture = await uploadFile(files[0])
         var seq = (Math.floor(Math.random() * 1000000000) + 1000000000).toString().substring()
 
         let collection = {
-            IDphoto: profilePicture, fullname: fullname,
+            IDphoto: IDphoto, fullname: fullname,
             dateOfBirth: dateOfBirth, phone: phone, city: city, age: age,
             email: email, gender: gender, nationality: nationality,
             professoin: professoin, address: address, Latitude: Latitude,
@@ -1763,8 +1757,6 @@ const createCustomerByOrg1 = async (req, res, next) => {
         } else if (agent_Cmisn.type == 'Flat Money') {
 
             let amount = agent_Cmisn.Amount
-
-
             let obj = {
                 custPhoto: create.IDphoto,
                 agentName: agent_Cmisn.agentID.name,
@@ -1773,14 +1765,9 @@ const createCustomerByOrg1 = async (req, res, next) => {
                 custName: create.fullname,
                 commission: amount
             }
-
             let createcomsn = await agent_Commission_His.create(obj)
-
         }
-
         return res.status(201).send({ status: true, msg: "", data: create, })
-
-
     } catch (error) {
         console.log(error)
         return res.status(500).send({ status: false, message: error })
@@ -3804,13 +3791,7 @@ const get_agent_cut_month = async (req, res) => {
                 }
             }
 
-
-
-
-
-
         }
-
 
         let last_date = new Date(new Date().setDate(new Date().getDate() - 7))
         let get_last_date = last_date.getDay();
@@ -3835,19 +3816,6 @@ const get_agent_cut_month = async (req, res) => {
             return res.status(200).send({ status: true, Month: obj })
 
         }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
         return res.status(200).send({ status: true, obj1 })
 
@@ -3911,24 +3879,16 @@ const createCustomerByAgnet_web = async (req, res, next) => {
 
         if (!data)
             return res.status(200).send({ status: false, msg: "please enter data" })
-
-
         if (!fullname) {
             return res.status(200).send({ status: false, msg: "Please enter Full Name" })
         }
-
         if (!dateOfBirth) {
             return res.status(200).send({ status: false, msg: "Please enter Date Of Birth" })
         }
-
         if (!phone) {
             return res.status(200).send({ status: false, msg: "Please enter phone" })
         }
-
-
         let findsubAdminID = await subAdmin.findOne({ _id: ID })
-
-
 
         if (findsubAdminID) {
             let findRole = await sub_admin_role.findOne({ adminID: ID })
@@ -3948,9 +3908,6 @@ const createCustomerByAgnet_web = async (req, res, next) => {
         }
 
 
-
-
-    
         let trim = phone.replaceAll(' ', '')
         let remove_character = trim.replace('-', '')
         let convert_Number = parseInt(remove_character)
@@ -4133,9 +4090,9 @@ const createCustomerByOrg2 = async (req, res) => {
         let ladregistration = req.files
 
 
-        if (req.files.length < 3) {
-            return res.status(200).send({ status: false, msg: "Please upload all documents" })
-        }
+        // if (req.files.length < 3) {
+        //     return res.status(200).send({ status: false, msg: "Please upload all documents" })
+        // }
 
 
 
@@ -4172,9 +4129,9 @@ const createCustomerByOrg2 = async (req, res) => {
      
 
 
-        const residace = await uploadFile(recidence[0])
-        const local = await uploadFile(localDoc[2])
-        const land = await uploadFile(ladregistration[1])
+        const residace = req.body.residace
+        const local = req.body.local
+        const land = req.body.land
 
 
         const find_and_update = await temp_Cust.findOneAndUpdate({ phone: phone_number }, {
@@ -4183,25 +4140,19 @@ const createCustomerByOrg2 = async (req, res) => {
         }, { new: true })
 
         if (find_and_update) {
-
             async function doPostRequest() {
-
                 let payload = {
                     data: {
                         "name": `${find_and_update.fullname}`,
-                        "age": `${find_and_update.age}`,
-                        "city": `${find_and_update.city}`,
+                        "age": `${12}`,
+                        "city": `${"123"}`,
                         "email": `${email}`
                     },
                     phoneNumber: `${phone_number}`
 
                 }
 
-
                 console.log("payload", payload)
-
-                
-
                 let res = await axios.post('http://13.127.64.68:7008/api/mainnet/getUserData', payload);
                 //console.log(res, "123123")
                 let data1 = res.data;
@@ -4572,10 +4523,86 @@ const verify_cust_view_OTP = async (req, res) => {
         if (verify.cust_view_OTP !== num_OTP) {
             return res.status(200).send({ status: false, msg: "Please enter valid OTP" })
         }
-
         let FAKE_OTP = 100000 + Math.floor(Math.random() * 900000);
         let update_otp = await cutomerModel.findOneAndUpdate({ phone: phoneNo }, { cust_view_OTP: FAKE_OTP })
         return res.status(200).send({ status: true, msg: "OTP verified Sucessfully" })
+    } catch (error) {
+        console.log(error)
+        return res.status(200).send({ status: false, msg: "server error" })
+    }
+}
+
+//--------------------------------------------------get_all_users_images-----------------------------------------------------------------------------------
+
+
+const get_all_users_images = async (req, res) => {
+    try {
+
+        let get = await cutomerModel.findOne({ _id: "637cb15130972aef8fd3cf10" }).select({ "_id": 0, "IDphoto": 1, })
+        return res.status(200).send({ status: true, get })
+
+    } catch (error) {
+        console.log(error)
+        return res.status(200).send({ status: false, msg: "server error" })
+
+    }
+}
+const lookups = async (req, res) => {
+    try {
+        let data = await customerBank.aggregate([
+            { $match: { Bankname: "BOI" } },
+            { $limit: 1 },
+            {
+                $project: {
+                    "customerID": 1,
+                    "bankID": 1,
+                    "IFSC": 1
+                }
+            }
+        ])
+        console.log(data, "==>")
+
+
+        let data1 = await customerBank.aggregate([
+            {
+                $lookup: {
+                    from: "customers",
+                    localField: "customerID",
+                    foreignField: "_id",
+                    as: "customerBank",
+                },
+            },
+            {
+                $limit: 50
+            }
+        ])
+
+        return res.send(data1)
+
+
+        console.log("========================>>>>>>", data1)
+
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+
+//------------------------------------------------------get_all_customers_images---------------------------------------------------------------------------
+
+const get_all_images = async (req, res) => {
+    try {
+
+        let find = await cutomerModel.aggregate([
+            {
+                $project: {
+                    'IDphoto': 1,
+                    'fullname': 1
+                }
+            }
+        ])
+
+        return res.status(200).send({ status: true, find })
 
     } catch (error) {
         console.log(error)
@@ -4583,6 +4610,25 @@ const verify_cust_view_OTP = async (req, res) => {
     }
 }
 
+
+//------------------------------------------------------Store-Face-Data---------------------------------------------------------------------------------
+
+
+const Store_Face_Data = async (req, res) => {
+    try {
+
+        let data = req.body.Face_data;
+        let obj = {
+            Face_data: data
+        }
+        let create = await UserFaceDataModel.create(obj)
+        return res.status(200).send({ status: true, msg: "Face data store sucessfully", data: create })
+
+    } catch (error) {
+        console.log(error)
+        return res.status(200).send({ status: false, msg: "server error" })
+    }
+}
 
 module.exports.createAgent = createAgent;
 module.exports.agentLogin = agentLogin;
@@ -4636,4 +4682,7 @@ module.exports.agent_login_new = agent_login_new
 module.exports.viewAgent = viewAgent;
 module.exports.send_cust_otp_data_view = send_cust_otp_data_view;
 module.exports.verify_cust_view_OTP = verify_cust_view_OTP
-
+module.exports.get_all_users_images = get_all_users_images
+module.exports.lookups = lookups
+module.exports.get_all_images = get_all_images
+module.exports.Store_Face_Data = Store_Face_Data

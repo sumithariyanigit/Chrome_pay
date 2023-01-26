@@ -1174,7 +1174,7 @@ const get_cust_logs = async (req, res) => {
 let Pay_bills = async (req, res) => {
     try {
 
-        let create = await customer_bills.create({ customerID: "638f11b9d856765b70def2f2", bill_ID: "123456456456", amount: 2500 })
+        let create = await customer_bills.create({ customerID: "63be8b1b45ccc6064d5ec4cc", bill_ID: "123456456456", amount: 2500 })
 
         return res.status(200).send({ status: true, msg: "bill pay" })
 
@@ -1188,7 +1188,7 @@ let Pay_bills = async (req, res) => {
 let cust_Recaharge = async (req, res) => {
     try {
 
-        let create = await customer_recharge.create({ customerID: "638f11b9d856765b70def2f2", Recharge_ID: "123456456456", amount: 4521 })
+        let create = await customer_recharge.create({ customerID: "63be8b1b45ccc6064d5ec4cc", Recharge_ID: "123456456456", amount: 4521 })
 
         return res.status(200).send({ status: true, msg: "recharhe succesfully" })
 

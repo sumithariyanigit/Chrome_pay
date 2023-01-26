@@ -42,6 +42,7 @@ const AgentModel = require("../models/AgentModel");
 const Delete_DID_Notes = require("../models/Delete_DID_Notes");
 const org_employee = require("../models/org_employees")
 var moment = require('moment');
+const orgBadLogs = require("../models/OrgBadLogs")
 
 
 
@@ -166,7 +167,6 @@ const createOrganisation = async (req, res, next) => {
         const profilePicture = await uploadFile(files[0])
 
 
-
         if (!name) {
             return res.status(200).send({ status: false, msg: "Please Enter Name" })
         }
@@ -181,14 +181,12 @@ const createOrganisation = async (req, res, next) => {
 
         let checkPhone = await Organisation.findOne({ phoneNo: phone })
 
-
         if (checkPhone)
             return res.status(200).send({ status: false, msg: "Number already register " })
         //next();
 
         if (!email) {
             return res.status(200).send({ status: false, msg: "Please enter email" })
-
         }
 
         if (!totlaLicense) {
@@ -314,6 +312,13 @@ const createOrganisation = async (req, res, next) => {
         return res.status(201).send({ status: true, msg: "Register Sucessfully", data: create, Loans: createLoans })
 
     } catch (error) {
+        let obj = {
+            IP: ip.address(),
+            description: error,
+            api: "Register Organization",
+            apiUrl: "http://ec2-13-233-63-235.ap-south-1.compute.amazonaws.com:3000/Organisation"
+        }
+        let create = await orgBadLogs.create(obj)
         console.log(error)
         return res.status(500).send(error)
     }
@@ -381,6 +386,13 @@ const organisationLogin = async (req, res, next) => {
 
                 }, "10000")
 
+                let obj = {
+                    IP: UserIP,
+                    description: "Blocked due to enter wrong password",
+                    api: "Login oeganization"
+                }
+
+                let create = await orgBadLogs.create(obj)
                 return res.status(200).send({ status: false, msg: "You are blocked due to access try Please try againn after 10 mintutes" })
 
             }
@@ -433,6 +445,13 @@ const organisationLogin = async (req, res, next) => {
 
 
     } catch (error) {
+        let obj = {
+            IP: ip.address(),
+            description: error,
+            api: "Login Organization",
+            apiUrl: "http://ec2-13-233-63-235.ap-south-1.compute.amazonaws.com:3000//Login"
+        }
+        let create = await orgBadLogs.create(obj)
         console.log(error)
         res.status(500).send({ status: false, error: { error } })
     }
@@ -484,9 +503,18 @@ const getLogHistory = async (req, res) => {
 
         }
 
+        console.log(d)
+
         return res.status(200).send({ status: true, totalPages: counPages, currenPage: parseInt(pageNO), data: result })
 
     } catch (error) {
+        let obj = {
+            IP: ip.address(),
+            description: error,
+            api: "get Organization Log History",
+            apiUrl: "http://ec2-13-233-63-235.ap-south-1.compute.amazonaws.com:3000/getHistory"
+        }
+        let create = await orgBadLogs.create(obj)
         console.log(error)
         res.status(500).send({ status: false, error: error })
     }
@@ -543,6 +571,13 @@ const Organisationdashboard = async (req, res) => {
 
         }
     } catch (error) {
+        let obj = {
+            IP: ip.address(),
+            description: error,
+            api: "Organization Dashboard Details",
+            apiUrl: "http://ec2-13-233-63-235.ap-south-1.compute.amazonaws.com:3000/OrganisationDash/:ID"
+        }
+        let create = await orgBadLogs.create(obj)
         console.log(error)
         return res.status(500).send({ status: false, msg: error })
     }
@@ -569,6 +604,13 @@ const organisationsTransection = async (req, res) => {
 
 
     } catch (error) {
+        let obj = {
+            IP: ip.address(),
+            description: error,
+            api: "get Organization transections",
+            apiUrl: "http://ec2-13-233-63-235.ap-south-1.compute.amazonaws.com:3000/OrganisationTransection/:ID"
+        }
+        let create = await orgBadLogs.create(obj)
         console.log(error)
         return res.status(500).send({ status: false, msg: error })
     }
@@ -580,11 +622,9 @@ const OrgDashSection = async (req, res) => {
     try {
 
         const organisationID = req.params.ID;
-
         if (!organisationID) {
             return res.status(200).send({ Status: false, msg: "Not Geting Organisation ID" })
         }
-
         let findName = await Organisation.findOne({ _id: organisationID })
         let orgName = findName.name
         let orgEmail = findName.email
@@ -612,8 +652,6 @@ const OrgDashSection = async (req, res) => {
             numberOFUSer++
         }
 
-
-
         let data = {
             name: findName.name,
             totlaLicense: findName.totlaLicense,
@@ -631,17 +669,18 @@ const OrgDashSection = async (req, res) => {
             joining_date: findName.createdAt,
             address: findName.address,
             totalTransection_amount: totalTransection
-
-
-
         }
 
         console.log("data", data)
-
         return res.status(200).send({ status: true, data: data })
-
-
     } catch (error) {
+        let obj = {
+            IP: ip.address(),
+            description: error,
+            api: "Organization DashBoard Section",
+            apiUrl: "http://ec2-13-233-63-235.ap-south-1.compute.amazonaws.com:3000/orgDashSection/:ID"
+        }
+        let create = await orgBadLogs.create(obj)
         console.log(error)
         return res.status(500).send({ status: false, msg: error })
     }
@@ -681,9 +720,14 @@ const organisationsTransectionList = async (req, res) => {
 
             return res.status(200).send({ status: true, filter })
         }
-
-
     } catch (error) {
+        let obj = {
+            IP: ip.address(),
+            description: error,
+            api: "Organization DashBoard Section",
+            apiUrl: "http://ec2-13-233-63-235.ap-south-1.compute.amazonaws.com:3000/organisationsTransectionList"
+        }
+        let create = await orgBadLogs.create(obj)
         console.log(error)
         return res.status(500).send({ status: false, msg: error })
     }
@@ -790,9 +834,6 @@ const OrganisationCustomerTest = async (req, res) => {
 
             return res.status(200).send({ status: true, totlaRow: contRow, currenPage: parseInt(pageNO), filter })
 
-
-
-
         } else if (req.body.ID.length > 2) {
 
 
@@ -825,6 +866,13 @@ const OrganisationCustomerTest = async (req, res) => {
         }
 
     } catch (error) {
+        let obj = {
+            IP: ip.address(),
+            description: error,
+            api: "Organization Get Customer",
+            apiUrl: "http://ec2-13-233-63-235.ap-south-1.compute.amazonaws.com:3000/OrganisationCustomerTest/:ID"
+        }
+        let create = await orgBadLogs.create(obj)
         console.log(error)
         return res.status(500).send({ status: false, msg: error })
     }
@@ -867,6 +915,13 @@ const DeleteCustomer = async (req, res) => {
         return res.status(200).send({ status: true, msg: "Customer Deleted Sucessfully" })
 
     } catch (error) {
+        let obj = {
+            IP: ip.address(),
+            description: error,
+            api: "Organization Delete Customer",
+            apiUrl: "http://ec2-13-233-63-235.ap-south-1.compute.amazonaws.com:3000/Delete/:ID"
+        }
+        let create = await orgBadLogs.create(obj)
         console.log(error)
         return res.status(500).send({ status: false, msg: error })
     }
@@ -920,6 +975,13 @@ const agentsuspend = async (req, res) => {
         }
 
     } catch (error) {
+        let obj = {
+            IP: ip.address(),
+            description: error,
+            api: "Suspend Agent",
+            apiUrl: "http://ec2-13-233-63-235.ap-south-1.compute.amazonaws.com:3000/agentSusupend/:agentID/:orgID"
+        }
+        let create = await orgBadLogs.create(obj)
         console.log(error)
         return res.status(200).send({ status: false, msg: error })
     }
@@ -976,6 +1038,13 @@ const unSuspendagent = async (req, res) => {
 
 
     } catch (error) {
+        let obj = {
+            IP: ip.address(),
+            description: error,
+            api: "Un-suspend Agent",
+            apiUrl: "http://ec2-13-233-63-235.ap-south-1.compute.amazonaws.com:3000/agentSusupend/unSuspendagent/:agentID/:orgID"
+        }
+        let create = await orgBadLogs.create(obj)
         console.log(error)
         return res.status(200).send({ status: false, msg: error })
     }
@@ -1032,6 +1101,13 @@ const deleteAgent = async (req, res) => {
 
 
     } catch (error) {
+        let obj = {
+            IP: ip.address(),
+            description: error,
+            api: "Delete Agent",
+            apiUrl: "http://ec2-13-233-63-235.ap-south-1.compute.amazonaws.com:3000/deleteAgent/:agentID/:orgID"
+        }
+        let create = await orgBadLogs.create(obj)
         console.log(error)
         return res.status(200).send({ status: false, msg: error })
     }
@@ -1221,6 +1297,13 @@ const organisationtransectionfillter = async (req, res) => {
         }
 
     } catch (error) {
+        let obj = {
+            IP: ip.address(),
+            description: error,
+            api: "get organization transections",
+            apiUrl: "http://ec2-13-233-63-235.ap-south-1.compute.amazonaws.com:3000/deleteAgent/orgtransection/:OrganisationID"
+        }
+        let create = await orgBadLogs.create(obj)
         console.log(error)
         return res.status(200).send({ status: false, msg: error })
     }
@@ -1289,6 +1372,13 @@ const changePassword = async (req, res) => {
         return res.status(200).send({ status: false, msg: "Password Change Sucessfully" })
 
     } catch (error) {
+        let obj = {
+            IP: ip.address(),
+            description: error,
+            api: "organization forgot password",
+            apiUrl: "http://ec2-13-233-63-235.ap-south-1.compute.amazonaws.com:3000/OrgchangePassword/:orgID"
+        }
+        let create = await orgBadLogs.create(obj)
         conosle.log(error)
         return res.status(200).send({ status: false, msg: error })
     }
@@ -1367,6 +1457,13 @@ const orgforgotpassword = async (req, res) => {
         return res.status(200).send({ status: true, msg: "Otp send Sucessfully" })
 
     } catch (error) {
+        let obj = {
+            IP: ip.address(),
+            description: error,
+            api: "organization forgot password",
+            apiUrl: "http://ec2-13-233-63-235.ap-south-1.compute.amazonaws.com:3000/orgforgotpassword"
+        }
+        let create = await orgBadLogs.create(obj)
         console.log(error)
         return res.status(200).send({ status: false, msg: error })
     }
@@ -1429,6 +1526,13 @@ const orgchangePasswordotp = async (req, res) => {
         return res.status(200).send({ status: true, msg: "Password change sucessfully" })
 
     } catch (error) {
+        let obj = {
+            IP: ip.address(),
+            description: error,
+            api: "organization forgot password otp verify",
+            apiUrl: "http://ec2-13-233-63-235.ap-south-1.compute.amazonaws.com:3000/orgchangePasswordotp"
+        }
+        let create = await orgBadLogs.create(obj)
         console.log(error)
         return res.status(200).send({ status: false, msg: error })
     }
@@ -1462,6 +1566,13 @@ const vieworg = async (req, res) => {
 
 
     } catch (error) {
+        let obj = {
+            IP: ip.address(),
+            description: error,
+            api: " view organization",
+            apiUrl: "http://ec2-13-233-63-235.ap-south-1.compute.amazonaws.com:3000/vieworg/:orgID"
+        }
+        let create = await orgBadLogs.create(obj)
         console.log(error)
     }
 }
@@ -1565,6 +1676,13 @@ const org_update = async (req, res) => {
 
         }
     } catch (error) {
+        let obj = {
+            IP: ip.address(),
+            description: error,
+            api: "Organization Update",
+            apiUrl: "http://ec2-13-233-63-235.ap-south-1.compute.amazonaws.com:3000/org_update/:orgID"
+        }
+        let create = await orgBadLogs.create(obj)
         console.log(error)
         return res.status(200).send({ status: false, msg: error.message })
     }
@@ -1765,6 +1883,13 @@ const createCustomerByOrg = async (req, res, next) => {
         return res.status(201).send({ status: true, msg: "data created succesfully", data: create, })
 
     } catch (error) {
+        let obj = {
+            IP: ip.address(),
+            description: error,
+            api: "Organization Customer Register",
+            apiUrl: "http://ec2-13-233-63-235.ap-south-1.compute.amazonaws.com:3000/createCustomerByOrg/:token"
+        }
+        let create = await orgBadLogs.create(obj)
         console.log(error)
         return res.status(500).send({ status: false, message: error })
     }
@@ -1914,6 +2039,13 @@ let verifyCustomer = async (req, res) => {
         });
 
     } catch (error) {
+        let obj = {
+            IP: ip.address(),
+            description: error,
+            api: "Organization Customer Register OTP Verification",
+            apiUrl: "http://ec2-13-233-63-235.ap-south-1.compute.amazonaws.com:3000/verifyCustomer"
+        }
+        let create = await orgBadLogs.create(obj)
         console.log(error)
         return res.status(500).send({ status: false, msg: error.message })
     }
@@ -2028,6 +2160,13 @@ const updateDigitalID = async (req, res) => {
 
 
     } catch (error) {
+        let obj = {
+            IP: ip.address(),
+            description: error,
+            api: "Organization Add Customer DID",
+            apiUrl: "http://ec2-13-233-63-235.ap-south-1.compute.amazonaws.com:3000/updateDigitalID/:custID/:adminID"
+        }
+        let create = await orgBadLogs.create(obj)
         console.log(error)
         return res.status(200).send({ status: false, msg: error.message })
     }
@@ -2135,6 +2274,13 @@ const applyUpdateLicenses = async (req, res) => {
 
 
     } catch (error) {
+        let obj = {
+            IP: ip.address(),
+            description: error,
+            api: "Apply For Licenses",
+            apiUrl: "http://ec2-13-233-63-235.ap-south-1.compute.amazonaws.com:3000/applyUpdateLicenses/:orgID"
+        }
+        let create = await orgBadLogs.create(obj)
         console.log(error)
         return res.status(200).send({ status: false, msg: error.message })
     }
@@ -2212,6 +2358,13 @@ const updateCommission = async (req, res) => {
         return res.status(200).send({ status: true, create })
 
     } catch (error) {
+        let obj = {
+            IP: ip.address(),
+            description: error,
+            api: "Update agent Commission",
+            apiUrl: "http://ec2-13-233-63-235.ap-south-1.compute.amazonaws.com:3000/updateCommission/:agentID"
+        }
+        let create = await orgBadLogs.create(obj)
         console.log(error)
         return res.status(200).send({ status: false, msg: error.messege })
     }
@@ -2240,6 +2393,13 @@ const ViewAgentCommmission = async (req, res) => {
         return res.status(200).send({ status: true, lastUpdate })
 
     } catch (error) {
+        let obj = {
+            IP: ip.address(),
+            description: error,
+            api: "View Agent Commision",
+            apiUrl: "http://ec2-13-233-63-235.ap-south-1.compute.amazonaws.com:3000/ViewAgentCommmission/:agentID"
+        }
+        let create = await orgBadLogs.create(obj)
         console.log(error)
         return res.status(200).send({ status: false, msg: error.messege })
     }
@@ -2427,6 +2587,13 @@ const org_add_cust = async (req, res) => {
         });
 
     } catch (error) {
+        let obj = {
+            IP: ip.address(),
+            description: error,
+            api: "Organization Customer Performance",
+            apiUrl: "http://ec2-13-233-63-235.ap-south-1.compute.amazonaws.com:3000/org_add_cust/:orgID"
+        }
+        let create = await orgBadLogs.create(obj)
         console.log(error)
         return res.status(200).send({ status: false, msg: error.message })
     }
@@ -2463,6 +2630,13 @@ const Cust_Loan_apply = async (req, res) => {
 
 
     } catch (error) {
+        let obj = {
+            IP: ip.address(),
+            description: error,
+            api: "Customer Loan Apply",
+            apiUrl: "http://ec2-13-233-63-235.ap-south-1.compute.amazonaws.com:3000/Cust_Loan_apply/:token"
+        }
+        let create = await orgBadLogs.create(obj)
         console.log(error)
         return res.status(200).send({ status: false, msg: error.messege })
     }
@@ -2519,6 +2693,13 @@ const org_loan_accept = async (req, res) => {
 
 
     } catch (error) {
+        let obj = {
+            IP: ip.address(),
+            description: error,
+            api: "Organization Loan Accept",
+            apiUrl: "http://ec2-13-233-63-235.ap-south-1.compute.amazonaws.com:3000/org_loan_accept/:LoanID"
+        }
+        let create = await orgBadLogs.create(obj)
         console.log(error)
         return res.status(200).send({ status: false, msg: " " })
     }
@@ -2546,6 +2727,13 @@ const org_cust_loan = async (req, res) => {
 
 
     } catch (error) {
+        let obj = {
+            IP: ip.address(),
+            description: error,
+            api: "View Organization Customer Loans",
+            apiUrl: "http://ec2-13-233-63-235.ap-south-1.compute.amazonaws.com:3000/org_cust_loan/:LoanID"
+        }
+        let create = await orgBadLogs.create(obj)
         console.log(error)
         return res.status(200).send({ status: false, msg: "" })
     }
@@ -2570,6 +2758,13 @@ const get_pass_Loans = async (req, res) => {
 
 
     } catch (error) {
+        let obj = {
+            IP: ip.address(),
+            description: error,
+            api: "View Organization Pass Loans",
+            apiUrl: "http://ec2-13-233-63-235.ap-south-1.compute.amazonaws.com:3000/get_pass_Loans/:token"
+        }
+        let create = await orgBadLogs.create(obj)
         console.log(error)
         return res.status(200).send({ status: false, msg: error.message })
     }
@@ -2597,6 +2792,13 @@ const get_Loan_installment = async (req, res) => {
         return res.status(200).send({ status: true, find_Installment })
 
     } catch (error) {
+        let obj = {
+            IP: ip.address(),
+            description: error,
+            api: "Get Loans Installment",
+            apiUrl: "http://ec2-13-233-63-235.ap-south-1.compute.amazonaws.com:3000/get_Loan_installment/:LoanID"
+        }
+        let create = await orgBadLogs.create(obj)
         console.log(error)
         return res.status(200).send({ status: false, msg: error.messege })
     }
@@ -2653,6 +2855,13 @@ const Cust_Linked_Srevice_Org = async (req, res) => {
 
 
     } catch (error) {
+        let obj = {
+            IP: ip.address(),
+            description: error,
+            api: "Customer Linked Service",
+            apiUrl: "http://ec2-13-233-63-235.ap-south-1.compute.amazonaws.com:3000/Cust_Linked_Srevice_Org/:token"
+        }
+        let create = await orgBadLogs.create(obj)
         console.log(error)
         return res.status(200).send({ satatus: false, msg: error.messege })
     }
@@ -3084,6 +3293,13 @@ const get_org_cust_data_graph = async (req, res) => {
         }
 
     } catch (error) {
+        let obj = {
+            IP: ip.address(),
+            description: error,
+            api: "Organization Customer Data By Graph",
+            apiUrl: "http://ec2-13-233-63-235.ap-south-1.compute.amazonaws.com:3000/get_org_cust_data_graph/:token"
+        }
+        let create = await orgBadLogs.create(obj)
         console.log(error)
         return res.status(200).send({ status: false, msg: error.message })
     }
@@ -3128,6 +3344,13 @@ const Org_pendingCust = async (req, res) => {
 
 
     } catch (error) {
+        let obj = {
+            IP: ip.address(),
+            description: error,
+            api: "Organization Pending Customer",
+            apiUrl: "http://ec2-13-233-63-235.ap-south-1.compute.amazonaws.com:3000/Org_pendingCust/:token"
+        }
+        let create = await orgBadLogs.create(obj)
         console.log(error)
         return res.status(200).send({ status: false, msg: error.message })
     }
@@ -3156,6 +3379,13 @@ const Org_blockedIDS = async (req, res) => {
         return res.status(200).send({ status: true, totlaRow: totlaRow, currenPage: parseInt(pageNO), data: findBlockedIDs })
 
     } catch (error) {
+        let obj = {
+            IP: ip.address(),
+            description: error,
+            api: "Organization Blocked DID's",
+            apiUrl: "http://ec2-13-233-63-235.ap-south-1.compute.amazonaws.com:3000/Org_blockedIDS/:token"
+        }
+        let create = await orgBadLogs.create(obj)
         console.log(error)
         return res.status(200).send({ status: false, msg: error.message })
     }
@@ -3213,6 +3443,13 @@ const blockCustomer = async (req, res) => {
         return res.status(200).send({ status: 1, msg: "Customer Block Sucessfully" })
 
     } catch (error) {
+        let obj = {
+            IP: ip.address(),
+            description: error,
+            api: "Organization Block DID",
+            apiUrl: "http://ec2-13-233-63-235.ap-south-1.compute.amazonaws.com:3000/BlockCustomer/:ID"
+        }
+        let create = await orgBadLogs.create(obj)
         console.log(error)
         return res.status(200).send({ status: false, msg: error })
     }
@@ -3240,6 +3477,13 @@ const get_num_of_Agnet = async (req, res) => {
         return res.status(200).send({ status: true, totlaRow: totlaRow, currenPage: parseInt(pageNO), Agents: find_Numbers, data: find_Agent })
 
     } catch (error) {
+        let obj = {
+            IP: ip.address(),
+            description: error,
+            api: "Get Numbers Of Agents",
+            apiUrl: "http://ec2-13-233-63-235.ap-south-1.compute.amazonaws.com:3000/get_num_of_Agnet/:token"
+        }
+        let create = await orgBadLogs.create(obj)
         console.log(error)
         return res.status(200).send({ status: false, msg: error.message })
     }
@@ -3267,6 +3511,13 @@ const Blocking_DID_Note = async (req, res) => {
 
 
     } catch (error) {
+        let obj = {
+            IP: ip.address(),
+            description: error,
+            api: "Blocking DID Note",
+            apiUrl: "http://ec2-13-233-63-235.ap-south-1.compute.amazonaws.com:3000/Blocking_DID_Note"
+        }
+        let create = await orgBadLogs.create(obj)
         console.log(error)
         return res.status(200).send({ status: false, msg: error.message })
     }
@@ -3295,6 +3546,13 @@ const Delete_DID_Note = async (req, res) => {
 
 
     } catch (error) {
+        let obj = {
+            IP: ip.address(),
+            description: error,
+            api: "Delete DID Note",
+            apiUrl: "http://ec2-13-233-63-235.ap-south-1.compute.amazonaws.com:3000/Delete_DID_Note"
+        }
+        let create = await orgBadLogs.create(obj)
         console.log(error)
         return res.status(200).send({ status: false, msg: error.message })
     }
@@ -3310,8 +3568,6 @@ const Org_get_agent_cut_month = async (req, res) => {
         let date1 = new Date
 
         console.log("jkl", agentID)
-
-
 
         var fromDate = new Date(Date.now() - 334 * 24 * 60 * 60 * 1000);
 
@@ -3370,6 +3626,13 @@ const Org_get_agent_cut_month = async (req, res) => {
         return res.status(200).send({ status: true, obj })
 
     } catch (error) {
+        let obj = {
+            IP: ip.address(),
+            description: error,
+            api: "organization agent performance",
+            apiUrl: "http://ec2-13-233-63-235.ap-south-1.compute.amazonaws.com:3000/Org_get_agent_cut_month/:agentID"
+        }
+        let create = await orgBadLogs.create(obj)
         console.log(error)
         return res.status(200).send({ status: false, msg: error.message })
     }
@@ -3403,6 +3666,13 @@ const org_blocked_custmers = async (req, res) => {
 
         }
     } catch (error) {
+        let obj = {
+            IP: ip.address(),
+            description: error,
+            api: "organization agent performance",
+            apiUrl: "http://ec2-13-233-63-235.ap-south-1.compute.amazonaws.com:3000/Org_get_agent_cut_month/:agentID"
+        }
+        let create = await orgBadLogs.create(obj)
         console.log(error)
         return res.status(200).send({ status: false, msg: error.messege })
     }
@@ -3556,6 +3826,13 @@ const get_org_transections_months = async (req, res) => {
 
 
     } catch (error) {
+        let obj = {
+            IP: ip.address(),
+            description: error,
+            api: "organization transection by months",
+            apiUrl: "http://ec2-13-233-63-235.ap-south-1.compute.amazonaws.com:3000/get_org_transections_months/:orgID"
+        }
+        let create = await orgBadLogs.create(obj)
         console.log(error)
         return res.status(200).send({ status: false, msg: error.message })
     }
@@ -3607,6 +3884,13 @@ const get_transctions = async (req, res) => {
         }
 
     } catch (error) {
+        let obj = {
+            IP: ip.address(),
+            description: error,
+            api: "organization transection by months",
+            apiUrl: "http://ec2-13-233-63-235.ap-south-1.compute.amazonaws.com:3000/get_org_transections_months/:orgID"
+        }
+        let create = await orgBadLogs.create(obj)
         console.log(error)
         return res.status(200).send({ status: false, msg: error.message })
     }
@@ -3690,6 +3974,13 @@ const create_employe = async (req, res) => {
 
 
     } catch (error) {
+        let obj = {
+            IP: ip.address(),
+            description: error,
+            api: "organization Create Employee",
+            apiUrl: "http://ec2-13-233-63-235.ap-south-1.compute.amazonaws.com:3000/create_employe/:token"
+        }
+        let create = await orgBadLogs.create(obj)
         console.log(error)
         return res.status(200).send({ status: false, msg: error.message })
     }
@@ -3723,6 +4014,13 @@ const get_emaployees = async (req, res) => {
         return res.status(200).send({ status: true, totlaRow: contRow, currenPage: parseInt(pageNO), find })
 
     } catch (error) {
+        let obj = {
+            IP: ip.address(),
+            description: error,
+            api: "organization get Employee",
+            apiUrl: "http://ec2-13-233-63-235.ap-south-1.compute.amazonaws.com:3000/get_emaployees/:token"
+        }
+        let create = await orgBadLogs.create(obj)
         console.log(error)
         return res.status(200).send({ status: false, mg: error.message })
     }
@@ -3744,10 +4042,20 @@ const get_employee_roles = async (req, res) => {
         return res.status(200).send({ status: true, find })
 
     } catch (error) {
+        let obj = {
+            IP: ip.address(),
+            description: error,
+            api: "organization get Employee Roles",
+            apiUrl: "http://ec2-13-233-63-235.ap-south-1.compute.amazonaws.com:3000/get_employee_roles/:employeeID"
+        }
+        let create = await orgBadLogs.create(obj)
         console.log(error)
         return res.status(200).send({ status: false, msg: error.message })
     }
 }
+
+
+//----------------------------------------------------------server_logs------------------------------------------------------------------------------------
 
 
 

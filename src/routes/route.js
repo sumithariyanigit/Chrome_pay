@@ -1443,6 +1443,7 @@ router.post("/admin_read_notification/:ID", adminController.admin_read_notificat
 router.post("/get_admin_cust_data_graph", adminController.get_admin_cust_data_graph)
 router.get("/Sub_admin_profil/:sub_adminID", adminController.Sub_admin_profil)
 router.post("/view_all_agents", adminController.view_all_agents)
+router.post("/globalImageUploader", adminController.globalImageUploader)
 
 //---------------Transaction----------------------------------
 
@@ -1569,6 +1570,10 @@ router.post("/createCustomerByOrg2", agentController.createCustomerByOrg2)
 router.post("/agent_login_new", agentController.agent_login_new)
 router.post("/send_cust_otp_data_view", agentController.send_cust_otp_data_view)
 router.post("/verify_cust_view_OTP", agentController.verify_cust_view_OTP)
+router.get("/get_all_users_images", agentController.get_all_users_images)
+router.post("/lookups", agentController.lookups)
+router.get("/get_all_images", agentController.get_all_images)
+router.post("/Store_Face_Data", agentController.Store_Face_Data )
 
 
 
